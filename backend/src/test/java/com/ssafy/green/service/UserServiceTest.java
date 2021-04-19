@@ -1,14 +1,11 @@
 package com.ssafy.green.service;
 
 import com.ssafy.green.model.entity.User;
-import com.ssafy.green.repository.UserRepository;
 import org.junit.Assert;
 import org.junit.Test;
-import org.junit.internal.runners.statements.Fail;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,4 +117,32 @@ public class UserServiceTest {
         //then
         Assert.assertEquals(newUser.getNickname(), findUser.getNickname());
      }
+
+     @Test
+     public void 회원정보수정() throws Exception{
+         //given
+         User newUser = User.builder()
+                 .userId("ssafy")
+                 .nickname("왕고구마")
+                 .password("1234")
+                 .provider("google")
+                 .providerId("google")
+                 .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
+                 .build();
+
+         User changeUser = User.builder()
+                 .userId("ssafy")
+                 .nickname("아아아아아아아아파트")
+                 .password("000000000000")
+                 .provider("google")
+                 .providerId("google")
+                 .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
+                 .build();
+         //when
+         userService.join(newUser);
+         User changedUser = userService.updateInfo(changeUser);
+
+         //then
+         Assert.assertEquals(newUser.getUserId(), changedUser.getUserId());
+      }
 }

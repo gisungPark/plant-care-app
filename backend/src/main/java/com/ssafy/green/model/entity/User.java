@@ -21,7 +21,8 @@ public class User {
     private String profile;
     private String provider;
     private String providerId;
-    private boolean uFlag = false;
+    @Column(columnDefinition = "boolean default true")
+    private Boolean flag = true;
 
     public User() {}
 
@@ -33,5 +34,15 @@ public class User {
         this.profile = profile;
         this.provider = provider;
         this.providerId = providerId;
+    }
+
+    public void updateInfo(User user) {
+        this.password = user.password;
+        this.nickname = user.nickname;
+        this.profile = user.profile;
+    }
+
+    public void delete() {
+        this.flag = false
     }
 }

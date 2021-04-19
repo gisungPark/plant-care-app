@@ -17,7 +17,7 @@ public class UserService {
      * 아이디 중복체크
      */
     public boolean validateDuplicateUserId(User user){
-        User findUser = userRepository.findByUserId(user.getUserId());
+        User findUser = userRepository.findByUserIdAndFlag(user.getUserId(),true);
         if(findUser == null){
             return true; // 사용가능한 아이디 입니다.!
         }else{
@@ -29,7 +29,7 @@ public class UserService {
      * 닉네임 중복체크
      */
     public boolean validateDuplicateNickname(User user){
-        User findUser = userRepository.findByNickname(user.getNickname());
+        User findUser = userRepository.findByNicknameAndFlag(user.getNickname(), true);
         if(findUser == null){
             return true; // 사용가능한 닉네임 입니다.!
         }else{
@@ -51,16 +51,26 @@ public class UserService {
      * 로그인
      */
     public User login(User user){
-        return userRepository.findByUserIdAndPassword(user.getUserId(), user.getPassword());
+        return userRepository.findByUserIdAndPasswordAndFlag(user.getUserId(), user.getPassword(), true);
     }
-
 
     /**
      * 회원 정보 수정
      */
+    public User updateInfo(User user){
+        User findUser = userRepository.findByUserIdAndFlag(user.getUserId(), true);
+        findUser.updateInfo(user);
+        userRepository.save(findUser);
+        return findUser;
+    }
 
     /**
      * 회원 정보 삭제
      */
-
+    public boolean deleteUser(User user){
+        User findUser = userRepository.findByUserIdAndFlag(user.getUserId(), true);
+        findUser.delete();
+        userRepository.save(findUser);
+        return true;
+    }
 }
