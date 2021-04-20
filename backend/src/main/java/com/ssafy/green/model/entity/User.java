@@ -26,6 +26,9 @@ public class User {
     private String providerId;
 
     @OneToMany(mappedBy = "user")
+    private List<Diary> diarys = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
     private List<Room> rooms = new ArrayList<>();
 
     @Column(name = "uflag", columnDefinition = "boolean default true")

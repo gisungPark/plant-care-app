@@ -31,7 +31,7 @@ public class UserServiceTest {
         //given
         User newUser = User.builder()
                 .userId("ssafy")
-                .nickname("왕왕고구마")
+                .nickname("왕고구마")
                 .password("1234")
                 .provider("google")
                 .providerId("google")
@@ -50,7 +50,7 @@ public class UserServiceTest {
         //given
         User newUser = User.builder()
                 .userId("ssafy")
-                .nickname("왕왕고구마")
+                .nickname("왕고구마")
                 .password("1234")
                 .provider("google")
                 .providerId("google")
@@ -78,7 +78,7 @@ public class UserServiceTest {
         //given
         User newUser = User.builder()
                 .userId("parkssafy")
-                .nickname("왕왕고구마")
+                .nickname("왕고구마")
                 .password("1234")
                 .provider("google")
                 .providerId("google")
@@ -87,7 +87,7 @@ public class UserServiceTest {
 
         User newUser2 = User.builder()
                 .userId("kimssafy")
-                .nickname("왕왕고구마")
+                .nickname("왕고구마")
                 .password("1234")
                 .provider("google")
                 .providerId("google")
