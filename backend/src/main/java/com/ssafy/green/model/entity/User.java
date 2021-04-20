@@ -3,15 +3,18 @@ package com.ssafy.green.model.entity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
+@ToString
 public class User {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Id @GeneratedValue
     @Column(name = "uid")
     private Long id;
 
@@ -21,11 +24,14 @@ public class User {
     private String profile;
     private String provider;
     private String providerId;
+
+    @OneToMany(mappedBy = "user")
+    private List<Room> rooms = new ArrayList<>();
+
     @Column(columnDefinition = "boolean default true")
     private Boolean flag = true;
 
     public User() {}
-
     @Builder
     public User(String userId, String password, String nickname, String profile, String provider, String providerId) {
         this.userId = userId;
@@ -43,6 +49,6 @@ public class User {
     }
 
     public void delete() {
-        this.flag = false
+        this.flag = false;
     }
 }

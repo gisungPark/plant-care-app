@@ -5,9 +5,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, String> {
 
-    User findByUserIdAndFlag(String userId, boolean uFlag);
+    User findByUserIdAndFlag(String userId, boolean flag);
 
-    User findByNicknameAndFlag(String nickname, boolean uFlag);
+    User findByNicknameAndFlag(String nickname, boolean flag);
 
-    User findByUserIdAndPasswordAndFlag(String userId, String password, boolean uFlag);
+    User findByUserIdAndPasswordAndFlag(String userId, String password, boolean flag);
+
 }

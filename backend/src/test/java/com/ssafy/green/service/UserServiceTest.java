@@ -6,10 +6,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
+import java.lang.reflect.Member;
 
 
 @RunWith(SpringRunner.class)
@@ -145,4 +147,27 @@ public class UserServiceTest {
          //then
          Assert.assertEquals(newUser.getUserId(), changedUser.getUserId());
       }
+
+      @Test
+      public void 회원_삭제() throws Exception{
+          //given
+          User newUser = User.builder()
+                  .userId("ssafy")
+                  .nickname("왕고구마")
+                  .password("1234")
+                  .provider("google")
+                  .providerId("google")
+                  .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
+                  .build();
+
+          //when
+          userService.join(newUser);
+          userService.deleteUser(newUser);
+
+          boolean result = userService.validateDuplicateUserId(newUser);
+
+
+          //then
+          Assert.assertEquals(result, true);
+       }
 }

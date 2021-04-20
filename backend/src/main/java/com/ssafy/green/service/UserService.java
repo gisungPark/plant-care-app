@@ -48,6 +48,13 @@ public class UserService {
     }
 
     /**
+     * 아이디로 회원 정보 조회
+     */
+    public User findUser(String userId){
+        return userRepository.findByUserIdAndFlag(userId, true);
+    }
+
+    /**
      * 로그인
      */
     public User login(User user){
