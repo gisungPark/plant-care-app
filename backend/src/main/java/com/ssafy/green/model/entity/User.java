@@ -28,7 +28,7 @@ public class User {
     @OneToMany(mappedBy = "user")
     private List<Room> rooms = new ArrayList<>();
 
-    @Column(columnDefinition = "boolean default true")
+    @Column(name = "uflag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
     public User() {}

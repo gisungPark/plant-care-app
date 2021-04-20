@@ -18,6 +18,9 @@ public class Room {
     @JoinColumn(name = "uid")
     private User user;
     private String roomName;
+    @Column(name = "rflag", columnDefinition = "boolean default true")
+    private boolean flag = true;
+
 
     public Room() {}
 
@@ -25,5 +28,9 @@ public class Room {
     public Room(User user, String roomName) {
         this.user = user;
         this.roomName = roomName;
+    }
+
+    public void delete() {
+        this.flag = false;
     }
 }

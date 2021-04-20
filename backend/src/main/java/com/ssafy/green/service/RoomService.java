@@ -23,8 +23,17 @@ public class RoomService {
     /**
      * 방 생성
      */
-    public void createRoom(String userId, String roomName) {
+    public boolean createRoom(String userId, String roomName) {
+
         User findUser = userService.findUser(userId);
+        // 0. 유효한 방 리스트 호출
+        List<Room> rooms = findRooms(findUser.getUserId());
+        // 0. 중복된 이름의 방 존재여부 체크!!!
+        for(Room r: rooms){
+            // 이름 중복!!
+            if(r.getRoomName().equals(roomName)) return false;
+        }
+
         Room newRoom = Room
                 .builder()
                 .user(findUser)
@@ -35,17 +44,36 @@ public class RoomService {
         roomRepository.save(newRoom);
 
         // 2. 유저 맵핑
-        List<Room> rooms = findUser.getRooms();
         rooms.add(newRoom);
         userRepository.save(findUser);
+
+        return true;
     }
 
     /**
-     * 방 조회
+     * 방 전체 조회 (flag == true)
      */
+    public List<Room> findRooms(String userId){
+        User findUser = userService.findUser(userId);
+        return roomRepository.findByUserAndFlag(findUser, true);
+    }
+
+    /**
+     * 방 이름 조회
+     */
+
 
     /**
      * 방 삭제
      */
+    public boolean deleteRoom(String userId, String roomName){
 
+        User findUser = userService.findUser(userId);
+        Room findRoom = roomRepository.findByUserAndRoomNameAndFlag(findUser, roomName, true);
+
+        findRoom.delete();
+        roomRepository.save(findRoom);
+
+        return true;
+    }
 }
