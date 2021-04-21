@@ -1,39 +1,46 @@
 package com.ssafy.green.service;
 
+import com.ssafy.green.config.security.JwtTokenProvider;
+import com.ssafy.green.model.dto.CallbackDto;
+import com.ssafy.green.model.dto.TokenResultDTO;
+import com.ssafy.green.model.dto.UserInfoDto;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+
 @Service
-@Transactional(readOnly = true)
+@Transactional
 @RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
-
+    private final JwtTokenProvider jwtTokenProvider;
     /**
      * 아이디 중복체크
      */
-    public boolean validateDuplicateUserId(User user){
-        User findUser = userRepository.findByUserIdAndFlag(user.getUserId(),true);
+    public boolean validateDuplicateUserId(String userId){
+        User findUser = userRepository.findByUserIdAndFlag(userId,true);
         if(findUser == null){
             return true; // 사용가능한 아이디 입니다.!
         }else{
-            throw new IllegalStateException("이미 존재하는 아이디입니다.");
+            return  false;
         }
     }
 
     /**
      * 닉네임 중복체크
      */
-    public boolean validateDuplicateNickname(User user){
-        User findUser = userRepository.findByNicknameAndFlag(user.getNickname(), true);
+    public boolean validateDuplicateNickname(String nickname){
+        User findUser = userRepository.findByNicknameAndFlag(nickname, true);
         if(findUser == null){
             return true; // 사용가능한 닉네임 입니다.!
         }else{
-            throw new IllegalStateException("이미 존재하는 닉네임입니다.");
+            return  false;
         }
     }
 
@@ -41,8 +48,11 @@ public class UserService {
      * 회원 가입!
      */
     public boolean join(User user) throws Exception{
-        if(validateDuplicateUserId(user) && validateDuplicateNickname(user)){
+        if(validateDuplicateUserId(user.getUserId()) && validateDuplicateNickname(user.getNickname())){
             userRepository.save(user);
+        }else {
+            System.out.println("이미 존재하는 회원입니다.");
+            return false;
         }
         return true;
     }
@@ -57,8 +67,23 @@ public class UserService {
     /**
      * 로그인
      */
-    public User login(User user){
-        return userRepository.findByUserIdAndPasswordAndFlag(user.getUserId(), user.getPassword(), true);
+    public CallbackDto login(UserInfoDto userInfo){
+        User findUser = userRepository.findByUserIdAndPasswordAndFlag(userInfo.getUserId(), userInfo.getPassword(), true);
+        CallbackDto callbackDto = new CallbackDto();
+
+        // 1. 회원 존재여부 확인
+        if(findUser != null){
+            // 2. token 생성 및 기본정보 세팅
+            callbackDto.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+            callbackDto.setUserId(findUser.getUserId());
+            callbackDto.setNickname(findUser.getNickname());
+            callbackDto.setProfile(findUser.getProfile());
+            callbackDto.setCode(0);
+        } else {
+            callbackDto.setCode(1);
+        }
+
+        return callbackDto;
     }
 
     /**

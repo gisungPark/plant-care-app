@@ -3,6 +3,7 @@ package com.ssafy.green.service;
 
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.User;
+import com.ssafy.green.model.entity.UserType;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,7 +30,7 @@ public class RoomServiceTest {
                 .userId("ssafy")
                 .nickname("고구마")
                 .password("1234")
-                .provider("google")
+                .provider(UserType.google)
                 .providerId("google")
                 .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
                 .build();
@@ -57,7 +58,7 @@ public class RoomServiceTest {
                  .userId("ssafy")
                  .nickname("고구마")
                  .password("1234")
-                 .provider("google")
+                 .provider(UserType.google)
                  .providerId("google")
                  .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
                  .build();

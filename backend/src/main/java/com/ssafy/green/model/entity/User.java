@@ -22,7 +22,7 @@ public class User {
     private String password;
     private String nickname;
     private String profile;
-    private String provider;
+    private UserType provider;
     private String providerId;
 
     @OneToMany(mappedBy = "user")
@@ -36,7 +36,7 @@ public class User {
 
     public User() {}
     @Builder
-    public User(String userId, String password, String nickname, String profile, String provider, String providerId) {
+    public User(String userId, String password, String nickname, String profile, UserType provider, String providerId) {
         this.userId = userId;
         this.password = password;
         this.nickname = nickname;

@@ -2,6 +2,7 @@ package com.ssafy.green.service;
 
 import com.ssafy.green.model.entity.Diary;
 import com.ssafy.green.model.entity.User;
+import com.ssafy.green.model.entity.UserType;
 import com.ssafy.green.repository.DiaryRepository;
 import org.junit.Assert;
 import org.junit.Test;
@@ -31,7 +32,7 @@ public class DiaryServiceTest {
                 .userId("ssafy")
                 .nickname("왕고구마")
                 .password("1234")
-                .provider("google")
+                .provider(UserType.google)
                 .providerId("google")
                 .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
                 .build();
