@@ -18,12 +18,12 @@ import java.util.stream.Collectors;
 @Entity
 @Getter
 @ToString
+@Table(name="User")
 public class User implements UserDetails {
 
     @Id @GeneratedValue
-    @Column(name = "uid")
+    @Column(name = "u_id")
     private Long id;
-
     private String userId;
     private String password;
     private String nickname;
@@ -37,7 +37,7 @@ public class User implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Room> rooms = new ArrayList<>();
 
-    @Column(name = "uflag", columnDefinition = "boolean default true")
+    @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
 
