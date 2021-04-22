@@ -68,8 +68,8 @@ public class UserService {
      * 로그인
      */
     public CallbackDto login(UserInfoDto userInfo){
-        User findUser = userRepository.findByUserIdAndPasswordAndFlag(userInfo.getUserId(), userInfo.getPassword(), true);
         CallbackDto callbackDto = new CallbackDto();
+        User findUser = userRepository.findByUserIdAndPasswordAndFlag(userInfo.getUserId(), userInfo.getPassword(), true);
 
         // 1. 회원 존재여부 확인
         if(findUser != null){
@@ -89,11 +89,28 @@ public class UserService {
     /**
      * 회원 정보 수정
      */
-    public User updateInfo(User user){
-        User findUser = userRepository.findByUserIdAndFlag(user.getUserId(), true);
-        findUser.updateInfo(user);
+    public CallbackDto updateInfo(String token, UserInfoDto userInfo){
+        System.out.println("2222222222222222222222222222222");
+        // 0. 토큰 값에서 UserId 읽기
+        String userId = jwtTokenProvider.getUserId(token);
+        CallbackDto callbackDto = new CallbackDto();
+
+        // 1. userId로 회원 정보 검색
+        System.out.println(userId + " 값으로 회원정보 검색");
+        User findUser = userRepository.findByUserIdAndFlag(userId, true);
+
+        // 2. 회원 정보 수정
+        findUser.updateInfo(userInfo);
         userRepository.save(findUser);
-        return findUser;
+
+        // 3. callback 객체 생성
+        callbackDto.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+        callbackDto.setUserId(findUser.getUserId());
+        callbackDto.setNickname(findUser.getNickname());
+        callbackDto.setProfile(findUser.getProfile());
+        callbackDto.setCode(0);
+
+        return callbackDto;
     }
 
     /**

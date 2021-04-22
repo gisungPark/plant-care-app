@@ -1,7 +1,6 @@
 package com.ssafy.green.controller;
 
 import com.ssafy.green.model.dto.CallbackDto;
-import com.ssafy.green.model.dto.JoinDto;
 import com.ssafy.green.model.dto.UserInfoDto;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.UserType;
@@ -9,9 +8,6 @@ import com.ssafy.green.repository.UserRepository;
 import com.ssafy.green.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
-import java.util.logging.Logger;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -44,23 +40,21 @@ public class UserController {
      * 일반 회원가입
      */
     @PostMapping("/join")
-    public User join(@RequestBody JoinDto joinDto){
+    public User join(@RequestBody UserInfoDto userInfo){
         User newUser = User.builder()
-                .userId(joinDto.getUserId())
-                .nickname(joinDto.getNickname())
-                .password(joinDto.getPassword())
+                .userId(userInfo.getUserId())
+                .nickname(userInfo.getNickname())
+                .password(userInfo.getPassword())
                 .provider(UserType.basic)
                 .providerId("")
                 .profile(DEFALLT_IMG)
                 .build();
-
         try {
             boolean result = userService.join(newUser);
             if(result) System.out.println("회원가입에 성공했습니다. ");
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return userService.findUser(newUser.getUserId());
     }
 
@@ -75,11 +69,12 @@ public class UserController {
         return loginCallback;
     }
 
-
     /**
      * 회원 정보 수정
      */
     @PostMapping("/updateInfo")
-    public void updateInfo(@RequestParam UserInfoDto userInfo) {
+    public void updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserInfoDto userInfo) {
+        System.out.println(userInfo.toString());
+        userService.updateInfo(token, userInfo);
     }
 }

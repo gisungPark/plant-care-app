@@ -1,5 +1,7 @@
 package com.ssafy.green.service;
 
+import com.ssafy.green.model.dto.CallbackDto;
+import com.ssafy.green.model.dto.UserInfoDto;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.UserType;
 import org.junit.Assert;
@@ -122,30 +124,6 @@ public class UserServiceTest {
 
      @Test
      public void 회원정보수정() throws Exception{
-         //given
-         User newUser = User.builder()
-                 .userId("ssafy")
-                 .nickname("왕고구마")
-                 .password("1234")
-                 .provider(UserType.google)
-                 .providerId("google")
-                 .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
-                 .build();
-
-         User changeUser = User.builder()
-                 .userId("ssafy")
-                 .nickname("아아아아아아아아파트")
-                 .password("000000000000")
-                 .provider(UserType.google)
-                 .providerId("google")
-                 .profile("http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG")
-                 .build();
-         //when
-         userService.join(newUser);
-         User changedUser = userService.updateInfo(changeUser);
-
-         //then
-         Assert.assertEquals(newUser.getUserId(), changedUser.getUserId());
       }
 
       @Test

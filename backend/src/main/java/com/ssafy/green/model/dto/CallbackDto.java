@@ -1,5 +1,6 @@
 package com.ssafy.green.model.dto;
 
+import lombok.Builder;
 import lombok.Data;
 import lombok.ToString;
 
@@ -11,4 +12,6 @@ public class CallbackDto {
     private String nickname;
     private String profile;
     private Integer code;
+
+    public CallbackDto() {}
 }

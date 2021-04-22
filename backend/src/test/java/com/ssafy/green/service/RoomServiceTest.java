@@ -73,6 +73,8 @@ public class RoomServiceTest {
          // 2. 큰방 삭제
          roomService.deleteRoom(newUser.getUserId(), "큰방");
 
+
+
          List<Room> rooms = roomService.findRooms(newUser.getUserId());
          for (Room r: rooms){
              System.out.println(r.toString());
