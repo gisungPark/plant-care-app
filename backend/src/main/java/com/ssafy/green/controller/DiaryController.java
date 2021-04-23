@@ -12,7 +12,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -23,7 +26,18 @@ public class DiaryController {
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final DiaryService diaryService;
 
+    /**
+     * 다이어리 전체 조회!!
+     */
+    @GetMapping("/findAll")
+    public List<Diary> write(@RequestHeader("TOKEN") String token){
+        logger.debug("# 토큰정보 {}: " + token);
+        return null;
+    }
 
+    /**
+     * 다이어리 작성!
+     */
     @PostMapping("/write")
     public String write(@RequestHeader("TOKEN") String token, @RequestBody DiaryDto diaryDto){
         logger.debug("# 토큰정보 {}: " + token);
@@ -31,9 +45,18 @@ public class DiaryController {
         return "success";
     }
 
-    @GetMapping("/findAll")
-    public List<Diary> write(@RequestHeader("TOKEN") String token){
+    /**
+     * 다이어리 수정!
+     */
+    @PutMapping("/update")
+    public String update(@RequestHeader("TOKEN") String token, @RequestBody DiaryDto diaryDto){
         logger.debug("# 토큰정보 {}: " + token);
-        return diaryService.findAll(token);
+        diaryService.update(token, diaryDto);
+        return "success";
     }
+
+    /**
+     * 다이어리 내용 삭제!
+     */
+
 }

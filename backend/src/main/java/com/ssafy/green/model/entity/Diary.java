@@ -20,10 +20,14 @@ public class Diary {
     @Column(name = "d_id")
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
-    @Setter
     private User user;
+
+    @OneToMany(mappedBy = "diary")
+    private List<DiaryImage> diaryImages = new ArrayList<>();
+
     //##################
     private String plantId = "C102";
     private String nickname;
@@ -36,8 +40,7 @@ public class Diary {
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 
-    @OneToMany(mappedBy = "diary")
-    private List<DiaryImage> diaryImages = new ArrayList<>();
+
 
     public Diary() {}
 
