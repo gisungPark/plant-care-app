@@ -28,13 +28,15 @@ public class User implements UserDetails {
     private String password;
     private String nickname;
     private String profile;
+
+    @Enumerated(EnumType.STRING)
     private UserType provider;
     private String providerId;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user") // 연관관계 주인 diarys.user
     private List<Diary> diarys = new ArrayList<>();
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user") // 연관관계 주인 rooms.user
     private List<Room> rooms = new ArrayList<>();
 
     @Column(name = "flag", columnDefinition = "boolean default true")
