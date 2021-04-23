@@ -28,11 +28,8 @@ public class DiaryService {
      */
     @Transactional
     public boolean writeDiary(String token, DiaryDto diaryDto){
-        // 0. 토큰 값에서 UserId 읽기
-        String userId = jwtTokenProvider.getUserId(token);
-
         // 1. 회원 정보 찾기
-        User findUser = userService.findUser(userId);
+        User findUser = getUserByToken(token);
         
         // 2. 다이어리 객체 생성
         Diary newDiary = Diary.builder()
@@ -60,17 +57,38 @@ public class DiaryService {
      * 다이어리 전체 조회
      */
     public List<Diary> findAll(String token){
-        // 0. 토큰 값에서 UserId 읽기
-        String userId = jwtTokenProvider.getUserId(token);
 
         // 1. 회원 정보 찾기
-        User findUser = userService.findUser(userId);
+        User findUser = getUserByToken(token);
         return diaryRepository.findByUserAndFlag(findUser, true);
+    }
+
+    /**
+     * 다이어리 수정!
+     */
+    public void update(String token, DiaryDto diaryDto) {
+        // 1. 회원 정보 찾기
+        User findUser = getUserByToken(token);
+
+
+
+
     }
 
     /**
      * 식물별 다이어리 조회
      */
 
+
+    /**
+     * 토큰으로 유저정보 가져오기
+     */
+    public User getUserByToken(String token){
+        // 0. 토큰 값에서 UserId 읽기
+        String userId = jwtTokenProvider.getUserId(token);
+
+        // 1. 회원 정보 찾기
+        return userService.findUser(userId);
+    }
 
 }
