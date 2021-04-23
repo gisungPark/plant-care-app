@@ -90,7 +90,6 @@ public class UserService {
      * 회원 정보 수정
      */
     public CallbackDto updateInfo(String token, UserInfoDto userInfo){
-        System.out.println("2222222222222222222222222222222");
         // 0. 토큰 값에서 UserId 읽기
         String userId = jwtTokenProvider.getUserId(token);
         CallbackDto callbackDto = new CallbackDto();

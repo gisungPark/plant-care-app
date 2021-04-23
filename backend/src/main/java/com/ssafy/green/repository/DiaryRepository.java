@@ -11,5 +11,4 @@ public interface DiaryRepository extends JpaRepository<Diary, String> {
 
     List<Diary> findByUserAndFlag(User user, boolean flag);
 
-    List<Diary> findByUserAndPlantIdAndFlag(User user, String plantId, boolean flag);
 }

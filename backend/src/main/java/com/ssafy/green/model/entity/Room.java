@@ -8,17 +8,19 @@ import javax.persistence.*;
 
 @Entity
 @Getter @ToString
+@Table(name="Room")
 public class Room {
 
     @Id @GeneratedValue
-    @Column(name = "rid")
+    @Column(name = "r_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "uid")
+    @JoinColumn(name = "u_id")
     private User user;
+    @JoinColumn(name = "r_name")
     private String roomName;
-    @Column(name = "rflag", columnDefinition = "boolean default true")
+    @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 
 
