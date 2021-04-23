@@ -49,6 +49,10 @@ Planfit 또한 비슷한 서비스이다. 반려식물 목록을 한눈에 정�
 ## 와이어프레임
 https://drive.google.com/file/d/1JjZXiPvLodNY4x_UjbOA0oULK-ky3RY8/view?usp=sharing
 
+
+## ERD
+https://drive.google.com/file/d/1VM_MmH0CeND28AJtcgHYJHeRsx8Oi6hh/view?usp=sharing
+
 ## 발표 자료
 https://drive.google.com/file/d/1vfVPLA8iOjxyvffCQR532VBHs4qW8OgG/view?usp=sharing
 
