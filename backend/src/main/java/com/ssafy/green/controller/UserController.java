@@ -1,7 +1,7 @@
 package com.ssafy.green.controller;
 
-import com.ssafy.green.model.dto.CallbackDto;
-import com.ssafy.green.model.dto.UserInfoDto;
+import com.ssafy.green.model.dto.UserResponse;
+import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.UserType;
 import com.ssafy.green.repository.UserRepository;
@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 @CrossOrigin(origins = "*")
 @RestController
-@RequestMapping("/user")
 @RequiredArgsConstructor
+@RequestMapping("/user")
 public class UserController {
 
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
@@ -61,11 +61,11 @@ public class UserController {
             "- success\n" +
             "- fail ")
     @PostMapping("/join")
-    public String join(@RequestBody UserInfoDto userInfo){
+    public String join(@RequestBody UserRequest userRequest){
         User newUser = User.builder()
-                .userId(userInfo.getUserId())
-                .nickname(userInfo.getNickname())
-                .password(userInfo.getPassword())
+                .userId(userRequest.getUserId())
+                .nickname(userRequest.getNickname())
+                .password(userRequest.getPassword())
                 .provider(UserType.basic)
                 .providerId("")
                 .profile(DEFALLT_IMG)
@@ -93,10 +93,10 @@ public class UserController {
                     "- profile: 프로필 이미지\n" +
                     "- code: 0[로그인 성공], 1[로그인 실패]")
     @PostMapping("/login")
-    public CallbackDto login(@RequestBody UserInfoDto userInfoDto){
-        logger.debug("# 로그인 정보 {}: " + userInfoDto.toString());
-        CallbackDto loginCallback = userService.login(userInfoDto);
-        return loginCallback;
+    public UserResponse login(@RequestBody UserRequest userRequest){
+        logger.debug("# 로그인 정보 {}: " + userRequest.toString());
+        UserResponse userResponse = userService.login(userRequest);
+        return userResponse;
     }
 
     /**
@@ -116,9 +116,9 @@ public class UserController {
                     "- profile: 변경된 프로필 이미지\n" +
                     "- code: (쓸데없음)")
     @PostMapping("/updateInfo")
-    public CallbackDto updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserInfoDto userInfo) {
+    public UserResponse updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserRequest userRequest) {
         logger.debug("# 토큰정보 {}: " + token);
-        CallbackDto callbackDto = userService.updateInfo(token, userInfo);
-        return callbackDto;
+        UserResponse userResponse = userService.updateInfo(token, userRequest);
+        return userResponse;
     }
 }
