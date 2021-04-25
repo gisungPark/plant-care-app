@@ -13,12 +13,12 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name="User")
+@Table(name="user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
     @Id @GeneratedValue
-    @Column(name = "u_id")
+    @Column(name = "id")
     private Long id;
     private String userId;
     private String password;

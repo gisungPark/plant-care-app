@@ -5,21 +5,21 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name="DiaryImage")
+@Table(name="dimage")
 @Getter
 @NoArgsConstructor
 public class DiaryImage {
 
     @Id @GeneratedValue
-    @Column(name = "di_id")
+    @Column(name = "id")
     private Long id;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "d_id")
+    @JoinColumn(name = "did")
     private Diary diary;
 
-    @Column(name = "di_url")
+    @Column(name = "image")
     private String imgUrl;
 
 

@@ -6,18 +6,20 @@ import javax.persistence.*;
 
 @Entity
 @Getter @ToString
-@Table(name="Room")
+@Table(name="room")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Room {
 
     @Id @GeneratedValue
-    @Column(name = "r_id")
+    @Column(name = "id")
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "u_id")
-    private User user;
+    @Column(name = "name")
     private String roomName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "uid")
+    private User user;
+
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 
