@@ -10,31 +10,31 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name="Diary")
+@Table(name="diary")
 @NoArgsConstructor
 public class Diary {
 
     @Id @GeneratedValue
-    @Column(name = "d_id")
+    @Column(name = "id")
     private Long id;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "u_id")
+    @JoinColumn(name = "uid")
     private User user;
 
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
     private List<DiaryImage> diaryImages = new ArrayList<>();
 
     //##################
-    @Column(name = "pc_id")
+    @Column(name = "pid")
     private Long plantId = 1L;
     private String nickname;
-    @Column(name = "d_title")
+    @Column(name = "title")
     private String diaryTitle;
-    @Column(name = "d_content")
+    @Column(name = "content")
     private String diaryContent;
-    @Column(name = "d_date")
+    @Column(name = "created_date")
     private LocalDateTime writeDateTime;
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;

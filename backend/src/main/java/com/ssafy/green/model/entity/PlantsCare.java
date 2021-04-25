@@ -7,10 +7,10 @@ import javax.persistence.*;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name="PlantsCare")
+@Table(name="plant_care")
 public class PlantsCare {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "pc_id")
+    @Column(name = "id")
     private Long id;
 }
