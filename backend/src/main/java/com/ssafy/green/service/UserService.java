@@ -1,17 +1,13 @@
 package com.ssafy.green.service;
 
 import com.ssafy.green.config.security.JwtTokenProvider;
-import com.ssafy.green.model.dto.CallbackDto;
-import com.ssafy.green.model.dto.TokenResultDTO;
-import com.ssafy.green.model.dto.UserInfoDto;
+import com.ssafy.green.model.dto.UserResponse;
+import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
 
 @Service
 @Transactional
@@ -67,49 +63,49 @@ public class UserService {
     /**
      * 로그인
      */
-    public CallbackDto login(UserInfoDto userInfo){
-        CallbackDto callbackDto = new CallbackDto();
-        User findUser = userRepository.findByUserIdAndPasswordAndFlag(userInfo.getUserId(), userInfo.getPassword(), true);
+    public UserResponse login(UserRequest userRequest){
+        UserResponse userInfoDto = new UserResponse();
+        User findUser = userRepository.findByUserIdAndPasswordAndFlag(userRequest.getUserId(), userRequest.getPassword(), true);
 
         // 1. 회원 존재여부 확인
         if(findUser != null){
             // 2. token 생성 및 기본정보 세팅
-            callbackDto.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
-            callbackDto.setUserId(findUser.getUserId());
-            callbackDto.setNickname(findUser.getNickname());
-            callbackDto.setProfile(findUser.getProfile());
-            callbackDto.setCode(0);
+            userInfoDto.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+            userInfoDto.setUserId(findUser.getUserId());
+            userInfoDto.setNickname(findUser.getNickname());
+            userInfoDto.setProfile(findUser.getProfile());
+            userInfoDto.setCode(0);
         } else {
-            callbackDto.setCode(1);
+            userInfoDto.setCode(1);
         }
 
-        return callbackDto;
+        return userInfoDto;
     }
 
     /**
      * 회원 정보 수정
      */
-    public CallbackDto updateInfo(String token, UserInfoDto userInfo){
+    public UserResponse updateInfo(String token, UserRequest userRequest){
         // 0. 토큰 값에서 UserId 읽기
         String userId = jwtTokenProvider.getUserId(token);
-        CallbackDto callbackDto = new CallbackDto();
+        UserResponse userResponse = new UserResponse();
 
         // 1. userId로 회원 정보 검색
         System.out.println(userId + " 값으로 회원정보 검색");
         User findUser = userRepository.findByUserIdAndFlag(userId, true);
 
         // 2. 회원 정보 수정
-        findUser.updateInfo(userInfo);
+        findUser.updateInfo(userRequest);
         userRepository.save(findUser);
 
         // 3. callback 객체 생성
-        callbackDto.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
-        callbackDto.setUserId(findUser.getUserId());
-        callbackDto.setNickname(findUser.getNickname());
-        callbackDto.setProfile(findUser.getProfile());
-        callbackDto.setCode(0);
+        userResponse.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+        userResponse.setUserId(findUser.getUserId());
+        userResponse.setNickname(findUser.getNickname());
+        userResponse.setProfile(findUser.getProfile());
+        userResponse.setCode(0);
 
-        return callbackDto;
+        return userResponse;
     }
 
     /**

@@ -1,14 +1,13 @@
 package com.ssafy.green.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
 @Getter @ToString
 @Table(name="Room")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Room {
 
     @Id @GeneratedValue
@@ -18,13 +17,9 @@ public class Room {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "u_id")
     private User user;
-    @JoinColumn(name = "r_name")
     private String roomName;
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
-
-
-    public Room() {}
 
     @Builder
     public Room(User user, String roomName) {

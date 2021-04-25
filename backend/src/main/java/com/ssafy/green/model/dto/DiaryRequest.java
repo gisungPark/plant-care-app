@@ -7,10 +7,10 @@ import java.util.List;
 
 @Data
 @ToString
-public class DiaryDto {
-
+public class DiaryRequest {
     private String diaryTitle;
     private String content;
+    private String plantId;
     private List<String> imgs;
 
 }

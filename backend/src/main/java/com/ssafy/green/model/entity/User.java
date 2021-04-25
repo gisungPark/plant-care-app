@@ -1,10 +1,7 @@
 package com.ssafy.green.model.entity;
 
-import com.ssafy.green.model.dto.UserInfoDto;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
-import lombok.ToString;
+import com.ssafy.green.model.dto.UserRequest;
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,12 +10,11 @@ import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Entity
 @Getter
-@ToString
 @Table(name="User")
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
     @Id @GeneratedValue
@@ -33,17 +29,15 @@ public class User implements UserDetails {
     private UserType provider;
     private String providerId;
 
-    @OneToMany(mappedBy = "user") // 연관관계 주인 diarys.user
-    private List<Diary> diarys = new ArrayList<>();
-
     @OneToMany(mappedBy = "user") // 연관관계 주인 rooms.user
     private List<Room> rooms = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user") // 연관관계 주인 diarys.user
+    private List<Diary> diarys = new ArrayList<>();
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
-
-    public User() {}
     @Builder
     public User(String userId, String password, String nickname, String profile, UserType provider, String providerId) {
         this.userId = userId;
@@ -57,7 +51,7 @@ public class User implements UserDetails {
     /**
      * 유저 정보 수정
      */
-    public void updateInfo(UserInfoDto userInfo) {
+    public void updateInfo(UserRequest userInfo) {
         this.password = userInfo.getPassword();
         this.nickname = userInfo.getNickname();
         this.profile = userInfo.getProfile();
