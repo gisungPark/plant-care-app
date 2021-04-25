@@ -1,21 +1,20 @@
 package com.ssafy.green.model.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name="diaryImage")
+@Table(name="DiaryImage")
 @Getter
-@ToString
+@NoArgsConstructor
 public class DiaryImage {
 
     @Id @GeneratedValue
     @Column(name = "di_id")
     private Long id;
 
+    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "d_id")
     private Diary diary;
@@ -23,7 +22,6 @@ public class DiaryImage {
     @Column(name = "di_url")
     private String imgUrl;
 
-    public DiaryImage() {}
 
     @Builder
     public DiaryImage(Diary diary, String imgUrl) {
@@ -31,7 +29,4 @@ public class DiaryImage {
         this.imgUrl = imgUrl;
     }
 
-    public void setDiary(Diary diary){
-        this.diary = diary;
-    }
 }

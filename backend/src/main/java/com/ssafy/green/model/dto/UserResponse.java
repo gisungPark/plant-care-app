@@ -6,12 +6,12 @@ import lombok.ToString;
 
 @Data
 @ToString
-public class CallbackDto {
+public class UserResponse {
     private String token;
     private String userId;
     private String nickname;
     private String profile;
     private Integer code;
 
-    public CallbackDto() {}
+    public UserResponse() {}
 }
