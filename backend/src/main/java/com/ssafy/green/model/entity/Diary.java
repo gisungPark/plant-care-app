@@ -15,6 +15,7 @@ public class Diary {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diary_id")
+
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -26,6 +27,7 @@ public class Diary {
 
     @Column(name = "pid")
     private Long plantId = 1L;
+
 
     @Column(name = "content")
     private String diaryContent;

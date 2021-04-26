@@ -13,6 +13,8 @@ public class Room {
     @Column(name = "room_id")
     private Long id;
 
+    @Column(name = "name")
+    private String roomName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
     private User user;
