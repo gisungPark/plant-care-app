@@ -1,8 +1,10 @@
 package com.ssafy.green.model.entity;
 
+import com.ssafy.green.model.entity.plant.PlantCare;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Getter
@@ -13,13 +15,14 @@ public class Room {
     @Column(name = "room_id")
     private Long id;
 
-    @Column(name = "name")
-    private String roomName;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
     private User user;
-    private String roomName;
 
+    @OneToMany(mappedBy = "room")
+    private List<PlantCare> plantCares;
+
+    private String roomName;
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 
@@ -29,6 +32,10 @@ public class Room {
         this.roomName = roomName;
     }
 
+    public void addPlant(PlantCare plantCare){
+        this.plantCares.add(plantCare);
+        plantCare.setRoom(this);
+    }
     public void delete() {
         this.flag = false;
     }

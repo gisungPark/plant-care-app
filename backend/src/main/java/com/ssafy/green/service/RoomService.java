@@ -1,16 +1,18 @@
 package com.ssafy.green.service;
 
 import com.ssafy.green.config.security.JwtTokenProvider;
+import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.repository.RoomRepository;
 import com.ssafy.green.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -31,9 +33,9 @@ public class RoomService {
         User findUser = getUserByToken(token);
 
         // 0. 유효한 방 리스트 호출
-        List<Room> rooms = findRooms(findUser.getUserId());
+        List<Room> allRooms = roomRepository.findByUserAndFlag(findUser, true);
         // 1. 중복된 이름의 방 존재여부 체크!!!
-        for(Room r: rooms){
+        for(Room r: allRooms){
             // 이름 중복!!
             if(r.getRoomName().equals(roomName)) return false;
         }
@@ -50,29 +52,33 @@ public class RoomService {
     /**
      * 방 전체 조회 (flag == true)
      */
-    public List<Room> findRooms(String token){
+    public List<RoomResponse> findRooms(String token){
         User findUser = getUserByToken(token);
-        return roomRepository.findByUserAndFlag(findUser, true);
+        List<Room> allRooms = roomRepository.findByUserAndFlag(findUser, true);
+        List<RoomResponse> responses = new ArrayList<>();
+        for(Room r : allRooms){
+            responses.add(RoomResponse.create(r));
+        }
+        return responses;
     }
-
-    /**
-     * 방 이름 조회
-     */
-
 
     /**
      * 방 삭제
      */
     @Transactional
-    public boolean deleteRoom(String userId, String roomName){
+    public boolean deleteRoom(String token, Long id){
 
-        User findUser = userService.findUser(userId);
-        Room findRoom = roomRepository.findByUserAndRoomNameAndFlag(findUser, roomName, true);
-
-        findRoom.delete();
-        roomRepository.save(findRoom);
-
-        return true;
+        User findUser = getUserByToken(token);
+        Optional<Room> result = roomRepository.findById(id);
+        if(result.isPresent()){
+            Room findRoom = result.get();
+            if(findRoom.getUser() == findUser){
+                findRoom.delete();
+                roomRepository.save(findRoom);
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
