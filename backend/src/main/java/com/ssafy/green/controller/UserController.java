@@ -1,9 +1,8 @@
 package com.ssafy.green.controller;
 
-import com.ssafy.green.model.dto.UserResponse;
+import com.ssafy.green.model.dto.OauthResponse;
 import com.ssafy.green.model.dto.UserRequest;
-import com.ssafy.green.model.entity.User;
-import com.ssafy.green.model.entity.UserType;
+import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.repository.UserRepository;
 import com.ssafy.green.service.UserService;
 import io.swagger.annotations.ApiOperation;
@@ -20,9 +19,6 @@ public class UserController {
 
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final UserRepository userRepository;
-    private final String DEFALLT_IMG = "http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG";
-
 
     /**
      * 아이디 중복 여부 체크
@@ -62,16 +58,8 @@ public class UserController {
             "- fail ")
     @PostMapping("/join")
     public String join(@RequestBody UserRequest userRequest){
-        User newUser = User.builder()
-                .userId(userRequest.getUserId())
-                .nickname(userRequest.getNickname())
-                .password(userRequest.getPassword())
-                .provider(UserType.basic)
-                .providerId("")
-                .profile(DEFALLT_IMG)
-                .build();
         try {
-            boolean result = userService.join(newUser);
+            boolean result = userService.join(userRequest);
             if(result) logger.info("회원가입에 성공했습니다.!!!");
         } catch (Exception e) {
             e.printStackTrace();
@@ -97,6 +85,14 @@ public class UserController {
         logger.debug("# 로그인 정보 {}: " + userRequest.toString());
         UserResponse userResponse = userService.login(userRequest);
         return userResponse;
+    }
+
+    /**
+     * 소셜 로그인
+     */
+    @PostMapping("/oauth")
+    public UserResponse oauthLogin(@RequestBody OauthResponse oauth){
+        return userService.oauthLogin(oauth);
     }
 
     /**

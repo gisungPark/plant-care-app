@@ -5,19 +5,19 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Getter @ToString
-@Table(name="Room")
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Room {
 
-    @Id @GeneratedValue
-    @Column(name = "r_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "room_id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "u_id")
+    @JoinColumn(name = "uid")
     private User user;
     private String roomName;
+
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 

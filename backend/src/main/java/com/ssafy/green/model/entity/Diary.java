@@ -10,50 +10,43 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name="Diary")
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Diary {
 
-    @Id @GeneratedValue
-    @Column(name = "d_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "diary_id")
     private Long id;
 
-    @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "u_id")
+    @JoinColumn(name = "uid")
     private User user;
 
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
     private List<DiaryImage> diaryImages = new ArrayList<>();
 
-    //##################
-    @Column(name = "pc_id")
+    @Column(name = "pid")
     private Long plantId = 1L;
-    private String nickname;
-    @Column(name = "d_title")
-    private String diaryTitle;
-    @Column(name = "d_content")
+
+    @Column(name = "content")
     private String diaryContent;
-    @Column(name = "d_date")
+    @Column(name = "created_date")
     private LocalDateTime writeDateTime;
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 
     @Builder
-    public Diary(User user, String nickname, String diaryTitle, String diaryContent) {
+    public Diary(User user, String diaryContent) {
         this.user = user;
-        this.nickname = nickname;
-        this.diaryTitle = diaryTitle;
         this.diaryContent = diaryContent;
         this.writeDateTime = LocalDateTime.now();
     }
 
-    // ###########################################
     /**
      * 이미지 정보 추가
      */
     public void addImg(DiaryImage img){
         this.diaryImages.add(img);
+        img.setDiary(this);
     }
 
     /**
@@ -63,7 +56,6 @@ public class Diary {
         if(this.diaryImages != null){
             this.diaryImages.clear();
         }
-        this.diaryTitle = diaryRequest.getDiaryTitle();
         this.diaryContent = diaryRequest.getContent();
         this.writeDateTime = LocalDateTime.now();
 

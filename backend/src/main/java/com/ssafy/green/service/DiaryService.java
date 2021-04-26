@@ -39,8 +39,6 @@ public class DiaryService {
         // 2. 다이어리 객체 생성
         Diary newDiary = Diary.builder()
                 .user(findUser)
-                .nickname(findUser.getNickname())
-                .diaryTitle(diaryRequest.getDiaryTitle())
                 .diaryContent(diaryRequest.getContent())
                 .build();
 

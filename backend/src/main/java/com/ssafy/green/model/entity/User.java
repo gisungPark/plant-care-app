@@ -13,12 +13,12 @@ import java.util.List;
 
 @Entity
 @Getter
-@Table(name="User")
+@Table(name="user")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User implements UserDetails {
 
-    @Id @GeneratedValue
-    @Column(name = "u_id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "uid")
     private Long id;
     private String userId;
     private String password;
@@ -28,12 +28,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserType provider;
     private String providerId;
-
-    @OneToMany(mappedBy = "user") // 연관관계 주인 rooms.user
-    private List<Room> rooms = new ArrayList<>();
-
-    @OneToMany(mappedBy = "user") // 연관관계 주인 diarys.user
-    private List<Diary> diarys = new ArrayList<>();
+    private String thema;
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
@@ -46,6 +41,7 @@ public class User implements UserDetails {
         this.profile = profile;
         this.provider = provider;
         this.providerId = providerId;
+        this.thema = "DEAFULT_THEMA_IMAGE";
     }
 
     /**
@@ -55,6 +51,13 @@ public class User implements UserDetails {
         this.password = userInfo.getPassword();
         this.nickname = userInfo.getNickname();
         this.profile = userInfo.getProfile();
+    }
+
+    /**
+     * 테마 정보 수정
+     */
+    public void changeThema(String thema){
+        this.thema = thema;
     }
 
     /**
