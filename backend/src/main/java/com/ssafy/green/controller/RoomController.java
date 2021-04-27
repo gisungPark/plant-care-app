@@ -1,9 +1,8 @@
 package com.ssafy.green.controller;
 
 import com.ssafy.green.model.dto.RoomResponse;
-import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.service.RoomService;
-import lombok.Getter;
+import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,6 +19,13 @@ public class RoomController {
     /**
      * 방 생성
      */
+    @ApiOperation(value = "방 생성", notes="Parameter\n" +
+            "- token(RequestHeader): 액세스 토큰\n" +
+            "- roomName: 생성할 방 이름\n\n" +
+            "Response\n" +
+            "- success: 방 생성 성공\n" +
+            "- fail: 방 생성 실패!\n" +
+            "- nickname: 닉네임\n")
     @PostMapping("/create")
     public String create(@RequestHeader("TOKEN") String token, @RequestBody String roomName){
         boolean room = roomService.createRoom(token, roomName);
