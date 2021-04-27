@@ -38,7 +38,8 @@ public class RoomController {
     /**
      * 방 조회
      */
-    @GetMapping("/find")
+    @ApiOperation(value = "모든 방 조회(그 안 식물까지)", notes = "사용자 로그인 토큰 필요")
+    @GetMapping
     public List<RoomResponse> find(@RequestHeader("TOKEN") String token){
         return roomService.findRooms(token);
     }
