@@ -57,7 +57,7 @@ public class RoomService {
         List<Room> allRooms = roomRepository.findByUserAndFlag(findUser, true);
         List<RoomResponse> responses = new ArrayList<>();
         for(Room r : allRooms){
-            responses.add(RoomResponse.create(r));
+            //responses.add(RoomResponse.create(r));
         }
         return responses;
     }

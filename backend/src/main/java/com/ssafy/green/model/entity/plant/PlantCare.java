@@ -1,9 +1,13 @@
 package com.ssafy.green.model.entity.plant;
 
+import com.ssafy.green.model.entity.Diary;
+import com.ssafy.green.model.entity.DiaryImage;
 import com.ssafy.green.model.entity.Room;
 import lombok.*;
 import javax.persistence.*;
-
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @Entity
@@ -15,24 +19,32 @@ public class PlantCare {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long pid;
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch=FetchType.LAZY)
+    @JoinColumn(name = "pid")
+    @NonNull
+    private PlantInfo plantInfo;
+
+    @ManyToOne(fetch=FetchType.LAZY)
     @JoinColumn(name = "room_id")
+    @NonNull
     private Room room;
+
     private String nickname;
+    private String name;
     private String water;
-    private String info;
+    private LocalDate started_date;
     private String image;
     private boolean dead;
     private boolean flag;
 
     @Builder
-    public PlantCare(Long pid, Room room, String nickname, String water, String info, boolean dead, boolean flag) {
-        this.pid = pid;
+    public PlantCare(PlantInfo plantInfo, Room room, String nickname, LocalDate started_date, String name, String water) {
+        this.plantInfo = plantInfo;
         this.room = room;
         this.nickname = nickname;
+        this.name = name;
+        this.started_date = started_date;
         this.water = water;
-        this.info = info;
         this.dead = true;
         this.flag = true;
     }
