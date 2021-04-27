@@ -14,19 +14,17 @@ public class RoomResponse {
     private String roomName;
     private List<MyPlantResponse> plantList;
 
+    public RoomResponse(Room room){
+        this.rid = room.getId();
+        this.roomName = room.getRoomName();
+        this.plantList = this.getPlantList(room);
+    }
 
-//    public RoomResponse(Room r) {
-//        RoomResponse response = new RoomResponse();
-//        response.id = r.getId();
-//        response.setRoomName(r.getRoomName());
-//
-//        // 해당 방에 존재하는 식물 정보 매칭!
-////        if(r.getPlantCares()!=null){
-////            for (PlantCare p : r.getPlantCares()){
-////                MyPlantResponse.create(p);
-////            }
-////        }
-//        return response;
-//    }
-
+    public List<MyPlantResponse> getPlantList(Room room){
+        List<MyPlantResponse> list = new ArrayList<>();
+        for(PlantCare plant : room.getPlantList()){
+            list.add(new MyPlantResponse(plant));
+        }
+        return list;
+    }
 }
