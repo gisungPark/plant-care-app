@@ -1,6 +1,6 @@
 package com.ssafy.green.model.dto;
 
-import com.ssafy.green.model.dto.plant.MyPlantResponse;
+import com.ssafy.green.model.dto.plant.MyPlantListResponse;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import lombok.Data;
@@ -12,7 +12,7 @@ import java.util.List;
 public class RoomResponse {
     private Long rid;
     private String roomName;
-    private List<MyPlantResponse> plantList;
+    private List<MyPlantListResponse> plantList;
 
     public RoomResponse(Room room){
         this.rid = room.getId();
@@ -20,10 +20,11 @@ public class RoomResponse {
         this.plantList = this.getPlantList(room);
     }
 
-    public List<MyPlantResponse> getPlantList(Room room){
-        List<MyPlantResponse> list = new ArrayList<>();
+    public List<MyPlantListResponse> getPlantList(Room room){
+        List<MyPlantListResponse> list = new ArrayList<>();
         for(PlantCare plant : room.getPlantList()){
-            list.add(new MyPlantResponse(plant));
+            if(plant.isFlag() && plant.isDead())
+                list.add(new MyPlantListResponse(plant));
         }
         return list;
     }
