@@ -1,6 +1,7 @@
 package com.ssafy.green.controller;
 
 import com.ssafy.green.model.dto.plant.MyPlantRequest;
+import com.ssafy.green.model.dto.plant.MyPlantResponse;
 import com.ssafy.green.model.dto.plant.PlantListResponse;
 import com.ssafy.green.model.dto.plant.PlantResponse;
 import com.ssafy.green.service.PlantService;
@@ -38,8 +39,36 @@ public class PlantController {
         return plantService.findByPlantInfo(id);
     }
 
-    // 식물 등록
-    @ApiOperation(value = "식물 등록 ", notes = "")
+    // 나의 식물 등록
+    @ApiOperation(value = "나의 식물 등록", notes = "")
     @PostMapping("/care")
     public Long save(@RequestBody MyPlantRequest myPlantRequest) { return plantService.save(myPlantRequest); }
+
+    // 나의 식물 상세 정보
+    @ApiOperation(value = "나의 식물 상세 정보")
+    @GetMapping("/care/{pid}")
+    public MyPlantResponse findById(@PathVariable Long pid) {
+        return plantService.findById(pid);
+    }
+
+    // 나의 식물 수정
+    @ApiOperation(value = "나의 식물 수정")
+    @PutMapping("/care/{pid}")
+    public Long update(@PathVariable Long pid, @RequestBody MyPlantRequest myPlantRequest) {
+        return plantService.update(pid, myPlantRequest);
+    }
+
+    // 나의 식물 삭제
+    @ApiOperation(value = "나의 식물 삭제")
+    @PutMapping("/care/delete/{pid}")
+    public Long delete(@PathVariable Long pid) {
+        return plantService.delete(pid);
+    }
+
+    // 나의 식물 떠나감
+    @ApiOperation(value = "나의 식물 떠나감")
+    @PutMapping("/care/dead/{pid}")
+    public Long dead(@PathVariable Long pid) {
+        return plantService.dead(pid);
+    }
 }
