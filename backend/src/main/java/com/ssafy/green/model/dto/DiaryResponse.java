@@ -14,10 +14,8 @@ import java.util.List;
 public class DiaryResponse {
     private Long id;
     private Long plantId;
-    private String diaryTitle;
     private String diaryContent;
-    private List<String> imgs = new ArrayList<>();
-    private String nickname;
+    private List<String> imgUrls = new ArrayList<>();
     private LocalDateTime writeDateTime;
 
 
@@ -25,14 +23,12 @@ public class DiaryResponse {
         DiaryResponse diaryResponse = new DiaryResponse();
         diaryResponse.setId(diary.getId());
         diaryResponse.setPlantId(diary.getPlantId());
-        diaryResponse.setDiaryTitle(diary.getDiaryTitle());
         diaryResponse.setDiaryContent(diary.getDiaryContent());
 
         for(DiaryImage img : diary.getDiaryImages()){
-            diaryResponse.getImgs().add(img.getImgUrl());
+            diaryResponse.getImgUrls().add(img.getImgUrl());
         }
 
-        diaryResponse.setNickname(diary.getNickname());
         diaryResponse.setWriteDateTime(diary.getWriteDateTime());
 
         return diaryResponse;

@@ -1,9 +1,11 @@
 package com.ssafy.green.service;
 
 import com.ssafy.green.config.security.JwtTokenProvider;
+import com.ssafy.green.model.dto.OauthResponse;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.entity.User;
+import com.ssafy.green.model.entity.UserType;
 import com.ssafy.green.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,6 +18,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
+    private final String DEFALLT_IMG = "http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG";
     /**
      * 아이디 중복체크
      */
@@ -43,9 +46,21 @@ public class UserService {
     /**
      * 회원 가입!
      */
-    public boolean join(User user) throws Exception{
-        if(validateDuplicateUserId(user.getUserId()) && validateDuplicateNickname(user.getNickname())){
-            userRepository.save(user);
+    public boolean join(UserRequest userRequest) throws Exception{
+
+        if(validateDuplicateUserId(userRequest.getUserId()) 
+                    && validateDuplicateNickname(userRequest.getNickname())){
+            
+            User newUser = User.builder()
+                    .userId(userRequest.getUserId())
+                    .password(userRequest.getPassword())
+                    .nickname(userRequest.getNickname())
+                    .provider(UserType.basic)
+                    .providerId("")
+                    .profile(DEFALLT_IMG)
+                    .build();
+            // 회원 가입
+            userRepository.save(newUser);
         }else {
             System.out.println("이미 존재하는 회원입니다.");
             return false;
@@ -64,22 +79,56 @@ public class UserService {
      * 로그인
      */
     public UserResponse login(UserRequest userRequest){
-        UserResponse userInfoDto = new UserResponse();
+        UserResponse userResponse = new UserResponse();
         User findUser = userRepository.findByUserIdAndPasswordAndFlag(userRequest.getUserId(), userRequest.getPassword(), true);
 
         // 1. 회원 존재여부 확인
         if(findUser != null){
             // 2. token 생성 및 기본정보 세팅
-            userInfoDto.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
-            userInfoDto.setUserId(findUser.getUserId());
-            userInfoDto.setNickname(findUser.getNickname());
-            userInfoDto.setProfile(findUser.getProfile());
-            userInfoDto.setCode(0);
+            userResponse.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+            userResponse.setUserId(findUser.getUserId());
+            userResponse.setNickname(findUser.getNickname());
+            userResponse.setProfile(findUser.getProfile());
+            userResponse.setCode(0);
         } else {
-            userInfoDto.setCode(1);
+            userResponse.setCode(1);
         }
 
-        return userInfoDto;
+        return userResponse;
+    }
+
+    /**
+     * 소셜 로그인
+     */
+    public UserResponse oauthLogin(OauthResponse oauth) {
+        UserResponse userResponse = new UserResponse();
+        User findUser = userRepository.findByUserIdAndFlag(oauth.getId(), true);
+
+        if(findUser == null){
+            if(validateDuplicateUserId(oauth.getId())
+                    && validateDuplicateNickname(oauth.getNickname())){
+
+                User newUser = User.builder()
+                        .userId(oauth.getId())
+                        .password(oauth.getId())
+                        .nickname(oauth.getNickname())
+                        .provider(UserType.basic)
+                        .providerId("")
+                        .profile(DEFALLT_IMG)
+                        .build();
+                // 회원 가입
+                userRepository.save(newUser);
+            }else {
+                throw new IllegalStateException("이미 존재하는 회원입니다.");
+            }
+        }else {
+            userResponse.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+            userResponse.setUserId(findUser.getUserId());
+            userResponse.setNickname(findUser.getNickname());
+            userResponse.setProfile(findUser.getProfile());
+            userResponse.setCode(0);
+        }
+        return userResponse;
     }
 
     /**
@@ -117,4 +166,6 @@ public class UserService {
         userRepository.save(findUser);
         return true;
     }
+
+
 }

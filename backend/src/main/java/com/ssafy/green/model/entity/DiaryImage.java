@@ -5,22 +5,20 @@ import lombok.*;
 import javax.persistence.*;
 
 @Entity
-@Table(name="dimage")
 @Getter
 @NoArgsConstructor
 public class DiaryImage {
 
-    @Id @GeneratedValue
-    @Column(name = "id")
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "diary_image_id")
+
     private Long id;
+    private String imgUrl;
 
     @Setter
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "did")
+    @JoinColumn(name = "diary_id")
     private Diary diary;
-
-    @Column(name = "image")
-    private String imgUrl;
 
 
     @Builder
