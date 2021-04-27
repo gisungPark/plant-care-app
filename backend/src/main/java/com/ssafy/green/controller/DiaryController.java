@@ -9,10 +9,14 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -37,17 +41,27 @@ public class DiaryController {
             "- nickname\n" +
             "- writeDateTime\n")
     @GetMapping("/findAll")
-    public List<DiaryResponse> write(@RequestHeader("TOKEN") String token){
+    public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token){
         logger.debug("# 토큰정보 {}: " + token);
-        return diaryService.findAll(token);
+
+        Map<String,Object> resultMap = new HashMap<>();
+        List<DiaryResponse> allDiary = diaryService.findAll(token);
+
+        resultMap.put("response", allDiary);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     /**
      * 다이어리 날짜 조회
      */
     @GetMapping("/findByDate/{date}")
-    public List<DiaryResponse> findByDate(@RequestHeader("TOKEN") String token, @PathVariable String date){
-        return diaryService.findByDate(token, date);
+    public ResponseEntity<Map<String, Object>> findByDate(@RequestHeader("TOKEN") String token, @PathVariable String date){
+        Map<String,Object> resultMap = new HashMap<>();
+
+        List<DiaryResponse> byDate = diaryService.findByDate(token, date);
+        resultMap.put("response", byDate);
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
 
@@ -58,17 +72,20 @@ public class DiaryController {
             "- token(RequestHeader): 액세스 토큰\n" +
             "- {id}(PathVariable): 다이어리 아이디\n\n" +
             "Response\n" +
-            "- id\n" +
-            "- plantId\n" +
-            "- diaryTitle\n" +
-            "- diaryContent\n" +
-            "- imgs\n" +
-            "- nickname\n" +
-            "- writeDateTime\n")
+            "- id:  다이어리 아이디\n" +
+            "- plantId: 식물 아이디\n" +
+            "- content: 다이어리 내용\n" +
+            "- imgUrls: 이미지 url 목록\n" +
+            "- writeDateTime: 작성 날짜\n")
     @GetMapping("/find/{id}")
-    public DiaryResponse write(@RequestHeader("TOKEN") String token, @PathVariable Long id){
+    public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token, @PathVariable Long id){
         logger.debug("# 토큰정보 {}: " + token);
-        return diaryService.findById(id);
+        Map<String,Object> resultMap = new HashMap<>();
+
+        DiaryResponse findDiary = diaryService.findById(id);
+        resultMap.put("response", findDiary);
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     /**
@@ -77,16 +94,23 @@ public class DiaryController {
     @ApiOperation(value = "다이어리 작성!!", notes="Parameter\n" +
             "- token(RequestHeader): 액세스 토큰\n" +
             "- plantId\n" +
-            "- diaryTitle\n" +
-            "- diaryContent\n" +
+            "- content\n" +
             "- imgs (List)\n\n" +
             "Response\n" +
-            "- success\n")
+            "- true : 성공\n"+
+            "- false : 실패\n")
     @PostMapping("/write")
-    public String write(@RequestHeader("TOKEN") String token, @RequestBody DiaryRequest diaryRequest){
+    public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token, @RequestBody DiaryRequest diaryRequest){
         logger.debug("# 토큰정보 {}: " + token);
-        diaryService.writeDiary(token, diaryRequest);
-        return "success";
+        Map<String,Object> resultMap = new HashMap<>();
+
+        boolean result = diaryService.writeDiary(token, diaryRequest);
+        resultMap.put("response", result);
+        if(result){
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -95,24 +119,27 @@ public class DiaryController {
     @ApiOperation(value = "다이어리 수정!!", notes="Parameter\n" +
             "- token(RequestHeader): 액세스 토큰\n" +
             "- {id}(PathVariable): 다이어리 아이디\n" +
-            "- diaryTitle\n" +
-            "- diaryContent\n" +
-            "- plantId\n" +
+            "- content: 내용\n" +
+            "- plantId: 식물 아이디\n" +
             "- imgs (List)\n\n" +
             "Response\n" +
-            "- id\n" +
-            "- plantId\n" +
-            "- diaryTitle\n" +
-            "- diaryContent\n" +
-            "- imgs\n" +
-            "- nickname\n" +
-            "- writeDateTime\n")
+            "- id:  다이어리 아이디\n" +
+            "- plantId: 식물 아이디\n" +
+            "- content: 다이어리 내용\n" +
+            "- imgUrls: 이미지 url 목록\n" +
+            "- writeDateTime: 작성 날짜\n")
     @PutMapping("/update/{id}")
-    public DiaryResponse update(@RequestHeader("TOKEN") String token, @PathVariable Long id, @RequestBody DiaryRequest diaryRequest){
+    public ResponseEntity<Map<String, Object>> update(@RequestHeader("TOKEN") String token, @PathVariable Long id, @RequestBody DiaryRequest diaryRequest){
         logger.debug("# 토큰정보 {}: " + token);
-        diaryService.update(token, id, diaryRequest);
+        Map<String,Object> resultMap = new HashMap<>();
+        boolean result = diaryService.update(token, id, diaryRequest);
+        if(result){
+            DiaryResponse findDiary = diaryService.findById(id);
+            resultMap.put("response", findDiary);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        }
 
-        return  diaryService.findById(id);
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -122,13 +149,18 @@ public class DiaryController {
             "- token(RequestHeader): 액세스 토큰\n" +
             "- {id}(PathVariable): 다이어리 아이디\n\n" +
             "Response\n" +
-            "- success\n"+
-            "- fail\n")
+            "- true\n"+
+            "- false\n")
     @PutMapping("/delete/{id}")
-    public boolean delete(@RequestHeader("TOKEN") String token, @PathVariable Long id){
+    public ResponseEntity<Map<String, Object>> delete(@RequestHeader("TOKEN") String token, @PathVariable Long id){
         logger.debug("# 토큰정보 {}: " + token);
+        Map<String,Object> resultMap = new HashMap<>();
         boolean result = diaryService.delete(token, id);
-        return result;
+        resultMap.put("response", result);
+        if(result){
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
 }
