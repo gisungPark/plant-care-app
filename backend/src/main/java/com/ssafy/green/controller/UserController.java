@@ -3,13 +3,17 @@ package com.ssafy.green.controller;
 import com.ssafy.green.model.dto.OauthResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
-import com.ssafy.green.repository.UserRepository;
 import com.ssafy.green.service.UserService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -29,8 +33,10 @@ public class UserController {
             "- true: 사용가능한 아이디\n" +
             "- false: 사용 불가능한 아이디")
     @GetMapping("/checkEmail")
-    public boolean validateEmail(@RequestParam String userId){
-        return userService.validateDuplicateUserId(userId);
+    public ResponseEntity<Map<String, Object>> validateEmail(@RequestParam String userId){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("response", userService.validateDuplicateUserId(userId));
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     /**
@@ -42,8 +48,10 @@ public class UserController {
                     "- true: 사용가능한 닉네임\n" +
                     "- false: 사용 불가능한 닉네임")
     @GetMapping("/checkNickname")
-    public boolean validateNickname(@RequestParam String nickname){
-        return userService.validateDuplicateNickname(nickname);
+    public ResponseEntity<Map<String, Object>> validateNickname(@RequestParam String nickname){
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("response",userService.validateDuplicateNickname(nickname));
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     /**
@@ -57,15 +65,19 @@ public class UserController {
             "- success\n" +
             "- fail ")
     @PostMapping("/join")
-    public String join(@RequestBody UserRequest userRequest){
+    public ResponseEntity<Map<String, Object>> join(@RequestBody UserRequest userRequest){
+        Map<String,Object> resultMap = new HashMap<>();
         try {
             boolean result = userService.join(userRequest);
-            if(result) logger.info("회원가입에 성공했습니다.!!!");
+            if(result) {
+                resultMap.put("response", result);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            }
+            resultMap.put("response", "false");
         } catch (Exception e) {
             e.printStackTrace();
-            return "fail";
         }
-        return "success";
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
     /**
@@ -81,18 +93,34 @@ public class UserController {
                     "- profile: 프로필 이미지\n" +
                     "- code: 0[로그인 성공], 1[로그인 실패]")
     @PostMapping("/login")
-    public UserResponse login(@RequestBody UserRequest userRequest){
+    public ResponseEntity<Map<String, Object>> login(@RequestBody UserRequest userRequest){
         logger.debug("# 로그인 정보 {}: " + userRequest.toString());
+        Map<String,Object> resultMap = new HashMap<>();
+
         UserResponse userResponse = userService.login(userRequest);
-        return userResponse;
+        resultMap.put("response", userResponse);
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     /**
      * 소셜 로그인
      */
+    @ApiOperation(value = "구를 로그인", notes="Parameter\n" +
+            "- oauth: 파이어베이스 토큰값\n" +
+            "Response\n" +
+            "- token: 엑세스 토큰\n" +
+            "- userId: 유저 아이디\n" +
+            "- nickname: 닉네임\n" +
+            "- profile: 프로필 이미지\n" +
+            "- code: 0[로그인 성공], 1[로그인 실패]")
     @PostMapping("/oauth")
-    public UserResponse oauthLogin(@RequestBody OauthResponse oauth){
-        return userService.oauthLogin(oauth);
+    public ResponseEntity<Map<String, Object>> oauthLogin(@RequestBody OauthResponse oauth){
+        logger.debug("# 로그인 정보 {}: " + oauth);
+        Map<String,Object> resultMap = new HashMap<>();
+        resultMap.put("response", userService.oauthLogin(oauth));
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     /**
@@ -112,9 +140,13 @@ public class UserController {
                     "- profile: 변경된 프로필 이미지\n" +
                     "- code: (쓸데없음)")
     @PutMapping("/updateInfo")
-    public UserResponse updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserRequest userRequest) {
+    public ResponseEntity<Map<String, Object>> updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserRequest userRequest) {
         logger.debug("# 토큰정보 {}: " + token);
+        Map<String,Object> resultMap = new HashMap<>();
+
         UserResponse userResponse = userService.updateInfo(token, userRequest);
-        return userResponse;
+        resultMap.put("response", userResponse);
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 }
