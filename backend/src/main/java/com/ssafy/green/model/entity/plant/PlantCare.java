@@ -1,5 +1,6 @@
 package com.ssafy.green.model.entity.plant;
 
+import com.ssafy.green.model.entity.Room;
 import lombok.*;
 import javax.persistence.*;
 
@@ -15,7 +16,9 @@ public class PlantCare {
     private Long id;
 
     private Long pid;
-    private Long rid;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "room_id")
+    private Room room;
     private String nickname;
     private String water;
     private String info;
@@ -24,9 +27,9 @@ public class PlantCare {
     private boolean flag;
 
     @Builder
-    public PlantCare(Long pid, Long rid, String nickname, String water, String info, boolean dead, boolean flag) {
+    public PlantCare(Long pid, Room room, String nickname, String water, String info, boolean dead, boolean flag) {
         this.pid = pid;
-        this.rid = rid;
+        this.room = room;
         this.nickname = nickname;
         this.water = water;
         this.info = info;
