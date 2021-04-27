@@ -111,7 +111,7 @@ public class UserController {
                     "- nickname: 변경된 닉네임\n" +
                     "- profile: 변경된 프로필 이미지\n" +
                     "- code: (쓸데없음)")
-    @PostMapping("/updateInfo")
+    @PutMapping("/updateInfo")
     public UserResponse updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserRequest userRequest) {
         logger.debug("# 토큰정보 {}: " + token);
         UserResponse userResponse = userService.updateInfo(token, userRequest);
