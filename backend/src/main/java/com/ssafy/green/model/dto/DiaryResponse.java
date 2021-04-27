@@ -22,7 +22,7 @@ public class DiaryResponse {
     public static DiaryResponse create(Diary diary) {
         DiaryResponse diaryResponse = new DiaryResponse();
         diaryResponse.setId(diary.getId());
-        diaryResponse.setPlantId(diary.getPlantId());
+        diaryResponse.setPlantId(diary.getPlantCare().getId());
         diaryResponse.setDiaryContent(diary.getDiaryContent());
 
         for(DiaryImage img : diary.getDiaryImages()){
