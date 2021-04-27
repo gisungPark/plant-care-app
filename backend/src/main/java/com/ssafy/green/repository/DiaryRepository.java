@@ -17,6 +17,9 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     Diary findByIdAndFlag(Long id, boolean flag);
 
-
-
+    @Query(value = "SELECT d FROM Diary d " +
+            "WHERE d.user.id = :id and date(d.writeDateTime) = date(:date) and" +
+            "  d.flag = true ORDER BY d.id DESC",
+            nativeQuery = true)
+    List<Diary> findByDate(String id, String date);
 }

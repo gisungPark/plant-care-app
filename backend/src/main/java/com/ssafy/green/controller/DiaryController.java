@@ -3,6 +3,7 @@ package com.ssafy.green.controller;
 
 import com.ssafy.green.model.dto.DiaryRequest;
 import com.ssafy.green.model.dto.DiaryResponse;
+import com.ssafy.green.model.entity.Diary;
 import com.ssafy.green.service.DiaryService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
@@ -40,6 +41,16 @@ public class DiaryController {
         logger.debug("# 토큰정보 {}: " + token);
         return diaryService.findAll(token);
     }
+
+    /**
+     * 다이어리 날짜 조회
+     */
+    @GetMapping("/findByDate/{date}")
+    public List<DiaryResponse> findByDate(@RequestHeader("TOKEN") String token, @PathVariable String date){
+        return diaryService.findByDate(token, date);
+    }
+
+
     /**
      * 다이어리 ID 조회!!
      */

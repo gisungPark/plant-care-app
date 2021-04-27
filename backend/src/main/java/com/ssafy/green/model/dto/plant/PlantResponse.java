@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.io.Serializable;
 
 @Getter
-public class PlantResponseDto implements Serializable {
+public class PlantResponse implements Serializable {
     private Long id;
     private String common;
     private String name;
@@ -17,7 +17,7 @@ public class PlantResponseDto implements Serializable {
     private String info;
     private String image;
 
-    public PlantResponseDto(PlantInfo entity) {
+    public PlantResponse(PlantInfo entity) {
         this.id = entity.getId();
         this.common = entity.getCommon();
         this.name = entity.getName();

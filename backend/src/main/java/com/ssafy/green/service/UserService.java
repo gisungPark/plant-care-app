@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class UserService {
 
@@ -46,6 +46,7 @@ public class UserService {
     /**
      * 회원 가입!
      */
+    @Transactional
     public boolean join(UserRequest userRequest) throws Exception{
 
         if(validateDuplicateUserId(userRequest.getUserId()) 
@@ -100,6 +101,7 @@ public class UserService {
     /**
      * 소셜 로그인
      */
+    @Transactional
     public UserResponse oauthLogin(OauthResponse oauth) {
         UserResponse userResponse = new UserResponse();
         User findUser = userRepository.findByUserIdAndFlag(oauth.getId(), true);
@@ -134,6 +136,7 @@ public class UserService {
     /**
      * 회원 정보 수정
      */
+    @Transactional
     public UserResponse updateInfo(String token, UserRequest userRequest){
         // 0. 토큰 값에서 UserId 읽기
         String userId = jwtTokenProvider.getUserId(token);
@@ -160,6 +163,7 @@ public class UserService {
     /**
      * 회원 정보 삭제
      */
+    @Transactional
     public boolean deleteUser(User user){
         User findUser = userRepository.findByUserIdAndFlag(user.getUserId(), true);
         findUser.delete();

@@ -1,5 +1,6 @@
 package com.ssafy.green.model.dto;
 
+import com.ssafy.green.model.dto.plant.MyPlantResponse;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import lombok.Data;
@@ -9,22 +10,21 @@ import java.util.List;
 
 @Data
 public class RoomResponse {
-
-    private Long id;
+    private Long rid;
     private String roomName;
-    private List<plantResponse> plants = new ArrayList<>();
+    private List<MyPlantResponse> plantList;
 
-    public static RoomResponse create(Room r) {
-        RoomResponse response = new RoomResponse();
-        response.id = r.getId();
-        response.setRoomName(r.getRoomName());
+    public RoomResponse(Room room){
+        this.rid = room.getId();
+        this.roomName = room.getRoomName();
+        this.plantList = this.getPlantList(room);
+    }
 
-        // 해당 방에 존재하는 식물 정보 매칭!
-        if(r.getPlantCares()!=null){
-            for (PlantCare p : r.getPlantCares()){
-                plantResponse.create(p);
-            }
+    public List<MyPlantResponse> getPlantList(Room room){
+        List<MyPlantResponse> list = new ArrayList<>();
+        for(PlantCare plant : room.getPlantList()){
+            list.add(new MyPlantResponse(plant));
         }
-        return response;
+        return list;
     }
 }

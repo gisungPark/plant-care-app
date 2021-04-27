@@ -54,12 +54,12 @@ public class RoomService {
      */
     public List<RoomResponse> findRooms(String token){
         User findUser = getUserByToken(token);
-        List<Room> allRooms = roomRepository.findByUserAndFlag(findUser, true);
-        List<RoomResponse> responses = new ArrayList<>();
-        for(Room r : allRooms){
-            responses.add(RoomResponse.create(r));
+        List<Room> RoomList = roomRepository.findByUserAndFlag(findUser, true);
+        List<RoomResponse> list = new ArrayList<>();
+        for(Room room : RoomList){
+            list.add(new RoomResponse(room));
         }
-        return responses;
+        return list;
     }
 
     /**

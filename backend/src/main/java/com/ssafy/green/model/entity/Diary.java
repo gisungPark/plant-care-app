@@ -1,6 +1,7 @@
 package com.ssafy.green.model.entity;
 
 import com.ssafy.green.model.dto.DiaryRequest;
+import com.ssafy.green.model.entity.plant.PlantCare;
 import lombok.*;
 
 import javax.persistence.*;
@@ -10,24 +11,25 @@ import java.util.List;
 
 @Entity
 @Getter
+@Table(name = "diary")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Diary {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "diary_id")
-
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "uid")
     private User user;
 
+    @Setter
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "pid")
+    private PlantCare plantCare;
+
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
     private List<DiaryImage> diaryImages = new ArrayList<>();
-
-    @Column(name = "pid")
-    private Long plantId = 1L;
-
 
     @Column(name = "content")
     private String diaryContent;
