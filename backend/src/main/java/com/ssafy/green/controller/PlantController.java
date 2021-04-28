@@ -74,9 +74,11 @@ public class PlantController {
         return plantService.dead(pid);
     }
 
-    @ApiOperation(value = "물 준 날짜 등록", notes = "식물 pid, date 필요")
+    @ApiOperation(value = "물 준 날짜 등록", notes = "식물 pid, 날짜 필요")
     @PostMapping("/care/water")
     public Long save(@RequestBody WaterRequest waterRequest) { return plantService.saveWater(waterRequest); }
 
-
+    @ApiOperation(value = "물 준 날짜 수정", notes = "해당 wid / 수정할 날짜 필요")
+    @PutMapping("/care/water/{wid}")
+    public Long update(@PathVariable Long wid, @RequestBody WaterRequest waterRequest) { return plantService.updateWater(wid, waterRequest); }
 }
