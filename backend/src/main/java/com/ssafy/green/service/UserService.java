@@ -105,8 +105,8 @@ public class UserService {
     public UserResponse oauthLogin(OauthResponse oauth) {
         UserResponse userResponse = new UserResponse();
         User findUser = userRepository.findByUserIdAndFlag(oauth.getId(), true);
-
         if(findUser == null){
+            System.out.println("#최초 로그인!!!");
             if(validateDuplicateUserId(oauth.getId())
                     && validateDuplicateNickname(oauth.getNickname())){
 
@@ -120,16 +120,17 @@ public class UserService {
                         .build();
                 // 회원 가입
                 userRepository.save(newUser);
+                findUser = userRepository.findByUserIdAndFlag(oauth.getId(), true);
             }else {
                 throw new IllegalStateException("이미 존재하는 회원입니다.");
             }
-        }else {
-            userResponse.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
-            userResponse.setUserId(findUser.getUserId());
-            userResponse.setNickname(findUser.getNickname());
-            userResponse.setProfile(findUser.getProfile());
-            userResponse.setCode(0);
         }
+        System.out.println("#로그인 처리!!!");
+        userResponse.setToken(jwtTokenProvider.generateToken(findUser.getUserId()));
+        userResponse.setUserId(findUser.getUserId());
+        userResponse.setNickname(findUser.getNickname());
+        userResponse.setProfile(findUser.getProfile());
+        userResponse.setCode(0);
         return userResponse;
     }
 

@@ -15,6 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -83,12 +86,39 @@ public class DiaryService {
 
     /**
      * 다이어리 ID 조회
-     * @return
      */
     public DiaryResponse findById(Long id){
         // 1. 회원 정보 찾기
         Diary findDiary = diaryRepository.findByIdAndFlag(id, true);
         return DiaryResponse.create(findDiary);
+    }
+
+    /**
+     * 날짜별 다이어리 조회
+     */
+    public List<DiaryResponse> findByDate(String token, String date) {
+        // 1. 회원 정보 찾기
+        User findUser = getUserByToken(token);
+
+        String[] splits = date.split("-");
+        int year = Integer.parseInt(splits[0]);
+        int month = Integer.parseInt(splits[1]);
+        int day = Integer.parseInt(splits[2]);
+
+        System.out.println(findUser.getUserId() +"의 다이어리  " + date + " 날짜 호출");
+        LocalDateTime start = LocalDateTime.of(LocalDate.of(year,month, day), LocalTime.of(0, 0, 0));
+        LocalDateTime end = LocalDateTime.of(LocalDate.of(year,month, day), LocalTime.of(23, 59, 59));
+        System.out.println(start);
+        System.out.println(end);
+
+        List<Diary> findDiarys
+                = diaryRepository.findAllByUserAndFlagAndWriteDateTimeBetweenOrderByIdDesc(findUser, true, start, end);
+        List<DiaryResponse> diaryRes = new ArrayList<>();
+
+        for(Diary d : findDiarys){
+            diaryRes.add(DiaryResponse.create(d));
+        }
+        return diaryRes;
     }
 
     /**
@@ -151,21 +181,7 @@ public class DiaryService {
     }
 
     
-    /**
-     * 날짜별 다이어리 조회
-     */
-    public List<DiaryResponse> findByDate(String token, String date) {
-        // 1. 회원 정보 찾기
-        User findUser = getUserByToken(token);
 
-        List<Diary> findDiarys = diaryRepository.findByDate(findUser.getUserId(), date);
-        List<DiaryResponse> diaryRes = new ArrayList<>();
-
-        for(Diary d : findDiarys){
-            diaryRes.add(DiaryResponse.create(d));
-        }
-        return diaryRes;
-    }
 
     /**
      * 토큰으로 유저정보 가져오기
