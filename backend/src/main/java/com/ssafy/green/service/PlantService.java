@@ -72,7 +72,7 @@ public class PlantService {
     private Long savePlant(MyPlantRequest myPlantRequest, Optional<Room> room, Optional<PlantInfo> plantInfo) {
         PlantCare plantCare = PlantCare.builder()
                 .nickname(myPlantRequest.getNickname())
-                .started_date(myPlantRequest.getStarted_date())
+                .startedDate(myPlantRequest.getStartedDate())
                 .name(plantInfo.get().getName())
                 .water(plantInfo.get().getWater())
                 .build();
@@ -97,7 +97,7 @@ public class PlantService {
         Room room = roomRepository.findById(myPlantRequest.getRid()).get();
 
         plantCare.setNickname(myPlantRequest.getNickname());
-        plantCare.setStarted_date(myPlantRequest.getStarted_date());
+        plantCare.setStartedDate(myPlantRequest.getStartedDate());
         plantCare.setRoom(room);
         plantCareRepository.save(plantCare);
 

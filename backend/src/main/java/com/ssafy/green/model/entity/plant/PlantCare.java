@@ -1,17 +1,16 @@
 package com.ssafy.green.model.entity.plant;
 
-import com.ssafy.green.model.entity.Diary;
-import com.ssafy.green.model.entity.DiaryImage;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.green.model.entity.Room;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 
 @Data
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Table(name="plant_care")
 public class PlantCare {
     @Id
@@ -32,18 +31,22 @@ public class PlantCare {
     private String nickname;
     private String name;
     private String water;
-    private LocalDate started_date;
+    private LocalDate startedDate;
     private String image;
     private boolean dead;
     private boolean flag;
 
+    @JsonIgnore
+    @OneToMany(cascade = CascadeType.PERSIST, mappedBy = "plantCare")
+    private List<Water> waterList;
+
     @Builder
-    public PlantCare(PlantInfo plantInfo, Room room, String nickname, LocalDate started_date, String name, String water) {
+    public PlantCare(PlantInfo plantInfo, Room room, String nickname, LocalDate startedDate, String name, String water) {
         this.plantInfo = plantInfo;
         this.room = room;
         this.nickname = nickname;
         this.name = name;
-        this.started_date = started_date;
+        this.startedDate = startedDate;
         this.water = water;
         this.dead = true;
         this.flag = true;

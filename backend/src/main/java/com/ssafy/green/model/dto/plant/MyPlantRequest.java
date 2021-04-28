@@ -11,5 +11,5 @@ public class MyPlantRequest {
     private Long pid;
     private Long rid;
     private String nickname;
-    private LocalDate started_date;
+    private LocalDate startedDate;
 }

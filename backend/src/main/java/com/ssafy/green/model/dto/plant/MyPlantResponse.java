@@ -23,7 +23,7 @@ public class MyPlantResponse {
     public MyPlantResponse(PlantCare plantCare, PlantInfo plantInfo) {
         this.pid = plantCare.getId();
         this.nickname = plantCare.getNickname();
-        this.started_date = plantCare.getStarted_date();
+        this.started_date = plantCare.getStartedDate();
         this.image = plantCare.getImage();
         this.name = plantCare.getName();
         this.water = plantCare.getWater();
