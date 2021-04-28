@@ -1,9 +1,6 @@
 package com.ssafy.green.controller;
 
-import com.ssafy.green.model.dto.plant.MyPlantRequest;
-import com.ssafy.green.model.dto.plant.MyPlantResponse;
-import com.ssafy.green.model.dto.plant.PlantListResponse;
-import com.ssafy.green.model.dto.plant.PlantResponse;
+import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.service.PlantService;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
@@ -76,4 +73,10 @@ public class PlantController {
     public Long dead(@PathVariable Long pid) {
         return plantService.dead(pid);
     }
+
+    @ApiOperation(value = "물 준 날짜 등록", notes = "식물 pid, date 필요")
+    @PostMapping("/care/water")
+    public Long save(@RequestBody WaterRequest waterRequest) { return plantService.saveWater(waterRequest); }
+
+
 }
