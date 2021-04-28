@@ -1,7 +1,9 @@
 package com.ssafy.green.service;
 
+import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.model.entity.Room;
+import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import com.ssafy.green.model.entity.plant.PlantInfo;
 import com.ssafy.green.model.entity.plant.Water;
@@ -14,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -126,6 +129,17 @@ public class PlantService {
     private PlantCare getOne(Long id) throws IllegalArgumentException {
         return plantCareRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 식물이 없습니다.[id=" + id + "]"));
+    }
+
+    // 물 준 날짜 조회
+    public List<WaterResponse> getWater(Long id){
+        PlantCare plantCare = getOne(id);
+
+        List<WaterResponse> list = new ArrayList<>();
+        for(Water water : plantCare.getWaterList()){
+            list.add(new WaterResponse(water));
+        }
+        return list;
     }
 
     // 물 준 날짜 등록
