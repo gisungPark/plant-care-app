@@ -140,4 +140,13 @@ public class PlantService {
         waterRepository.save(water);
         return water.getId();
     }
+
+    // 물 준 날짜 수정
+    @Transactional
+    public Long updateWater(Long id, WaterRequest waterRequest) {
+        Water water = waterRepository.findById(id).get();
+        water.setWaterDate(waterRequest.getWaterDate());
+        waterRepository.save(water);
+        return id;
+    }
 }
