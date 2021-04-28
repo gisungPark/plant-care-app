@@ -1,15 +1,14 @@
 package com.ssafy.green.service;
 
-import com.ssafy.green.model.dto.plant.MyPlantRequest;
-import com.ssafy.green.model.dto.plant.MyPlantResponse;
-import com.ssafy.green.model.dto.plant.PlantListResponse;
-import com.ssafy.green.model.dto.plant.PlantResponse;
+import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import com.ssafy.green.model.entity.plant.PlantInfo;
+import com.ssafy.green.model.entity.plant.Water;
 import com.ssafy.green.repository.PlantCareRepository;
 import com.ssafy.green.repository.PlantInfoRepository;
 import com.ssafy.green.repository.RoomRepository;
+import com.ssafy.green.repository.WaterRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -28,6 +27,8 @@ public class PlantService {
     private final PlantCareRepository plantCareRepository;
     @Autowired
     private final PlantInfoRepository plantInfoRepository;
+    @Autowired
+    private final WaterRepository waterRepository;
 
     // 식물 학명 조회
     @Transactional
@@ -125,5 +126,18 @@ public class PlantService {
     private PlantCare getOne(Long id) throws IllegalArgumentException {
         return plantCareRepository.findById(id).orElseThrow(() ->
                 new IllegalArgumentException("해당 식물이 없습니다.[id=" + id + "]"));
+    }
+
+    // 물 준 날짜 등록
+    @Transactional
+    public Long saveWater(WaterRequest waterRequest) {
+        Optional<PlantCare> plantCare = plantCareRepository.findById(waterRequest.getPid());
+
+        Water water = Water.builder()
+                .waterDate(waterRequest.getWaterDate()).build();
+        water.setPlantCare(plantCare.get());
+
+        waterRepository.save(water);
+        return water.getId();
     }
 }
