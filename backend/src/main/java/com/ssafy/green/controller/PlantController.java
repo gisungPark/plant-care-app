@@ -39,10 +39,15 @@ public class PlantController {
         return plantService.findByPlantInfo(id);
     }
 
-    // 나의 식물 등록
-    @ApiOperation(value = "나의 식물 등록", notes = "")
+    // 나의 식물 검색 기반 등록 : 식물 pid 포함 정보 필요
+    @ApiOperation(value = "나의 식물 검색 기반 등록", notes = "식물 pid을 포함한 정보 필요")
     @PostMapping("/care")
-    public Long save(@RequestBody MyPlantRequest myPlantRequest) { return plantService.save(myPlantRequest); }
+    public Long save(@RequestBody MyPlantRequest myPlantRequest) { return plantService.saveBySearch(myPlantRequest); }
+
+    // 나의 식물 이미지 분류 기반 등록 : 식물 학명 포함 정보 필요
+    @ApiOperation(value = "나의 식물 이미지 분류 기반 등록", notes = "식물 학명을 포함한 정보 필요 / pid = 0으로 보내주세요!")
+    @PostMapping("/care/{common}")
+    public Long save(@PathVariable String common, @RequestBody MyPlantRequest myPlantRequest) { return plantService.saveByIdentify(common, myPlantRequest); }
 
     // 나의 식물 상세 정보
     @ApiOperation(value = "나의 식물 상세 정보")

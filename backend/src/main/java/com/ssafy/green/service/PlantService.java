@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -50,21 +51,34 @@ public class PlantService {
         return new PlantResponse(plantInfo);
     }
 
-    // 식물 등록
+    // 나의 식물 검색 기반 등록
     @Transactional
-    public Long save(MyPlantRequest myPlantRequest) {
-        Room room = roomRepository.findById(myPlantRequest.getRid()).get();
-        PlantInfo plantInfo = plantInfoRepository.findById(myPlantRequest.getPid()).get();
+    public Long saveBySearch(MyPlantRequest myPlantRequest) {
+        Optional<Room> room = roomRepository.findById(myPlantRequest.getRid());
+        Optional<PlantInfo> plantInfo = plantInfoRepository.findById(myPlantRequest.getPid());
 
+        return savePlant(myPlantRequest, room, plantInfo);
+    }
+
+    // 나의 식물 이미지 분류 기반 등록
+    @Transactional
+    public Long saveByIdentify(String common, MyPlantRequest myPlantRequest) {
+        Optional<Room> room = roomRepository.findById(myPlantRequest.getRid());
+        Optional<PlantInfo> plantInfo = plantInfoRepository.findByCommon(common);
+
+        return savePlant(myPlantRequest, room, plantInfo);
+    }
+
+    private Long savePlant(MyPlantRequest myPlantRequest, Optional<Room> room, Optional<PlantInfo> plantInfo) {
         PlantCare plantCare = PlantCare.builder()
                 .nickname(myPlantRequest.getNickname())
                 .started_date(myPlantRequest.getStarted_date())
-                .name(plantInfo.getName())
-                .water(plantInfo.getWater())
+                .name(plantInfo.get().getName())
+                .water(plantInfo.get().getWater())
                 .build();
 
-        plantCare.setPlantInfo(plantInfo);
-        plantCare.setRoom(room);
+        plantCare.setPlantInfo(plantInfo.get());
+        plantCare.setRoom(room.get());
         plantCareRepository.save(plantCare);
         return plantCare.getId();
     }
