@@ -54,6 +54,17 @@ public class DiaryController {
     /**
      * 다이어리 날짜 조회
      */
+    @ApiOperation(value = "다이어리 날짜별 조회!!", notes="Parameter\n" +
+            "- token(RequestHeader): 액세스 토큰\n" +
+            "- date(PathVariable): 날짜(ex: 2021-04-28 ) \n\n" +
+            "Response\n" +
+            "- id\n" +
+            "- plantId\n" +
+            "- diaryTitle\n" +
+            "- diaryContent\n" +
+            "- imgs\n" +
+            "- nickname\n" +
+            "- writeDateTime\n")
     @GetMapping("/findByDate/{date}")
     public ResponseEntity<Map<String, Object>> findByDate(@RequestHeader("TOKEN") String token, @PathVariable String date){
         Map<String,Object> resultMap = new HashMap<>();

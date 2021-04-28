@@ -4,6 +4,7 @@ import com.ssafy.green.model.dto.OauthResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.service.UserService;
+import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,6 +25,7 @@ public class UserController {
 
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final FirebaseCloudMessageService firebaseCloudMessageService;
 
     /**
      * 아이디 중복 여부 체크
@@ -106,7 +109,7 @@ public class UserController {
     /**
      * 소셜 로그인
      */
-    @ApiOperation(value = "구를 로그인", notes="Parameter\n" +
+    @ApiOperation(value = "구글 로그인", notes="Parameter\n" +
             "- oauth: 파이어베이스 토큰값\n" +
             "Response\n" +
             "- token: 엑세스 토큰\n" +
@@ -148,5 +151,15 @@ public class UserController {
         resultMap.put("response", userResponse);
 
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
+    @GetMapping("/fcmMessage")
+    public void sendMessage(){
+        try {
+            firebaseCloudMessageService
+                    .sendMessageTo("asdf", "테스트 메세지 입니다.", "테스트 바디 입니다.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
