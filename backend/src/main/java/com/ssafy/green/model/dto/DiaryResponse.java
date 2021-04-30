@@ -14,6 +14,7 @@ import java.util.List;
 public class DiaryResponse {
     private Long id;
     private Long plantId;
+    private String title;
     private String content;
     private List<String> imgUrls = new ArrayList<>();
     private LocalDateTime writeDateTime;
@@ -23,6 +24,7 @@ public class DiaryResponse {
         DiaryResponse diaryResponse = new DiaryResponse();
         diaryResponse.setId(diary.getId());
         diaryResponse.setPlantId(diary.getPlantCare().getId());
+        diaryResponse.setTitle(diary.getDiaryTitle());
         diaryResponse.setContent(diary.getDiaryContent());
 
         for(DiaryImage img : diary.getDiaryImages()){

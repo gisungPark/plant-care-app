@@ -28,9 +28,10 @@ public class RoomService {
      * 방 생성
      */
     @Transactional
-    public boolean createRoom(String token, String roomName) {
+    public boolean createRoom(String token, String userId, String roomName) {
 
-        User findUser = getUserByToken(token);
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(userId);
 
         // 0. 유효한 방 리스트 호출
         List<Room> allRooms = roomRepository.findByUserAndFlag(findUser, true);
@@ -52,8 +53,10 @@ public class RoomService {
     /**
      * 방 전체 조회 (flag == true)
      */
-    public List<RoomResponse> findRooms(String token){
-        User findUser = getUserByToken(token);
+    public List<RoomResponse> findRooms(String token, String userId){
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(userId);
+
         List<Room> RoomList = roomRepository.findByUserAndFlag(findUser, true);
         List<RoomResponse> list = new ArrayList<>();
         for(Room room : RoomList){
@@ -66,9 +69,11 @@ public class RoomService {
      * 방 삭제
      */
     @Transactional
-    public boolean deleteRoom(String token, Long id){
+    public boolean deleteRoom(String token, Long id, String userId){
 
-        User findUser = getUserByToken(token);
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(userId);
+
         Optional<Room> result = roomRepository.findById(id);
         if(result.isPresent()){
             Room findRoom = result.get();
@@ -81,14 +86,14 @@ public class RoomService {
         return false;
     }
 
-    /**
-     * 토큰으로 유저정보 가져오기
-     */
-    public User getUserByToken(String token){
-        // 0. 토큰 값에서 UserId 읽기
-        String userId = jwtTokenProvider.getUserId(token);
-
-        // 1. 회원 정보 찾기
-        return userService.findUser(userId);
-    }
+//    /**
+//     * 토큰으로 유저정보 가져오기
+//     */
+//    public User getUserByToken(String token){
+//        // 0. 토큰 값에서 UserId 읽기
+//        String userId = jwtTokenProvider.getUserId(token);
+//
+//        // 1. 회원 정보 찾기
+//        return userService.findUser(userId);
+//    }
 }

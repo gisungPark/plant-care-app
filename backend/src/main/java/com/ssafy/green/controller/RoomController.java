@@ -3,6 +3,7 @@ package com.ssafy.green.controller;
 import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.service.RoomService;
 import io.swagger.annotations.ApiOperation;
+import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,9 +31,9 @@ public class RoomController {
             "- true: 방 생성 성공\n" +
             "- false: 방 생성 실패!\n")
     @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> create(@RequestHeader("TOKEN") String token, @RequestBody String roomName){
+    public ResponseEntity<Map<String, Object>> create(@RequestHeader("TOKEN") String token, @RequestBody CreateRoomRequest request){
         Map<String,Object> resultMap = new HashMap<>();
-        boolean result = roomService.createRoom(token, roomName);
+        boolean result = roomService.createRoom(token, request.getUserId(), request.getRoomName());
         resultMap.put("response", result);
         if(result){
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
@@ -40,18 +41,32 @@ public class RoomController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
+    @Data
+    static class CreateRoomRequest{
+        private String userId;
+        private String roomName;
+    }
+
     /**
      * 방 조회
      */
     @ApiOperation(value = "모든 방 조회(그 안 식물까지)", notes = "사용자 로그인 토큰 필요")
-    @GetMapping("/find")
-    public ResponseEntity<Map<String, Object>> find(@RequestHeader("TOKEN") String token){
+    @GetMapping("/find/{userId}")
+    public ResponseEntity<Map<String, Object>> find(
+            @RequestHeader("TOKEN") String token,
+            @PathVariable String userId
+    ){
 
         Map<String,Object> resultMap = new HashMap<>();
-        List<RoomResponse> allRooms = roomService.findRooms(token);
+        List<RoomResponse> allRooms = roomService.findRooms(token, userId);
         resultMap.put("response", allRooms);
 
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
+    @Data
+    static class FineRoomRequest{
+        private String userId;
     }
 
     /**
@@ -64,13 +79,21 @@ public class RoomController {
             "- true: 방 삭제 성공\n" +
             "- false: 방 삭제 실패!\n")
     @PutMapping("/delete/{id}")
-    public ResponseEntity<Map<String, Object>> delete(@RequestHeader("TOKEN") String token, @PathVariable Long id){
+    public ResponseEntity<Map<String, Object>> delete(@RequestHeader("TOKEN") String token,
+                                                      @PathVariable Long id,
+                                                      @RequestBody DeleteRoomRequest request
+    ){
         Map<String,Object> resultMap = new HashMap<>();
-        boolean result = roomService.deleteRoom(token, id);
+        boolean result = roomService.deleteRoom(token, id, request.getUserId());
         resultMap.put("response", result);
         if(result){
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
+
+    @Data
+    static class DeleteRoomRequest{
+        private String userId;
     }
 }
