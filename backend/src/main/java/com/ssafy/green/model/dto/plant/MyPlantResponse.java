@@ -1,20 +1,36 @@
 package com.ssafy.green.model.dto.plant;
 
-import com.ssafy.green.model.entity.plant.PlantCare;
 import com.ssafy.green.model.entity.plant.PlantInfo;
 import lombok.Data;
+import com.ssafy.green.model.entity.plant.PlantCare;
+
+import java.time.LocalDate;
 
 @Data
 public class MyPlantResponse {
-    private Long id;
+    private Long pid;
     private String nickname;
-    private String name;
-    private String imgUrl;
+    private LocalDate started_date;
+    private String image;
 
-    public MyPlantResponse(PlantCare entity) {
-        this.id = entity.getId();
-        this.name = entity.getName();
-        this.nickname = entity.getNickname();
-        this.imgUrl =entity.getImage();
+    private String common;
+    private String name;
+    private String water;
+    private String temp;
+    private String humid;
+    private String info;
+
+    public MyPlantResponse(PlantCare plantCare, PlantInfo plantInfo) {
+        this.pid = plantCare.getId();
+        this.nickname = plantCare.getNickname();
+        this.started_date = plantCare.getStartedDate();
+        this.image = plantCare.getImage();
+        this.name = plantCare.getName();
+        this.water = plantCare.getWater();
+
+        this.common = plantInfo.getCommon();
+        this.temp = plantInfo.getTemp();
+        this.humid = plantInfo.getHumid();
+        this.info = plantInfo.getInfo();
     }
 }

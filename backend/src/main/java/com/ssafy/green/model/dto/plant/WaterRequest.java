@@ -7,9 +7,7 @@ import java.time.LocalDate;
 
 @Getter
 @NoArgsConstructor
-public class MyPlantRequest {
+public class WaterRequest {
     private Long pid;
-    private Long rid;
-    private String nickname;
-    private LocalDate startedDate;
+    private LocalDate waterDate;
 }
