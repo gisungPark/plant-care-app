@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -144,12 +145,17 @@ public class PlantService {
     @Transactional
     public Long saveWater(WaterRequest waterRequest) {
         Optional<PlantCare> plantCare = plantCareRepository.findById(waterRequest.getPid());
+        PlantCare getPlantCare = plantCare.get();
 
         Water water = Water.builder()
                 .waterDate(waterRequest.getWaterDate()).build();
         water.setPlantCare(plantCare.get());
-
         waterRepository.save(water);
+
+        Optional<Water> getWater = waterRepository.findTopByPlantCareOrderByWaterDateDesc(getPlantCare);
+        getPlantCare.setLastDate(getWater.get().getWaterDate());
+        plantCareRepository.save(getPlantCare);
+
         return water.getId();
     }
 
@@ -157,8 +163,16 @@ public class PlantService {
     @Transactional
     public Long updateWater(Long id, WaterRequest waterRequest) {
         Water water = waterRepository.findById(id).get();
+        Optional<PlantCare> plantCare = plantCareRepository.findById(water.getPlantCare().getId());
+        PlantCare getPlantCare = plantCare.get();
+
         water.setWaterDate(waterRequest.getWaterDate());
         waterRepository.save(water);
+
+        Optional<Water> getWater = waterRepository.findTopByPlantCareOrderByWaterDateDesc(getPlantCare);
+        getPlantCare.setLastDate(getWater.get().getWaterDate());
+        plantCareRepository.save(getPlantCare);
+
         return id;
     }
 }

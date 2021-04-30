@@ -1,6 +1,7 @@
 package com.ssafy.green.model.dto.plant;
 
 import com.ssafy.green.model.entity.plant.PlantInfo;
+import com.ssafy.green.model.entity.plant.Water;
 import lombok.Data;
 import com.ssafy.green.model.entity.plant.PlantCare;
 
@@ -11,6 +12,7 @@ public class MyPlantResponse {
     private Long pid;
     private String nickname;
     private LocalDate started_date;
+    private LocalDate last_date;
     private String image;
 
     private String common;
@@ -24,6 +26,7 @@ public class MyPlantResponse {
         this.pid = plantCare.getId();
         this.nickname = plantCare.getNickname();
         this.started_date = plantCare.getStartedDate();
+        this.last_date = plantCare.getLastDate();
         this.image = plantCare.getImage();
         this.name = plantCare.getName();
         this.water = plantCare.getWater();

@@ -5,6 +5,7 @@ import com.ssafy.green.model.entity.Room;
 import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -32,6 +33,7 @@ public class PlantCare {
     private String name;
     private String water;
     private LocalDate startedDate;
+    private LocalDate lastDate;
     private String image;
     private boolean dead;
     private boolean flag;
@@ -47,8 +49,11 @@ public class PlantCare {
         this.nickname = nickname;
         this.name = name;
         this.startedDate = startedDate;
+        this.lastDate = LocalDate.now();
         this.water = water;
         this.dead = true;
         this.flag = true;
     }
+
+
 }
