@@ -33,17 +33,15 @@ public class PlantService {
     @Autowired
     private final WaterRepository waterRepository;
 
-    // 식물 학명 조회
-    @Transactional
-    public List<PlantListResponse> findAllByCommon(String search) {
-        return plantInfoRepository.findByCommonContaining(search).stream()
+    // 모든 식물 조회
+    public List<PlantListResponse> findAll() {
+        return plantInfoRepository.findAll().stream()
                 .map(PlantListResponse::new)
                 .collect(Collectors.toList());
     }
 
     // 식물 이름 조회
-    @Transactional
-    public List<PlantListResponse> findAllByName(String search) {
+    public List<PlantListResponse> findByName(String search) {
         return plantInfoRepository.findByNameContaining(search).stream()
                 .map(PlantListResponse::new)
                 .collect(Collectors.toList());

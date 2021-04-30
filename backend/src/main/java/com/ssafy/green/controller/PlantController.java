@@ -18,20 +18,25 @@ public class PlantController {
     @Autowired
     private PlantService plantService;
 
-    // 식물 학명 또는 이름 조회
-    @ApiOperation(value = "식물 학명 또는 이름 조회", notes = "[category] 0: 학명으로 조회, 1: 이름으로 조회 & "+
-                                                        "[search] 검색할 키워드")
-    @GetMapping("/info/{category}/{search}")
-    public List<PlantListResponse> findAllByCommonAndName(@PathVariable int category, @PathVariable String search) {
-        List<PlantListResponse> list = null;
-       if(category == 0) list = plantService.findAllByCommon(search);
-       else if (category == 1) list = plantService.findAllByName(search);
-       return list;
+    // 식물 이름 조회
+    @ApiOperation(value = "모든 식물 학명&이름 조회", notes = "autocomplete를 위한")
+    @GetMapping("/info")
+    public List<PlantListResponse> findAll() {
+        List<PlantListResponse> list = plantService.findAll();
+        return list;
+    }
+
+    // 식물 이름 조회
+    @ApiOperation(value = "식물 이름 조회", notes = "{search} 검색할 키워드")
+    @GetMapping("/info/{search}")
+    public List<PlantListResponse> findAllByCommonAndName(@PathVariable String search) {
+        List<PlantListResponse> list = plantService.findByName(search);
+        return list;
     }
 
     // 식물 상세 정보 조회
     @ApiOperation(value = "식물 상세 정보 조회", notes = "")
-    @GetMapping("/info/{id}")
+    @GetMapping("/info/detail/{id}")
     public PlantResponse findByPlantInfo(@PathVariable Long id) {
         return plantService.findByPlantInfo(id);
     }
