@@ -31,49 +31,17 @@ public class DiaryService {
     private final UserRepository userRepository;
     private final DiaryRepository diaryRepository;
     private final DiaryImageRepository diaryImageRepository;
-    private final JwtTokenProvider jwtTokenProvider;
     private final PlantCareRepository plantCareRepository;
-
-    /**
-     * 다이어리 작성
-     */
-    @Transactional
-    public boolean writeDiary(String token, DiaryRequest diaryRequest){
-        // 1. 회원 정보 찾기
-        User findUser = getUserByToken(token);
-
-        // 2. 다이어리 객체 생성
-        Diary newDiary = Diary.builder()
-                .user(findUser)
-                .diaryContent(diaryRequest.getContent())
-                .build();
+    private final JwtTokenProvider jwtTokenProvider;
 
 
-        Optional<PlantCare> findPlant = plantCareRepository.findById(1L);
-
-        if(findPlant.isPresent()) {
-            newDiary.setPlantCare(findPlant.get());
-        }
-
-        // 3. 다이어리 이미지 엔티티 연결
-        List<DiaryImage> imgList = newDiary.getDiaryImages();
-        for(String i : diaryRequest.getImgs()){
-            // 4. 다이어리 이미지 저장!
-            DiaryImage diaryImage = new DiaryImage(newDiary, i);
-            newDiary.addImg(diaryImage);
-        }
-
-        // 5. 다이어리 저장!
-        diaryRepository.save(newDiary);
-        return true;
-    }
     /**
      * 다이어리 전체 조회
      */
-    public List<DiaryResponse> findAll(String token){
+    public List<DiaryResponse> findAll(String token, String userId){
 
         // 1. 회원 정보 찾기
-        User findUser = getUserByToken(token);
+        User findUser = userService.findUser(userId);
 
         List<Diary> allDiary = diaryRepository.findAllDiary(findUser.getId());
         List<DiaryResponse> diaryRes = new ArrayList<>();
@@ -96,9 +64,9 @@ public class DiaryService {
     /**
      * 날짜별 다이어리 조회
      */
-    public List<DiaryResponse> findByDate(String token, String date) {
+    public List<DiaryResponse> findByDate(String token, String userId, String date) {
         // 1. 회원 정보 찾기
-        User findUser = getUserByToken(token);
+        User findUser = userService.findUser(userId);
 
         String[] splits = date.split("-");
         int year = Integer.parseInt(splits[0]);
@@ -121,6 +89,43 @@ public class DiaryService {
         return diaryRes;
     }
 
+
+
+    /**
+     * 다이어리 작성
+     */
+    @Transactional
+    public boolean writeDiary(String token, DiaryRequest diaryRequest){
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(diaryRequest.getUserId());
+
+        Optional<PlantCare> findPlant = plantCareRepository.findById(diaryRequest.getPlantId());
+
+        if(!findPlant.isPresent()) {
+            throw new IllegalStateException("존재하지 않는 식물입니다.");
+        }
+
+        // 2. 다이어리 객체 생성
+        Diary newDiary = Diary.builder()
+                .user(findUser)
+                .plantCare(findPlant.get())
+                .title(diaryRequest.getTitle())
+                .content(diaryRequest.getContent())
+                .build();
+
+        // 3. 다이어리 이미지 엔티티 연결
+        List<DiaryImage> imgList = newDiary.getDiaryImages();
+        for(String i : diaryRequest.getImgUrls()){
+            // 4. 다이어리 이미지 저장!
+            DiaryImage diaryImage = new DiaryImage(newDiary, i);
+            newDiary.addImg(diaryImage);
+        }
+
+        // 5. 다이어리 저장!
+        diaryRepository.save(newDiary);
+        return true;
+    }
+
     /**
      * 다이어리 수정!
      */
@@ -129,10 +134,11 @@ public class DiaryService {
         // 1. 회원 정보 찾기
         User findUser = getUserByToken(token);
 
+        // 2. 다이어리 id로 검색
         Optional<Diary> findDiary = diaryRepository.findById(id);
 
         if(findDiary.isPresent()){
-            // 2. 다이어리 삭제 권한 체크 - 작성자가 본인이 맞다면,
+            // 3. 다이어리 삭제 권한 체크 - 작성자가 본인이 맞다면,
             if(findUser == findDiary.get().getUser()) {
                 Diary diary = findDiary.get();
                 for(DiaryImage img : diary.getDiaryImages()){

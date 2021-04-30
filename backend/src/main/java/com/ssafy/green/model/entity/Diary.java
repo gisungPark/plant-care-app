@@ -31,6 +31,10 @@ public class Diary {
     @OneToMany(mappedBy = "diary", cascade = CascadeType.ALL)
     private List<DiaryImage> diaryImages = new ArrayList<>();
 
+    @Column(name = "title")
+    private String diaryTitle;
+
+
     @Column(name = "content")
     private String diaryContent;
     @Column(name = "created_date")
@@ -39,9 +43,11 @@ public class Diary {
     private boolean flag = true;
 
     @Builder
-    public Diary(User user, String diaryContent) {
+    public Diary(User user, PlantCare plantCare, String title, String content) {
         this.user = user;
-        this.diaryContent = diaryContent;
+        this.plantCare = plantCare;
+        this.diaryTitle = title;
+        this.diaryContent = content;
         this.writeDateTime = LocalDateTime.now();
     }
 
@@ -60,10 +66,11 @@ public class Diary {
         if(this.diaryImages != null){
             this.diaryImages.clear();
         }
+        this.diaryTitle = diaryRequest.getTitle();
         this.diaryContent = diaryRequest.getContent();
         this.writeDateTime = LocalDateTime.now();
 
-        for(String img: diaryRequest.getImgs()){
+        for(String img: diaryRequest.getImgUrls()){
             DiaryImage diaryImage = new DiaryImage(this, img);
             this.addImg(diaryImage);
         }
