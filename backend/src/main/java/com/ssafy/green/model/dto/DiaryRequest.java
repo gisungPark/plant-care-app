@@ -8,7 +8,6 @@ import java.util.List;
 @Data
 @ToString
 public class DiaryRequest {
-    private String userId;
     private Long plantId;
     private String title;
     private String content;

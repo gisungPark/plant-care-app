@@ -48,10 +48,9 @@ public class User implements UserDetails {
     /**
      * 유저 정보 수정
      */
-    public void updateInfo(UserRequest userInfo) {
-        this.password = userInfo.getPassword();
-        this.nickname = userInfo.getNickname();
-        this.profile = userInfo.getProfile();
+    public void updateInfo(UserRequest info) {
+        this.nickname = info.getNickname();
+        this.profile = info.getProfile();
     }
 
     /**

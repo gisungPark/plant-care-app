@@ -38,7 +38,7 @@ public class DiaryService {
     /**
      * 다이어리 전체 조회
      */
-    public List<DiaryResponse> findAll(String token, String userId){
+    public List<DiaryResponse> findAll(String userId){
 
         // 1. 회원 정보 찾기
         User findUser = userService.findUser(userId);
@@ -53,18 +53,9 @@ public class DiaryService {
     }
 
     /**
-     * 다이어리 ID 조회
-     */
-    public DiaryResponse findById(Long id){
-        // 1. 회원 정보 찾기
-        Diary findDiary = diaryRepository.findByIdAndFlag(id, true);
-        return DiaryResponse.create(findDiary);
-    }
-
-    /**
      * 날짜별 다이어리 조회
      */
-    public List<DiaryResponse> findByDate(String token, String userId, String date) {
+    public List<DiaryResponse> findByDate(String userId, String date) {
         // 1. 회원 정보 찾기
         User findUser = userService.findUser(userId);
 
@@ -89,16 +80,23 @@ public class DiaryService {
         return diaryRes;
     }
 
+    /**
+     * 다이어리 ID 조회
+     */
+    public DiaryResponse findById(Long id){
+        // 1. 회원 정보 찾기
+        Diary findDiary = diaryRepository.findByIdAndFlag(id, true);
+        return DiaryResponse.create(findDiary);
+    }
 
 
     /**
      * 다이어리 작성
      */
     @Transactional
-    public boolean writeDiary(String token, DiaryRequest diaryRequest){
+    public boolean writeDiary(String userId, DiaryRequest diaryRequest){
         // 1. 회원 정보 찾기
-        User findUser = userService.findUser(diaryRequest.getUserId());
-
+        User findUser = userService.findUser(userId);
         Optional<PlantCare> findPlant = plantCareRepository.findById(diaryRequest.getPlantId());
 
         if(!findPlant.isPresent()) {
@@ -130,9 +128,9 @@ public class DiaryService {
      * 다이어리 수정!
      */
     @Transactional
-    public boolean update(String token, Long id, DiaryRequest diaryRequest) {
+    public boolean update(String userId, Long id, DiaryRequest diaryRequest) {
         // 1. 회원 정보 찾기
-        User findUser = getUserByToken(token);
+        User findUser = userService.findUser(userId);
 
         // 2. 다이어리 id로 검색
         Optional<Diary> findDiary = diaryRepository.findById(id);
@@ -159,9 +157,9 @@ public class DiaryService {
      * 해당 ID 다이어리 삭제!
      */
     @Transactional
-    public boolean delete(String token, Long id) {
+    public boolean delete(String userId, Long id) {
         // 1. 회원 정보 찾기
-        User findUser = getUserByToken(token);
+        User findUser = userService.findUser(userId);
 
         // 2. id로 다이어리 조회
         Optional<Diary> findDiary = diaryRepository.findById(id);
@@ -185,20 +183,4 @@ public class DiaryService {
         }
 
     }
-
-    
-
-
-    /**
-     * 토큰으로 유저정보 가져오기
-     */
-    public User getUserByToken(String token){
-        // 0. 토큰 값에서 UserId 읽기
-        String userId = jwtTokenProvider.getUserId(token);
-
-        // 1. 회원 정보 찾기
-        return userService.findUser(userId);
-    }
-
-
 }
