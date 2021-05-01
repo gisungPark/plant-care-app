@@ -25,7 +25,7 @@ public class UserService {
     @Transactional
     public UserResponse oauthLogin(String userId) {
         UserResponse userResponse = new UserResponse();
-        User findUser = userRepository.findByUserIdAndFlag(userId, true);
+        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
         // 1. 최초 로그인 회원가입 처리
         if (findUser == null) {
             System.out.println("#최초 로그인!!!");
@@ -38,7 +38,7 @@ public class UserService {
                     .build();
             // 2. 회원 가입
             userRepository.save(newUser);
-            findUser = userRepository.findByUserIdAndFlag(userId, true);
+            findUser = userRepository.findByUserIdAndFlag(userId, true).get();
         }
         // 3. callback 객체 생성
         System.out.println("#로그인 처리!!!");
@@ -56,7 +56,7 @@ public class UserService {
     public UserResponse updateInfo(String userId, UserRequest userRequest){
         // 1. userId로 회원 정보 조회
         UserResponse userResponse = new UserResponse();
-        User findUser = userRepository.findByUserIdAndFlag(userId, true);
+        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
 
         // 2. 회원 정보 수정
         findUser.updateInfo(userRequest);
@@ -75,7 +75,7 @@ public class UserService {
      */
     @Transactional
     public void changeThema(String userId, String thema){
-        User findUser = userRepository.findByUserIdAndFlag(userId, true);
+        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
         findUser.changeThema(thema);
     }
 
@@ -84,7 +84,7 @@ public class UserService {
      */
     @Transactional
     public boolean deleteUser(String userId){
-        User findUser = userRepository.findByUserIdAndFlag(userId, true);
+        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
         if(findUser == null) return false;
 
         findUser.delete();
@@ -96,6 +96,6 @@ public class UserService {
      * 아이디로 회원 정보 조회
      */
     public User findUser(String userId){
-        return userRepository.findByUserIdAndFlag(userId, true);
+        return userRepository.findByUserIdAndFlag(userId, true).get();
     }
 }

@@ -49,7 +49,7 @@ public class PlantCare {
         this.nickname = nickname;
         this.name = name;
         this.startedDate = startedDate;
-        this.lastDate = LocalDate.now();
+        this.lastDate = startedDate;
         this.water = water;
         this.dead = true;
         this.flag = true;

@@ -11,8 +11,8 @@ import java.time.LocalDate;
 public class MyPlantResponse {
     private Long pid;
     private String nickname;
-    private LocalDate started_date;
-    private LocalDate last_date;
+    private LocalDate startedDate;
+    private LocalDate lastDate;
     private String image;
 
     private String common;
@@ -25,8 +25,8 @@ public class MyPlantResponse {
     public MyPlantResponse(PlantCare plantCare, PlantInfo plantInfo) {
         this.pid = plantCare.getId();
         this.nickname = plantCare.getNickname();
-        this.started_date = plantCare.getStartedDate();
-        this.last_date = plantCare.getLastDate();
+        this.startedDate = plantCare.getStartedDate();
+        this.lastDate = plantCare.getLastDate();
         this.image = plantCare.getImage();
         this.name = plantCare.getName();
         this.water = plantCare.getWater();
