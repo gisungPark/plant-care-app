@@ -32,13 +32,12 @@ public class DiaryService {
     private final DiaryRepository diaryRepository;
     private final DiaryImageRepository diaryImageRepository;
     private final PlantCareRepository plantCareRepository;
-    private final JwtTokenProvider jwtTokenProvider;
 
 
     /**
      * 다이어리 전체 조회
      */
-    public List<DiaryResponse> findAll(String userId){
+    public List<DiaryResponse> findAll(String userId) {
 
         // 1. 회원 정보 찾기
         User findUser = userService.findUser(userId);
@@ -46,7 +45,7 @@ public class DiaryService {
         List<Diary> allDiary = diaryRepository.findAllDiary(findUser.getId());
         List<DiaryResponse> diaryRes = new ArrayList<>();
 
-        for(Diary d : allDiary){
+        for (Diary d : allDiary) {
             diaryRes.add(DiaryResponse.create(d));
         }
         return diaryRes;
@@ -64,9 +63,9 @@ public class DiaryService {
         int month = Integer.parseInt(splits[1]);
         int day = Integer.parseInt(splits[2]);
 
-        System.out.println(findUser.getUserId() +"의 다이어리  " + date + " 날짜 호출");
-        LocalDateTime start = LocalDateTime.of(LocalDate.of(year,month, day), LocalTime.of(0, 0, 0));
-        LocalDateTime end = LocalDateTime.of(LocalDate.of(year,month, day), LocalTime.of(23, 59, 59));
+        System.out.println(findUser.getUserId() + "의 다이어리  " + date + " 날짜 호출");
+        LocalDateTime start = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(0, 0, 0));
+        LocalDateTime end = LocalDateTime.of(LocalDate.of(year, month, day), LocalTime.of(23, 59, 59));
         System.out.println(start);
         System.out.println(end);
 
@@ -74,7 +73,7 @@ public class DiaryService {
                 = diaryRepository.findAllByUserAndFlagAndWriteDateTimeBetweenOrderByIdDesc(findUser, true, start, end);
         List<DiaryResponse> diaryRes = new ArrayList<>();
 
-        for(Diary d : findDiarys){
+        for (Diary d : findDiarys) {
             diaryRes.add(DiaryResponse.create(d));
         }
         return diaryRes;
@@ -83,7 +82,7 @@ public class DiaryService {
     /**
      * 다이어리 ID 조회
      */
-    public DiaryResponse findById(Long id){
+    public DiaryResponse findById(Long id) {
         // 1. 회원 정보 찾기
         Diary findDiary = diaryRepository.findByIdAndFlag(id, true);
         return DiaryResponse.create(findDiary);
@@ -94,12 +93,12 @@ public class DiaryService {
      * 다이어리 작성
      */
     @Transactional
-    public boolean writeDiary(String userId, DiaryRequest diaryRequest){
+    public boolean writeDiary(String userId, DiaryRequest diaryRequest) {
         // 1. 회원 정보 찾기
         User findUser = userService.findUser(userId);
         Optional<PlantCare> findPlant = plantCareRepository.findById(diaryRequest.getPlantId());
 
-        if(!findPlant.isPresent()) {
+        if (!findPlant.isPresent()) {
             throw new IllegalStateException("존재하지 않는 식물입니다.");
         }
 
@@ -113,7 +112,7 @@ public class DiaryService {
 
         // 3. 다이어리 이미지 엔티티 연결
         List<DiaryImage> imgList = newDiary.getDiaryImages();
-        for(String i : diaryRequest.getImgUrls()){
+        for (String i : diaryRequest.getImgUrls()) {
             // 4. 다이어리 이미지 저장!
             DiaryImage diaryImage = new DiaryImage(newDiary, i);
             newDiary.addImg(diaryImage);
@@ -135,20 +134,20 @@ public class DiaryService {
         // 2. 다이어리 id로 검색
         Optional<Diary> findDiary = diaryRepository.findById(id);
 
-        if(findDiary.isPresent()){
+        if (findDiary.isPresent()) {
             // 3. 다이어리 삭제 권한 체크 - 작성자가 본인이 맞다면,
-            if(findUser == findDiary.get().getUser()) {
+            if (findUser == findDiary.get().getUser()) {
                 Diary diary = findDiary.get();
-                for(DiaryImage img : diary.getDiaryImages()){
+                for (DiaryImage img : diary.getDiaryImages()) {
                     diaryImageRepository.delete(img);
                 }
                 diary.update(diaryRequest);
                 diaryRepository.save(diary);
                 return true;
-            }else{
+            } else {
                 return false;
             }
-        }else{
+        } else {
             return false;
         }
     }
@@ -163,22 +162,22 @@ public class DiaryService {
 
         // 2. id로 다이어리 조회
         Optional<Diary> findDiary = diaryRepository.findById(id);
-        if(findDiary.isPresent()){
+        if (findDiary.isPresent()) {
             // 2. 다이어리 삭제 권한 체크 - 작성자가 본인이 맞다면,
-            if(findUser == findDiary.get().getUser()) {
+            if (findUser == findDiary.get().getUser()) {
                 Diary diary = findDiary.get();
-                
+
                 // 3. 다이어리 이미지 목록 삭제
                 diary.getDiaryImages().clear();
                 // 4. flag값 flase로 전환
                 diary.delete();
                 diaryRepository.save(diary);
                 return true;
-            }else{
+            } else {
                 System.out.println("내 글이 아님!");
                 return false;
             }
-        }else{
+        } else {
             System.out.println("해당글 존재하지 않음!");
             return false;
         }
