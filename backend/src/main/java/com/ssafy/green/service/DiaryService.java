@@ -172,13 +172,14 @@ public class DiaryService {
                 diary.getDiaryImages().clear();
                 // 4. flag값 flase로 전환
                 diary.delete();
-                System.out.println(diary.isFlag());
                 diaryRepository.save(diary);
                 return true;
             }else{
+                System.out.println("내 글이 아님!");
                 return false;
             }
         }else{
+            System.out.println("해당글 존재하지 않음!");
             return false;
         }
 
