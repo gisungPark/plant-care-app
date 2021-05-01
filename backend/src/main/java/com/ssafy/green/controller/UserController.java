@@ -65,7 +65,7 @@ public class UserController {
      */
     @ApiOperation(value = "회원 정보 수정",
             notes = "Parameter\n" +
-                    "- token(RequestHeader): 액세스 토큰\n" +
+                    "- token(RequestHeader) : Firebase token\n" +
                     "- nickname: 변경할 닉네임\n" +
                     "- profile: 변경할 프로필 이미지\n\n" +
                     "Response\n" +
@@ -102,7 +102,7 @@ public class UserController {
 
     @ApiOperation(value = "테마 변경",
             notes = "Parameter\n" +
-                    "- token(RequestHeader): 액세스 토큰\n" +
+                    "- token(RequestHeader) : Firebase token\n" +
                     "- thema: 변경할 테마\n\n" +
                     "Response\n" +
                     "- error: 0[성공], 1[실패]")
@@ -138,7 +138,7 @@ public class UserController {
 
     @ApiOperation(value = "회원 정보 삭제",
             notes = "Parameter\n" +
-                    "- token(RequestHeader): 액세스 토큰\n\n" +
+                    "- token(RequestHeader) : Firebase token\n" +
                     "Response\n" +
                     "- error: 0[성공], 1[실패]")
     @PutMapping("/delete")
