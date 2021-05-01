@@ -10,6 +10,5 @@ public class UserResponse {
     private String userId;
     private String nickname;
     private String profile;
-    private Integer code;
-
+    private String thema;
 }
