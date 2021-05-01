@@ -1,12 +1,10 @@
 package com.ssafy.green.service;
 
-import com.ssafy.green.config.security.JwtTokenProvider;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.UserType;
 import com.ssafy.green.repository.UserRepository;
-import com.sun.el.parser.BooleanNode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -53,7 +51,7 @@ public class UserService {
      * 회원 정보 수정
      */
     @Transactional
-    public UserResponse updateInfo(String userId, UserRequest userRequest){
+    public UserResponse updateInfo(String userId, UserRequest userRequest) {
         // 1. userId로 회원 정보 조회
         UserResponse userResponse = new UserResponse();
         User findUser = userRepository.findByUserIdAndFlag(userId, true);
@@ -74,7 +72,7 @@ public class UserService {
      * 테마 변경
      */
     @Transactional
-    public void changeThema(String userId, String thema){
+    public void changeThema(String userId, String thema) {
         User findUser = userRepository.findByUserIdAndFlag(userId, true);
         findUser.changeThema(thema);
     }
@@ -83,9 +81,9 @@ public class UserService {
      * 회원 정보 삭제
      */
     @Transactional
-    public boolean deleteUser(String userId){
+    public boolean deleteUser(String userId) {
         User findUser = userRepository.findByUserIdAndFlag(userId, true);
-        if(findUser == null) return false;
+        if (findUser == null) return false;
 
         findUser.delete();
         return true;
@@ -95,7 +93,7 @@ public class UserService {
     /**
      * 아이디로 회원 정보 조회
      */
-    public User findUser(String userId){
+    public User findUser(String userId) {
         return userRepository.findByUserIdAndFlag(userId, true);
     }
 }
