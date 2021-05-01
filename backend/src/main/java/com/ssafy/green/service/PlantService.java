@@ -91,6 +91,12 @@ public class PlantService {
         plantCare.setPlantInfo(plantInfo.get());
         plantCare.setRoom(room.get());
         plantCareRepository.save(plantCare);
+
+        Water water = Water.builder()
+                .waterDate(myPlantRequest.getStartedDate()).build();
+        water.setPlantCare(plantCare);
+        waterRepository.save(water);
+
         return plantCare.getId();
     }
 
