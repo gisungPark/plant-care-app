@@ -81,7 +81,7 @@ public class DiaryController {
             "- imgUrls: 이미지 리스트\n" +
             "- writeDateTime: 작성일\n" +
             "- error: 0[성공], 1[실패]")
-    @GetMapping("/findByDate/{date}}")
+    @GetMapping("/findByDate/{date}")
     public ResponseEntity<Map<String, Object>> findByDate(@RequestHeader("TOKEN") String token,
                                                           @PathVariable String date) {
         Map<String, Object> resultMap = new HashMap<>();
