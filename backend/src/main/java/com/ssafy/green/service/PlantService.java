@@ -160,6 +160,10 @@ public class PlantService {
         User curUser = getUser(userId);
         PlantCare plantCare = getOne(id);
 
+        Optional<Room> room = roomRepository.findById(plantCare.getRoom().getId());
+        if(!curUser.getId().equals(room.get().getUser().getId()))
+            return null;
+
         List<WaterResponse> list = new ArrayList<>();
         for(Water water : plantCare.getWaterList()){
             list.add(new WaterResponse(water));
@@ -174,6 +178,10 @@ public class PlantService {
 
         Optional<PlantCare> plantCare = plantCareRepository.findById(waterRequest.getPid());
         PlantCare getPlantCare = plantCare.get();
+
+        Optional<Room> room = roomRepository.findById(getPlantCare.getRoom().getId());
+        if(!curUser.getId().equals(room.get().getUser().getId()))
+            return 0L;
 
         Water water = Water.builder()
                 .waterDate(waterRequest.getWaterDate()).build();
@@ -195,6 +203,10 @@ public class PlantService {
         Water water = waterRepository.findById(id).get();
         Optional<PlantCare> plantCare = plantCareRepository.findById(water.getPlantCare().getId());
         PlantCare getPlantCare = plantCare.get();
+
+        Optional<Room> room = roomRepository.findById(getPlantCare.getRoom().getId());
+        if(!curUser.getId().equals(room.get().getUser().getId()))
+            return 0L;
 
         water.setWaterDate(waterRequest.getWaterDate());
         waterRepository.save(water);
