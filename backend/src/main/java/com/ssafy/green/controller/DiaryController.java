@@ -33,7 +33,7 @@ public class DiaryController {
      * 다이어리 전체 조회!!
      */
     @ApiOperation(value = "다이어리 전체 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader): 액세스 토큰\n\n" +
+            "- token(RequestHeader) : Firebase token\n\n" +
             "Response\n" +
             "- id: 글 id\n" +
             "- plantId: 식물 id\n" +
@@ -42,7 +42,7 @@ public class DiaryController {
             "- imgUrls: 이미지 리스트\n" +
             "- writeDateTime: 작성일\n" +
             "- error: 0[성공], 1[실패]")
-    @GetMapping("/findAll/{userId}")
+    @GetMapping("/findAll")
     public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token) {
         logger.debug("# 토큰정보 {}: " + token);
         Map<String, Object> resultMap = new HashMap<>();
@@ -71,7 +71,7 @@ public class DiaryController {
      * 다이어리 날짜 조회
      */
     @ApiOperation(value = "다이어리 날짜별 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader): 액세스 토큰\n" +
+            "- token(RequestHeader) : Firebase token\n" +
             "- date(PathVariable): 날짜(ex: 2021-04-28 ) \n\n" +
             "Response\n" +
             "- id: 글 id\n" +
@@ -81,7 +81,7 @@ public class DiaryController {
             "- imgUrls: 이미지 리스트\n" +
             "- writeDateTime: 작성일\n" +
             "- error: 0[성공], 1[실패]")
-    @GetMapping("/findByDate/{date}}")
+    @GetMapping("/findByDate/{date}")
     public ResponseEntity<Map<String, Object>> findByDate(@RequestHeader("TOKEN") String token,
                                                           @PathVariable String date) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -111,7 +111,7 @@ public class DiaryController {
      * 다이어리 ID 조회!!
      */
     @ApiOperation(value = "다이어리 ID 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader): 액세스 토큰\n" +
+            "- token(RequestHeader) : Firebase token\n" +
             "- {id}(PathVariable): 다이어리 아이디\n\n" +
             "Response\n" +
             "- id:  다이어리 아이디\n" +
@@ -121,7 +121,7 @@ public class DiaryController {
             "- imgUrls: 이미지 url 목록\n" +
             "- writeDateTime: 작성 날짜\n" +
             "- error: 0[성공], 1[실패]")
-    @GetMapping("/find/{id}/{userId}")
+    @GetMapping("/find/{id}")
     public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token,
                                                      @PathVariable Long id) {
         logger.debug("# 토큰정보 {}: " + token);
@@ -152,7 +152,7 @@ public class DiaryController {
      * 다이어리 작성!
      */
     @ApiOperation(value = "다이어리 작성!!", notes = "Parameter\n" +
-            "- token(RequestHeader): 액세스 토큰\n" +
+            "- token(RequestHeader) : Firebase token\n" +
             "- plantId\n" +
             "- title\n" +
             "- content\n" +
@@ -191,11 +191,11 @@ public class DiaryController {
      * 다이어리 수정!
      */
     @ApiOperation(value = "다이어리 수정!!", notes = "Parameter\n" +
-            "- token(RequestHeader): 액세스 토큰\n" +
+            "- token(RequestHeader) : Firebase token\n" +
             "- {id}(PathVariable): 다이어리 아이디\n" +
             "- content: 내용\n" +
             "- plantId: 식물 아이디\n" +
-            "- imgs (List)\n\n" +
+            "- imgUrls (List)\n\n" +
             "Response\n" +
             "- id:  다이어리 아이디\n" +
             "- plantId: 식물 아이디\n" +
@@ -240,7 +240,7 @@ public class DiaryController {
      * 다이어리 내용 삭제!
      */
     @ApiOperation(value = "다이어리 삭제!!", notes = "Parameter\n" +
-            "- token(RequestHeader): 액세스 토큰\n" +
+            "- token(RequestHeader) : Firebase token\n" +
             "- {id}(PathVariable): 다이어리 아이디\n\n" +
             "Response\n" +
             "- error: 0[성공], 1[실패]")
