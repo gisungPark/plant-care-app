@@ -1,7 +1,10 @@
 package com.ssafy.green.controller;
 
+import com.google.firebase.auth.*;
+import com.ssafy.green.model.dto.UserRequest;
+import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.service.UserService;
-import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
+import com.ssafy.green.service.firebase.FirebaseInitService;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,107 +25,147 @@ public class UserController {
 
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
-    private final FirebaseCloudMessageService firebaseCloudMessageService;
+    private final FirebaseInitService firebaseInit;
 
     /**
-     * 소셜 로그인
+     * 회원 정보 조회
      */
-    @ApiOperation(value = "구글 로그인", notes="Parameter\n" +
-            "- userId: Firebase uid\n" +
+    @ApiOperation(value = "회원 정보 조회", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
             "Response\n" +
             "- userId: 유저 아이디\n" +
             "- nickname: 닉네임\n" +
             "- profile: 프로필 이미지\n" +
-            "- code: 0[로그인 성공], 1[로그인 실패]")
+            "- error: 0[성공], 1[실패]")
     @PostMapping("/oauth")
-    public ResponseEntity<Map<String, Object>> oauthLogin(@RequestBody OauthRequest oauth){
-        logger.debug("# 로그인 정보 {}: " + oauth);
-        Map<String,Object> resultMap = new HashMap<>();
-        resultMap.put("response", userService.oauthLogin(oauth.getUserId()));
+    public ResponseEntity<Map<String, Object>> findUserInfo(@RequestHeader("TOKEN") String idToken) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            resultMap.put("error", 0);
+            // 2. 회원 정보 조회
+            resultMap.put("response", userService.oauthLogin(decodedToken.getUid()));
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
+    /**
+     * 회원 정보 수정
+     */
+    @ApiOperation(value = "회원 정보 수정",
+            notes = "Parameter\n" +
+                    "- token(RequestHeader): 액세스 토큰\n" +
+                    "- nickname: 변경할 닉네임\n" +
+                    "- profile: 변경할 프로필 이미지\n\n" +
+                    "Response\n" +
+                    "- userId: 유저 아이디\n" +
+                    "- nickname: 변경된 닉네임\n" +
+                    "- profile: 변경된 프로필 이미지\n" +
+                    "- error: 0[성공], 1[실패]")
+    @PutMapping("/updateInfo")
+    public ResponseEntity<Map<String, Object>> updateInfo(@RequestHeader("TOKEN") String idToken,
+                                                          @RequestBody UserRequest request) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            resultMap.put("error", 0);
+
+            // 2. 회원 정보 수정
+            UserResponse userResponse = userService.updateInfo(decodedToken.getUid(), request);
+            resultMap.put("response", userResponse);
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
+    @ApiOperation(value = "테마 변경",
+            notes = "Parameter\n" +
+                    "- token(RequestHeader): 액세스 토큰\n" +
+                    "- thema: 변경할 테마\n\n" +
+                    "Response\n" +
+                    "- error: 0[성공], 1[실패]")
+    @PutMapping("/changeThema")
+    public ResponseEntity<Map<String, Object>> change(@RequestHeader("TOKEN") String idToken,
+                                                      @RequestBody ThemaRequest request) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            resultMap.put("error", 0);
+            userService.changeThema(decodedToken.getUid(), request.getThema());
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+        }
 
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
     @Data
-    static class OauthRequest{
-        private String userId;
+    static class ThemaRequest {
+        private String thema;
     }
 
-//    /**
-//     * 일반 회원가입
-//     */
-//    @ApiOperation(value = "일반 회원 가입", notes = "Parameter\n" +
-//            "- userId: 이메일\n" +
-//            "- nickname: 닉네임\n" +
-//            "- password: 비밀번호\n\n" +
-//            "Response\n" +
-//            "- success\n" +
-//            "- fail ")
-//    @PostMapping("/join")
-//    public ResponseEntity<Map<String, Object>> join(@RequestBody UserRequest userRequest){
-//        Map<String,Object> resultMap = new HashMap<>();
-//        try {
-//            boolean result = userService.join(userRequest);
-//            if(result) {
-//                resultMap.put("response", result);
-//                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-//            }
-//            resultMap.put("response", "false");
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-//    }
-//
-//    /**
-//     * 일반 회원 로그인
-//     */
-//    @ApiOperation(value = "로그인", notes="Parameter\n" +
-//                    "- userId: 아이디\n" +
-//                    "- password: 비밀번호\n\n" +
-//                    "Response\n" +
-//                    "- token: 엑세스 토큰\n" +
-//                    "- userId: 유저 아이디\n" +
-//                    "- nickname: 닉네임\n" +
-//                    "- profile: 프로필 이미지\n" +
-//                    "- code: 0[로그인 성공], 1[로그인 실패]")
-//    @PostMapping("/login")
-//    public ResponseEntity<Map<String, Object>> login(@RequestBody UserRequest userRequest){
-//        logger.debug("# 로그인 정보 {}: " + userRequest.toString());
-//        Map<String,Object> resultMap = new HashMap<>();
-//
-//        UserResponse userResponse = userService.login(userRequest);
-//        resultMap.put("response", userResponse);
-//
-//        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-//    }
 
-//    /**
-//     * 회원 정보 수정
-//     */
-//    @ApiOperation(value = "회원 정보 수정",
-//            notes = "Parameter\n" +
-//                    "- token(RequestHeader): 액세스 토큰\n" +
-//                    "- userId: 기존 회원아이디(변경 x, 필수 x)\n" +
-//                    "- nickname: 변경할 닉네임\n" +
-//                    "- password: 변경할 비밀번호\n" +
-//                    "- profile: 변경할 프로필 이미지\n\n" +
-//                    "Response\n" +
-//                    "- token: 엑세스 토큰\n" +
-//                    "- userId: 유저 아이디\n" +
-//                    "- nickname: 변경된 닉네임\n" +
-//                    "- profile: 변경된 프로필 이미지\n" +
-//                    "- code: (쓸데없음)")
-//    @PutMapping("/updateInfo")
-//    public ResponseEntity<Map<String, Object>> updateInfo(@RequestHeader("TOKEN") String token, @RequestBody UserRequest userRequest) {
-//        logger.debug("# 토큰정보 {}: " + token);
-//        Map<String,Object> resultMap = new HashMap<>();
-//
-//        UserResponse userResponse = userService.updateInfo(token, userRequest);
-//        resultMap.put("response", userResponse);
-//
-//        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-//    }
+    @ApiOperation(value = "회원 정보 삭제",
+            notes = "Parameter\n" +
+                    "- token(RequestHeader): 액세스 토큰\n\n" +
+                    "Response\n" +
+                    "- error: 0[성공], 1[실패]")
+    @PutMapping("/delete")
+    public ResponseEntity<Map<String, Object>> change(@RequestHeader("TOKEN") String idToken) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
 
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            boolean result = userService.deleteUser(decodedToken.getUid());
+            if (result) resultMap.put("error", 0);
+            else {
+                resultMap.put("error", 1);
+                resultMap.put("msg", "존재하지 않는 회원입니다.");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+            }
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
 
 }
