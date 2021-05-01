@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.PostConstruct;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 @Service
 public class FirebaseInitService {
@@ -24,9 +25,9 @@ public class FirebaseInitService {
     public void init() throws IOException {
 
         Resource resource = new ClassPathResource(firebaseSdkPath);
-        FileInputStream fis = new FileInputStream(resource.getFile());
+        InputStream inputStream = resource.getInputStream();
         FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredentials(GoogleCredentials.fromStream(fis))
+                .setCredentials(GoogleCredentials.fromStream(inputStream))
                 .build();
         if (FirebaseApp.getApps().isEmpty()){
             FirebaseApp.initializeApp(options);
