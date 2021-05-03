@@ -28,6 +28,7 @@ public class RoomController {
 
     private final RoomService roomService;
     private final S3Uploader s3Uploader;
+    private final String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
 
     /**
      * 방 생성
@@ -42,16 +43,19 @@ public class RoomController {
     public ResponseEntity<Map<String, Object>> createV2(@RequestHeader("TOKEN") String token,
                                                          CreateRoomRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
         String uploadImg = DEFAULT_THEMA_IMAGE;
 
         try {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
+            System.out.println("#####################################");
             // 2. 이미지 업로드
             if(request.getTheme() != null) {
                 uploadImg = s3Uploader.upload(request.getTheme());
+                System.out.println("파일 업로드 성공!!!!!");
+            }else{
+                System.out.println("파일 null 에러 발생!!!!!");
             }
             // 2. 방 생성!
             boolean result = roomService.createRoom(decodedToken.getUid(), request.getRoomName(), uploadImg);
