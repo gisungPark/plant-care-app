@@ -22,12 +22,13 @@ public class RoomService {
     private final UserService userService;
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+    private final String DEAFAULT_THEMA_IMAGE="https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
 
     /**
      * 방 생성
      */
     @Transactional
-    public boolean createRoom(String userId, String roomName) {
+    public boolean createRoom(String userId, String roomName, String theme) {
 
         // 1. 회원 정보 찾기
         User findUser = userService.findUser(userId);
@@ -40,9 +41,15 @@ public class RoomService {
             if (r.getRoomName().equals(roomName)) return false;
         }
 
+        if(theme.equals("") || theme == null){
+            theme = DEAFAULT_THEMA_IMAGE;
+        }
+
+        // 2. 방 생성
         Room newRoom = Room.builder()
                 .user(findUser)
                 .roomName(roomName)
+                .theme(theme)
                 .build();
 
         roomRepository.save(newRoom);
