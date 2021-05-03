@@ -34,7 +34,8 @@ public class RoomController {
      */
     @ApiOperation(value = "방 생성 V2", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
-            "- roomName: 생성할 방 이름\n\n" +
+            "- roomName: 생성할 방 이름\n" +
+            "- theme: 배경 이미지 파일 (MultipartFile)\n\n" +
             "Response\n" +
             "- error: 0[성공], 1[실패]")
     @PostMapping("/create/v2")

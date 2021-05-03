@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Transactional(readOnly = true)
@@ -63,10 +64,14 @@ public class UserService {
         List<MyPlantListResponse> response = new ArrayList<>();
 
         // 1. 회원 정보 조회
-        User findUser = userRepository.findByUserIdAndFlag(userId, true);
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+
+        if(!findUser.isPresent()){
+          return response;
+        }
 
         // 2. 방 정보 호출
-        List<Room> RoomList = roomRepository.findByUserAndFlag(findUser, true);
+        List<Room> RoomList = roomRepository.findByUserAndFlag(findUser.get(), true);
         for (Room room : RoomList) {
             response.addAll( RoomResponse.getPlantList(room));
         }
