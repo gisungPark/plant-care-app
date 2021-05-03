@@ -1,6 +1,7 @@
 package com.ssafy.green.model.entity;
 
 import com.ssafy.green.model.dto.DiaryRequest;
+import com.ssafy.green.model.dto.DiaryRequestV2;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import lombok.*;
 
@@ -77,9 +78,29 @@ public class Diary {
     }
 
     /**
+     * 다이어리 수정 v2
+     */
+    public void updateV2(DiaryRequestV2 request, List<String> fileNames) {
+        if(this.diaryImages != null){
+            this.diaryImages.clear();
+        }
+        this.diaryTitle = request.getTitle();
+        this.diaryContent = request.getContent();
+        this.writeDateTime = LocalDateTime.now();
+
+        for(String img: fileNames){
+            DiaryImage diaryImage = new DiaryImage(this, img);
+            this.addImg(diaryImage);
+        }
+
+    }
+
+    /**
      * 다이어리 삭제!
      */
     public void delete() {
         this.flag = false;
     }
+
+
 }
