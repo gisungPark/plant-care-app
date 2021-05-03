@@ -1,9 +1,7 @@
 package com.ssafy.green.service;
 
-import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.model.entity.Room;
-import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import com.ssafy.green.model.entity.plant.PlantInfo;
 import com.ssafy.green.model.entity.plant.Water;
@@ -16,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
