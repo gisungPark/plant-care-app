@@ -11,13 +11,11 @@ import com.ssafy.green.model.dto.DiaryResponse;
 import com.ssafy.green.service.DiaryService;
 import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
-import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -210,7 +208,7 @@ public class DiaryController {
             "- error: 0[성공], 1[실패]")
     @PostMapping("/write/v2")
     public ResponseEntity<Map<String, Object>> writeV2(@RequestHeader("TOKEN") String token,
-                                                     @RequestBody DiaryRequestV2 request) {
+                                                      DiaryRequestV2 request) {
         logger.debug("# 토큰정보 {}: " + token);
         Map<String, Object> resultMap = new HashMap<>();
         List<String> fileNames = new ArrayList<>();
