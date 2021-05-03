@@ -245,6 +245,72 @@ public class DiaryController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
+
+    /**
+     * 다이어리 수정! v2
+     */
+    @ApiOperation(value = "다이어리 수정!! v2", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "- {id}(PathVariable): 다이어리 아이디\n" +
+            "- content: 내용\n" +
+            "- plantId: 식물 아이디\n" +
+            "- files (List)\n\n" +
+            "Response\n" +
+            "- id:  다이어리 아이디\n" +
+            "- plantId: 식물 아이디\n" +
+            "- content: 다이어리 내용\n" +
+            "- imgUrls: 이미지 url 목록\n" +
+            "- writeDateTime: 작성 날짜\n" +
+            "- error: 0[성공], 1[실패]")
+    @PutMapping("/update/v2/{id}")
+    public ResponseEntity<Map<String, Object>> updateV2(@RequestHeader("TOKEN") String token,
+                                                      @PathVariable Long id,
+                                                        DiaryRequestV2 request) {
+        logger.debug("# 토큰정보 {}: " + token);
+        Map<String, Object> resultMap = new HashMap<>();
+        List<String> fileNames = new ArrayList<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+
+
+            // 2. 이미지 업로드
+            for(MultipartFile m : request.getFiles()) {
+                String fileName = s3Uploader.upload(m);
+                fileNames.add(fileName);
+            }
+
+            // 2. 다이어리 수정
+            boolean result = diaryService.updateV2(decodedToken.getUid(), id, request, fileNames);
+            if (result) {
+                // 2-1. 수정 성공!
+                resultMap.put("error", 0);
+                DiaryResponse findDiary = diaryService.findById(id);
+                resultMap.put("response", findDiary);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            } else {
+                // 2-2. 수정 실패!
+                resultMap.put("error", 1);
+                resultMap.put("msg", "글 수정 실패!!");
+            }
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        }catch (IOException e2){
+            resultMap.put("error", 1);
+            resultMap.put("msg", "파일 업로드 실패!!!");
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
+
+
+
+
     /**
      * 다이어리 수정!
      */
@@ -307,7 +373,6 @@ public class DiaryController {
                                                       @PathVariable Long id) {
         logger.debug("# 토큰정보 {}: " + token);
         Map<String, Object> resultMap = new HashMap<>();
-
 
         try {
             // 1. Firebase Token decoding
