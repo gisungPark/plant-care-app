@@ -1,8 +1,5 @@
 package com.ssafy.green.service;
 
-import com.google.firebase.auth.FirebaseToken;
-import com.ssafy.green.model.dto.RoomResponse;
-
 import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.User;
@@ -58,34 +55,35 @@ public class PlantService {
 
     // 나의 식물 조회 기반 등록
     @Transactional
-    public Long saveBySearch(String userId, MyPlantRequest myPlantRequest) {
+    public Long saveBySearch(String userId, MyPlantRequest myPlantRequest, String image) {
         User curUser = getUser(userId);
         Optional<Room> room = roomRepository.findById(myPlantRequest.getRid());
         Optional<PlantInfo> plantInfo = plantInfoRepository.findById(myPlantRequest.getPid());
+
         if(!curUser.getId().equals(room.get().getUser().getId()))
             return 0L;
-        return savePlant(myPlantRequest, room, plantInfo);
+        return savePlant(myPlantRequest, room, plantInfo, image);
     }
 
     // 나의 식물 이미지 분류 기반 등록
     @Transactional
-    public Long saveByIdentify(String userId, String common, MyPlantRequest myPlantRequest) {
+    public Long saveByIdentify(String userId, String common, MyPlantRequest myPlantRequest, String image) {
         User curUser = getUser(userId);
-
         Optional<Room> room = roomRepository.findById(myPlantRequest.getRid());
         Optional<PlantInfo> plantInfo = plantInfoRepository.findByCommon(common);
 
         if(!curUser.getId().equals(room.get().getUser().getId()))
             return 0L;
-        return savePlant(myPlantRequest, room, plantInfo);
+        return savePlant(myPlantRequest, room, plantInfo, image);
     }
 
-    private Long savePlant(MyPlantRequest myPlantRequest, Optional<Room> room, Optional<PlantInfo> plantInfo) {
+    private Long savePlant(MyPlantRequest myPlantRequest, Optional<Room> room, Optional<PlantInfo> plantInfo, String image) {
         PlantCare plantCare = PlantCare.builder()
                 .nickname(myPlantRequest.getNickname())
                 .startedDate(myPlantRequest.getStartedDate())
                 .name(plantInfo.get().getName())
                 .water(plantInfo.get().getWater())
+                .image(image)
                 .build();
 
         plantCare.setPlantInfo(plantInfo.get());
@@ -115,7 +113,7 @@ public class PlantService {
 
     // 나의 식물 수정
     @Transactional
-    public Long update(String userId, Long id, MyPlantRequest myPlantRequest) {
+    public Long update(String userId, Long id, MyPlantRequest myPlantRequest, String image) {
         User curUser = getUser(userId);
 
         PlantCare plantCare = getOne(id);
@@ -127,6 +125,7 @@ public class PlantService {
         plantCare.setNickname(myPlantRequest.getNickname());
         plantCare.setStartedDate(myPlantRequest.getStartedDate());
         plantCare.setRoom(updateRoom);
+        plantCare.setImage(image);
         plantCareRepository.save(plantCare);
 
         return id;

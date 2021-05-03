@@ -1,18 +1,15 @@
 package com.ssafy.green.model.dto.plant;
 
 import com.ssafy.green.model.entity.plant.PlantInfo;
-import com.ssafy.green.model.entity.plant.Water;
 import lombok.Data;
 import com.ssafy.green.model.entity.plant.PlantCare;
-
-import java.time.LocalDate;
 
 @Data
 public class MyPlantResponse {
     private Long pid;
     private String nickname;
-    private LocalDate startedDate;
-    private LocalDate lastDate;
+    private String startedDate;
+    private String lastDate;
     private String image;
 
     private String common;
