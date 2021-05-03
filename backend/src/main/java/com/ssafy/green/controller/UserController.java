@@ -1,8 +1,10 @@
 package com.ssafy.green.controller;
 
 import com.google.firebase.auth.*;
+import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
+import com.ssafy.green.service.RoomService;
 import com.ssafy.green.service.UserService;
 import com.ssafy.green.service.firebase.FirebaseInitService;
 import io.swagger.annotations.ApiOperation;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin(origins = "*")
@@ -25,6 +28,7 @@ public class UserController {
 
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
     private final UserService userService;
+    private final RoomService roomService;
     private final FirebaseInitService firebaseInit;
 
     /**
@@ -59,6 +63,46 @@ public class UserController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
+
+    /**
+     * 회원 정보 조회
+     */
+    @ApiOperation(value = "회원 정보 조회 V2", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "Response\n" +
+            "- response.userId: 유저 아이디\n" +
+            "- response.nickname: 닉네임\n" +
+            "- response.profile: 프로필 이미지\n" +
+            "- plants.pid: 식물 id\n" +
+            "- plants.nickname: 식물 닉네임\n" +
+            "- plants.name: 식물 이름\n" +
+            "- plants.lastDate: ????\n" +
+            "- plants.image: 식물 이미지\n" +
+            "- error: 0[성공], 1[실패]")
+    @PostMapping("/oauth/v2")
+    public ResponseEntity<Map<String, Object>> findUserInfoV2(@RequestHeader("TOKEN") String idToken) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            // 2. 회원 정보 조회
+            resultMap.put("response", userService.oauthLogin(decodedToken.getUid()));
+            resultMap.put("plants", userService.findMyPlants(decodedToken.getUid()));
+            resultMap.put("error", 0);
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
 
     /**
      * 회원 정보 수정

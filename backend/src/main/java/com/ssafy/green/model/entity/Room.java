@@ -27,14 +27,16 @@ public class Room {
     private List<PlantCare> plantList;
 
     private String roomName;
+    private String theme;
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private boolean flag = true;
 
     @Builder
-    public Room(User user, String roomName) {
+    public Room(User user, String roomName, String theme) {
         this.user = user;
         this.roomName = roomName;
+        this.theme = theme;
     }
 
     public void delete() {
