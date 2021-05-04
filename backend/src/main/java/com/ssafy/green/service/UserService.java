@@ -33,9 +33,10 @@ public class UserService {
     @Transactional
     public UserResponse oauthLogin(String userId) {
         UserResponse userResponse = new UserResponse();
-        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+
         // 1. 최초 로그인 회원가입 처리
-        if (findUser == null) {
+        if (!findUser.isPresent()) {
             System.out.println("#최초 로그인!!!");
             User newUser = User.builder()
                     .userId(userId)
@@ -46,14 +47,15 @@ public class UserService {
                     .build();
             // 2. 회원 가입
             userRepository.save(newUser);
-            findUser = userRepository.findByUserIdAndFlag(userId, true).get();
+            findUser = userRepository.findByUserIdAndFlag(userId, true);
         }
+        User user = findUser.get();
         // 3. callback 객체 생성
         System.out.println("#로그인 처리!!!");
-        userResponse.setUserId(findUser.getUserId());
-        userResponse.setNickname(findUser.getNickname());
-        userResponse.setProfile(findUser.getProfile());
-        userResponse.setThema(findUser.getThema());
+        userResponse.setUserId(user.getUserId());
+        userResponse.setNickname(user.getNickname());
+        userResponse.setProfile(user.getProfile());
+        userResponse.setThema(user.getThema());
         return userResponse;
     }
 
@@ -66,9 +68,8 @@ public class UserService {
         // 1. 회원 정보 조회
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
 
-        if(!findUser.isPresent()){
-          return response;
-        }
+        if(!findUser.isPresent()) return response;
+
 
         // 2. 방 정보 호출
         List<Room> RoomList = roomRepository.findByUserAndFlag(findUser.get(), true);
@@ -86,17 +87,20 @@ public class UserService {
     public UserResponse updateInfo(String userId, UserRequest userRequest) {
         // 1. userId로 회원 정보 조회
         UserResponse userResponse = new UserResponse();
-        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+
+        if(!findUser.isPresent()) return userResponse;
+        User user = findUser.get();
 
         // 2. 회원 정보 수정
-        findUser.updateInfo(userRequest);
-        userRepository.save(findUser);
+        user.updateInfo(userRequest);
+        userRepository.save(user);
 
         // 3. callback 객체 생성
-        userResponse.setUserId(findUser.getUserId());
-        userResponse.setNickname(findUser.getNickname());
-        userResponse.setProfile(findUser.getProfile());
-        userResponse.setThema(findUser.getThema());
+        userResponse.setUserId(user.getUserId());
+        userResponse.setNickname(user.getNickname());
+        userResponse.setProfile(user.getProfile());
+        userResponse.setThema(user.getThema());
         return userResponse;
     }
 
@@ -105,8 +109,10 @@ public class UserService {
      */
     @Transactional
     public void changeThema(String userId, String thema){
-        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
-        findUser.changeThema(thema);
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return;
+        User user = findUser.get();
+        user.changeThema(thema);
     }
 
     /**
@@ -114,10 +120,10 @@ public class UserService {
      */
     @Transactional
     public boolean deleteUser(String userId){
-        User findUser = userRepository.findByUserIdAndFlag(userId, true).get();
-        if(findUser == null) return false;
-
-        findUser.delete();
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return false;
+        User user = findUser.get();
+        user.delete();
         return true;
     }
 
@@ -126,6 +132,7 @@ public class UserService {
      * 아이디로 회원 정보 조회
      */
     public User findUser(String userId){
-        return userRepository.findByUserIdAndFlag(userId, true).get();
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        return findUser.get();
     }
 }
