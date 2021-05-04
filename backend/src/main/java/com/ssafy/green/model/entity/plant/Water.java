@@ -20,10 +20,10 @@ public class Water {
     @NonNull
     private PlantCare plantCare;
 
-    private LocalDate waterDate;
+    private String waterDate;
 
     @Builder
-    public Water(PlantCare plantCare, LocalDate waterDate) {
+    public Water(PlantCare plantCare, String waterDate) {
         this.plantCare = plantCare;
         this.waterDate = waterDate;
     }

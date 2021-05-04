@@ -4,8 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ssafy.green.model.entity.Room;
 import lombok.*;
 import javax.persistence.*;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Data
@@ -32,8 +30,8 @@ public class PlantCare {
     private String nickname;
     private String name;
     private String water;
-    private LocalDate startedDate;
-    private LocalDate lastDate;
+    private String startedDate;
+    private String lastDate;
     private String image;
     private boolean dead;
     private boolean flag;
@@ -43,7 +41,7 @@ public class PlantCare {
     private List<Water> waterList;
 
     @Builder
-    public PlantCare(PlantInfo plantInfo, Room room, String nickname, LocalDate startedDate, String name, String water) {
+    public PlantCare(PlantInfo plantInfo, Room room, String nickname, String startedDate, String name, String water, String image) {
         this.plantInfo = plantInfo;
         this.room = room;
         this.nickname = nickname;
@@ -51,6 +49,7 @@ public class PlantCare {
         this.startedDate = startedDate;
         this.lastDate = startedDate;
         this.water = water;
+        this.image = image;
         this.dead = true;
         this.flag = true;
     }

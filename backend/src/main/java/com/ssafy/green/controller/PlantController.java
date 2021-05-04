@@ -5,11 +5,14 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.service.PlantService;
+import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -20,6 +23,7 @@ public class PlantController {
 
     @Autowired
     private PlantService plantService;
+    private final S3Uploader s3Uploader;
 
     // 식물 이름 조회
     @ApiOperation(value = "모든 식물 이름 조회(autocomplete를 위한 API)", notes =
@@ -93,17 +97,23 @@ public class PlantController {
             "- pid : 식물 고유 번호(식물 조회 후)\n"+
             "- rid : 식물을 등록할 방 고유 번호\n"+
             "- nickname : 식물 애칭\n"+
+            "- image : 등록할 식물 이미지 or 해당 식물 정보의 기본 이미지(null로 보내면 안돼요)\n"+
             "- startedDate : 식물 키우기 시작한 날짜\n\n"+
             "Response\n" +
             "- 1 이상 : 등록 성공한 나의 식물 고유 번호(pid) \n" +
             "- 0 : 등록 실패")
     @PostMapping("/care")
-    public Long saveBySearch(@RequestHeader("TOKEN") String token, @RequestBody MyPlantRequest myPlantRequest) {
+    public Long saveBySearch(@RequestHeader("TOKEN") String token, MyPlantRequest myPlantRequest) {
         try{
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            return plantService.saveBySearch(decodedToken.getUid(), myPlantRequest);
+            MultipartFile file = myPlantRequest.getImage();
+            System.out.println(myPlantRequest.getImage());
+            String image = s3Uploader.upload(file);
+            return plantService.saveBySearch(decodedToken.getUid(), myPlantRequest, image);
         } catch (FirebaseAuthException e) {
 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return 0L;
     }
@@ -116,17 +126,22 @@ public class PlantController {
             "- pid : 0\n"+
             "- rid : 식물을 등록할 방 고유 번호\n"+
             "- nickname : 식물 애칭\n"+
+            "- image : 등록할 식물 이미지 or 해당 식물 정보의 기본 이미지(null로 보내면 안돼요)\n"+
             "- startedDate : 식물 키우기 시작한 날짜\n\n"+
             "Response\n" +
             "- 1 이상 : 등록 성공한 나의 식물 고유 번호(pid) \n" +
             "- 0 : 등록 실패")
     @PostMapping("/care/{common}")
-    public Long saveByIdentify(@RequestHeader("TOKEN") String token, @PathVariable String common, @RequestBody MyPlantRequest myPlantRequest) {
+    public Long saveByIdentify(@RequestHeader("TOKEN") String token, @PathVariable String common, MyPlantRequest myPlantRequest) {
         try{
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            return plantService.saveByIdentify(decodedToken.getUid(), common, myPlantRequest);
+            MultipartFile multipartFile = myPlantRequest.getImage();
+            String image = s3Uploader.upload(multipartFile);
+            return plantService.saveByIdentify(decodedToken.getUid(), common, myPlantRequest, image);
         } catch (FirebaseAuthException e) {
 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return 0L;
     }
@@ -167,17 +182,22 @@ public class PlantController {
             "- pid : 나의 식물 고유 번호\n"+
             "- rid : 수정할 식물을 등록할 방 고유 번호\n"+
             "- nickname : 수정할 식물 애칭\n"+
+            "- image : 등록할 식물 이미지 or 해당 식물 정보의 기본 이미지(null로 보내면 안돼요)\n"+
             "- startedDate : 수정할 키우기 시작한 날짜\n\n"+
             "Response\n" +
             "- 1 이상 : 수정 성공한 나의 식물 고유 번호(pid) \n" +
             "- 0 : 수정 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
     @PutMapping("/care/{pid}")
-    public Long update(@RequestHeader("TOKEN") String token, @PathVariable Long pid, @RequestBody MyPlantRequest myPlantRequest) {
+    public Long update(@RequestHeader("TOKEN") String token, @PathVariable Long pid, MyPlantRequest myPlantRequest) {
         try{
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            return plantService.update(decodedToken.getUid(), pid, myPlantRequest);
+            MultipartFile multipartFile = myPlantRequest.getImage();
+            String image = s3Uploader.upload(multipartFile);
+            return plantService.update( decodedToken.getUid(), pid, myPlantRequest, image);
         } catch (FirebaseAuthException e) {
 
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return 0L;
     }
