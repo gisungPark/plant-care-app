@@ -97,6 +97,7 @@ public class PlantController {
             "- pid : 식물 고유 번호(식물 조회 후)\n"+
             "- rid : 식물을 등록할 방 고유 번호\n"+
             "- nickname : 식물 애칭\n"+
+            "- image : 등록할 식물 이미지 or 해당 식물 정보의 기본 이미지(null로 보내면 안돼요)\n"+
             "- startedDate : 식물 키우기 시작한 날짜\n\n"+
             "Response\n" +
             "- 1 이상 : 등록 성공한 나의 식물 고유 번호(pid) \n" +
@@ -125,6 +126,7 @@ public class PlantController {
             "- pid : 0\n"+
             "- rid : 식물을 등록할 방 고유 번호\n"+
             "- nickname : 식물 애칭\n"+
+            "- image : 등록할 식물 이미지 or 해당 식물 정보의 기본 이미지(null로 보내면 안돼요)\n"+
             "- startedDate : 식물 키우기 시작한 날짜\n\n"+
             "Response\n" +
             "- 1 이상 : 등록 성공한 나의 식물 고유 번호(pid) \n" +
@@ -180,6 +182,7 @@ public class PlantController {
             "- pid : 나의 식물 고유 번호\n"+
             "- rid : 수정할 식물을 등록할 방 고유 번호\n"+
             "- nickname : 수정할 식물 애칭\n"+
+            "- image : 등록할 식물 이미지 or 해당 식물 정보의 기본 이미지(null로 보내면 안돼요)\n"+
             "- startedDate : 수정할 키우기 시작한 날짜\n\n"+
             "Response\n" +
             "- 1 이상 : 수정 성공한 나의 식물 고유 번호(pid) \n" +
