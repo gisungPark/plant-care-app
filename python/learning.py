@@ -38,8 +38,8 @@ def main():
     train_datasets = datasets.ImageFolder(os.path.join(data_dir, 'train'), transforms_train)
     test_datasets = datasets.ImageFolder(os.path.join(data_dir, 'test'), transforms_test)
 
-    train_dataloader = torch.utils.data.DataLoader(train_datasets, batch_size=4, shuffle=True, num_workers=4)
-    test_dataloader = torch.utils.data.DataLoader(test_datasets, batch_size=4, shuffle=True, num_workers=4)
+    train_dataloader = torch.utils.data.DataLoader(train_datasets, batch_size=8, shuffle=True, num_workers=2)
+    test_dataloader = torch.utils.data.DataLoader(test_datasets, batch_size=8, shuffle=True, num_workers=2)
 
     print('학습 데이터셋 크기:', len(train_datasets))
     print('테스트 데이터셋 크기:', len(test_datasets))
@@ -74,14 +74,14 @@ def main():
     model = models.resnet34(pretrained=True)
     num_features = model.fc.in_features
     # 전이 학습(transfer learning): 모델의 출력 뉴런 수를 3개로 교체하여 마지막 레이어 다시 학습
-    model.fc = nn.Linear(num_features, 210)
+    model.fc = nn.Linear(num_features, 208)
     model = model.to(device)
 
     criterion = nn.CrossEntropyLoss()
     optimizer = optim.SGD(model.parameters(), lr=0.001, momentum=0.9)
     print('초기화 완료*****************************************************')
 
-    num_epochs = 50
+    num_epochs = 30
     model.train()
     start_time = time.time()
 
