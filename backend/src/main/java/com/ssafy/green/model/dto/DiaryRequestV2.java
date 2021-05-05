@@ -2,15 +2,13 @@ package com.ssafy.green.model.dto;
 
 import lombok.Data;
 import lombok.ToString;
-
-import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
 @ToString
-public class DiaryRequest {
+public class DiaryRequestV2 {
     private Long plantId;
     private String title;
     private String content;
-    private List<String> imgUrls;
-
+    private MultipartFile[] files;
 }

@@ -4,13 +4,12 @@ import com.ssafy.green.model.entity.plant.PlantInfo;
 import lombok.Data;
 import com.ssafy.green.model.entity.plant.PlantCare;
 
-import java.time.LocalDate;
-
 @Data
 public class MyPlantResponse {
     private Long pid;
     private String nickname;
-    private LocalDate started_date;
+    private String startedDate;
+    private String lastDate;
     private String image;
 
     private String common;
@@ -23,7 +22,8 @@ public class MyPlantResponse {
     public MyPlantResponse(PlantCare plantCare, PlantInfo plantInfo) {
         this.pid = plantCare.getId();
         this.nickname = plantCare.getNickname();
-        this.started_date = plantCare.getStarted_date();
+        this.startedDate = plantCare.getStartedDate();
+        this.lastDate = plantCare.getLastDate();
         this.image = plantCare.getImage();
         this.name = plantCare.getName();
         this.water = plantCare.getWater();

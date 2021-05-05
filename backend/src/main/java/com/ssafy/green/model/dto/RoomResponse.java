@@ -20,7 +20,7 @@ public class RoomResponse {
         this.plantList = this.getPlantList(room);
     }
 
-    public List<MyPlantListResponse> getPlantList(Room room){
+    public static List<MyPlantListResponse> getPlantList(Room room){
         List<MyPlantListResponse> list = new ArrayList<>();
         for(PlantCare plant : room.getPlantList()){
             if(plant.isFlag() && plant.isDead())
@@ -29,3 +29,4 @@ public class RoomResponse {
         return list;
     }
 }
+

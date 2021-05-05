@@ -36,9 +36,8 @@ public class User implements UserDetails {
     private Boolean flag = true;
 
     @Builder
-    public User(String userId, String password, String nickname, String profile, UserType provider, String providerId) {
+    public User(String userId, String nickname, String profile, UserType provider, String providerId) {
         this.userId = userId;
-        this.password = password;
         this.nickname = nickname;
         this.profile = profile;
         this.provider = provider;
@@ -49,10 +48,9 @@ public class User implements UserDetails {
     /**
      * 유저 정보 수정
      */
-    public void updateInfo(UserRequest userInfo) {
-        this.password = userInfo.getPassword();
-        this.nickname = userInfo.getNickname();
-        this.profile = userInfo.getProfile();
+    public void updateInfo(UserRequest info) {
+        this.nickname = info.getNickname();
+        this.profile = info.getProfile();
     }
 
     /**
