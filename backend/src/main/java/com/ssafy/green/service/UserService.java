@@ -1,15 +1,14 @@
 package com.ssafy.green.service;
 
+import com.ssafy.green.model.dto.MessageResponse;
 import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.dto.plant.MyPlantListResponse;
 import com.ssafy.green.model.dto.plant.MyPlantResponse;
-import com.ssafy.green.model.entity.DeviceToken;
-import com.ssafy.green.model.entity.Room;
-import com.ssafy.green.model.entity.User;
-import com.ssafy.green.model.entity.UserType;
+import com.ssafy.green.model.entity.*;
 import com.ssafy.green.repository.DeviceTokenRepository;
+import com.ssafy.green.repository.MessageRepository;
 import com.ssafy.green.repository.RoomRepository;
 import com.ssafy.green.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,6 +26,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+    private final MessageRepository messageRepository;
     private final DeviceTokenRepository deviceTokenRepository;
     private final String DEFALLT_IMG = "http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG";
 
@@ -110,6 +110,7 @@ public class UserService {
     /**
      * 토큰 등록
      */
+    @Transactional
     public boolean registerToken(String userId, String deviceToken){
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return false;
@@ -132,6 +133,73 @@ public class UserService {
         // 2. 토큰 조회
         findAll = deviceTokenRepository.findAllByUser(findUser.get());
 
+        return findAll;
+    }
+
+    /**
+     * 토큰 삭제
+     */
+    @Transactional
+    public boolean deleteDeviceToken(String userId, String deviceToken){
+        List<DeviceToken> findAll = new ArrayList<>();
+        // 1. 회원 정보 검색
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return false;
+
+        // 2. 토큰 조회!!
+        Optional<DeviceToken> findToken = deviceTokenRepository.findByUserAndToken(findUser.get(), deviceToken);
+        if(!findToken.isPresent()) return false;
+
+        // 3. 토크 삭제
+        deviceTokenRepository.delete(findToken.get());
+        return true;
+    }
+
+    /**
+     * 알림 기록 저장!!!
+     */
+    @Transactional
+    public Long recordMsg(String userId, String title, String content){
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return 0L;
+        User user = findUser.get();
+        Message newMsg = new Message(user, title, content);
+        messageRepository.save(newMsg);
+        return newMsg.getId();
+    }
+
+    /**
+     * 알림 확인 완료!!!
+     */
+    @Transactional
+    public boolean checkMsg(String userId, String title, String content){
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return false;
+        User user = findUser.get();
+        Optional<Message> findMsg = messageRepository.findByUserAndTitleAndContentOrderByIdDesc(user, title, content);
+        if(!findMsg.isPresent()) return false;
+        
+        // 2. 알림 확인
+        Message message = findMsg.get();
+        message.check();
+        return true;
+    }
+
+    /**
+     * 전체 알림 조회
+     */
+    public List<MessageResponse> findAllMsg(String userId){
+        List<MessageResponse> findAll = new ArrayList<>();
+        // 1. 회원 정보 검색
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return findAll;
+        User user = findUser.get();
+
+        // 2. 알림 전체 조회
+        List<Message> messages = messageRepository.findAllByUser(user);
+        for(Message m: messages){
+            findAll.add(MessageResponse.create(m));
+        }
         return findAll;
     }
 

@@ -1,7 +1,10 @@
 package com.ssafy.green.controller;
 
-import com.google.firebase.auth.*;
-import com.ssafy.green.model.dto.RoomResponse;
+import com.google.firebase.auth.AuthErrorCode;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.FirebaseToken;
+import com.ssafy.green.model.dto.MessageResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.entity.DeviceToken;
@@ -35,7 +38,13 @@ public class UserController {
     private final FirebaseInitService firebaseInit;
     private final FirebaseCloudMessageService fcmService;
 
-    @GetMapping("/sendMsg")
+    @PostMapping("/sendMsg")
+    @ApiOperation(value = "알림 전송", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "- title : 알림 제목\n" +
+            "- content : 내용\n\n" +
+            "Response\n" +
+            "- error: 0[성공], 1[실패]")
     public ResponseEntity<Map<String, Object>> sendMessage(@RequestHeader("TOKEN") String idToken,
                               @RequestBody Message msg){
         Map<String, Object> resultMap = new HashMap<>();
@@ -48,6 +57,8 @@ public class UserController {
 
             // 3. 알림 전송
             for(DeviceToken d: allDeviceToken) {
+                // 3-1. 알림 기록
+                userService.recordMsg(decodedToken.getUid(), msg.getTitle(), msg.getContent());
                 fcmService.sendMessageTo(d.getToken(), msg.getTitle(), msg.getContent());
             }
 
@@ -74,9 +85,78 @@ public class UserController {
         private String content;
     }
 
+    @ApiOperation(value = "알림 목록 조회!!", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n\n" +
+            "Response\n" +
+            "- id: 알림 id \n" +
+            "- title: 알림 제목\n" +
+            "- content: 알림 내용\n" +
+            "- dateTime: 알림 날짜\n" +
+            "- flag: 알림 확인 여부(true[미확인], false[확인])\n" +
+            "- error: 0[성공], 1[실패]")
+    @GetMapping("/findAllMsg")
+    public ResponseEntity<Map<String, Object>> findAllMessage(@RequestHeader("TOKEN") String idToken){
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+          
+            // 2. 알림 목록 조회
+            List<MessageResponse> allMsg = userService.findAllMsg(decodedToken.getUid());
+            resultMap.put("response", allMsg);
+            resultMap.put("error", 0);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        }catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
+    @ApiOperation(value = "알림 확인 상태 변경!!(읽음 처리)", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "- title: 알림 제목\n" +
+            "- content: 알림 내용\n\n" +
+            "Response\n" +
+            "- error: 0[성공], 1[실패]")
+    @PutMapping("/checkMsg")
+    public ResponseEntity<Map<String, Object>> checkMessage(@RequestHeader("TOKEN") String idToken,
+                                                            @RequestBody Message msg){
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+            // 2. 알림 확인!!
+            boolean result = userService.checkMsg(decodedToken.getUid(), msg.getTitle(), msg.getContent());
+            if(result) {
+                resultMap.put("error", 0);
+                resultMap.put("msg", "알림 확인 성공!!");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            }
+            resultMap.put("error", 1);
+            resultMap.put("msg", "알림 확인 실패!!");
+        }catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
     /**
-     * 토큰 등록
+     * 디바이스 토큰 등록
      */
+    @ApiOperation(value = "디바이스 토큰 등록!!", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "- device_token(RequestHeader) : 디바이스 token\n\n" +
+            "Response\n" +
+            "- error: 0[성공], 1[실패]")
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerToken(@RequestHeader("TOKEN") String idToken,
                                                              @RequestHeader("DEVICE_TOKEN") String deviceToken) {
@@ -105,13 +185,47 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * 디바이스 토큰 삭제
+     */
+    @ApiOperation(value = "Logout 시, 디바이스 토큰 삭제!!", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "- device_token(RequestHeader) : 디바이스 token\n\n" +
+            "Response\n" +
+            "- error: 0[성공], 1[실패]")
+    @DeleteMapping("/logout")
+    public ResponseEntity<Map<String, Object>> logout(@RequestHeader("TOKEN") String idToken,
+                                                             @RequestHeader("DEVICE_TOKEN") String deviceToken) {
+        Map<String, Object> resultMap = new HashMap<>();
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+            // 2. 토큰 삭제
+            boolean result = userService.deleteDeviceToken(decodedToken.getUid(), deviceToken);
+            if(result){
+                resultMap.put("error", 0);
+                resultMap.put("msg", "디바이스 토큰 삭제 성공!!");
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            }
+            resultMap.put("error", 1);
+            resultMap.put("msg", "디바이스 토큰 삭제 실패!!");
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
 
 
     /**
      * 회원 정보 조회
      */
     @ApiOperation(value = "회원 정보 조회", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
+            "- token(RequestHeader) : Firebase token\n\n" +
             "Response\n" +
             "- userId: 유저 아이디\n" +
             "- nickname: 닉네임\n" +
@@ -144,7 +258,7 @@ public class UserController {
      * 회원 정보 조회
      */
     @ApiOperation(value = "회원 정보 조회 V2", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
+            "- token(RequestHeader) : Firebase token\n\n" +
             "Response\n" +
             "- response.userId: 유저 아이디\n" +
             "- response.nickname: 닉네임\n" +
