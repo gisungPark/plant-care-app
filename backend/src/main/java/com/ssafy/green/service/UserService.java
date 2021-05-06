@@ -5,9 +5,11 @@ import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.dto.plant.MyPlantListResponse;
 import com.ssafy.green.model.dto.plant.MyPlantResponse;
+import com.ssafy.green.model.entity.DeviceToken;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.UserType;
+import com.ssafy.green.repository.DeviceTokenRepository;
 import com.ssafy.green.repository.RoomRepository;
 import com.ssafy.green.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +27,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final RoomRepository roomRepository;
+    private final DeviceTokenRepository deviceTokenRepository;
     private final String DEFALLT_IMG = "http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG";
 
     /**
@@ -105,6 +108,34 @@ public class UserService {
     }
 
     /**
+     * 토큰 등록
+     */
+    public boolean registerToken(String userId, String deviceToken){
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return false;
+
+        User user = findUser.get();
+        DeviceToken newToken = new DeviceToken(user, deviceToken);
+        deviceTokenRepository.save(newToken);
+        return true;
+    }
+
+    /**
+     * 토큰 전체 조회
+     */
+    public List<DeviceToken> findAllDeviceToken(String userId){
+        List<DeviceToken> findAll = new ArrayList<>();
+        // 1. 회원 정보 검색
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+        if(!findUser.isPresent()) return findAll;
+
+        // 2. 토큰 조회
+        findAll = deviceTokenRepository.findAllByUser(findUser.get());
+
+        return findAll;
+    }
+
+    /**
      * 테마 변경
      */
     @Transactional
@@ -126,6 +157,7 @@ public class UserService {
         user.delete();
         return true;
     }
+
 
 
     /**
