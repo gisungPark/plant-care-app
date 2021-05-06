@@ -55,7 +55,7 @@ public class UserService {
         userResponse.setUserId(user.getUserId());
         userResponse.setNickname(user.getNickname());
         userResponse.setProfile(user.getProfile());
-        userResponse.setThema(user.getThema());
+        userResponse.setThema(user.getTheme());
         return userResponse;
     }
 
@@ -100,7 +100,7 @@ public class UserService {
         userResponse.setUserId(user.getUserId());
         userResponse.setNickname(user.getNickname());
         userResponse.setProfile(user.getProfile());
-        userResponse.setThema(user.getThema());
+        userResponse.setThema(user.getTheme());
         return userResponse;
     }
 
