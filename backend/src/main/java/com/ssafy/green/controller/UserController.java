@@ -6,6 +6,7 @@ import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.service.RoomService;
 import com.ssafy.green.service.UserService;
+import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import com.ssafy.green.service.firebase.FirebaseInitService;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
@@ -16,6 +17,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +32,19 @@ public class UserController {
     private final UserService userService;
     private final RoomService roomService;
     private final FirebaseInitService firebaseInit;
+    private final FirebaseCloudMessageService fcmService;
+
+    @GetMapping("/msg")
+    public String sendMessage(){
+        String deviceToken = "dtCQ7_dDTuuMa7-gfezDYA:APA91bGtKeWxFXk3iHwKGb0rHMxolUjjIetUHxcVf1y5expZc9PPa1jRPE5RW0ycrdsbCaE-MPE9ONGmw1RhBPV8CfvKl2DjTKf1UFc3joYbEYXmKn_TkfeDysemFsjXOmXYMJgVmixd";
+        try {
+            fcmService.sendMessageTo(deviceToken, "메세지 잘 갔나요?? ", "갔으면 대답좀 해주세요");
+        } catch (IOException e) {
+            e.printStackTrace();
+            return "file";
+        }
+        return "success";
+    }
 
     /**
      * 회원 정보 조회
