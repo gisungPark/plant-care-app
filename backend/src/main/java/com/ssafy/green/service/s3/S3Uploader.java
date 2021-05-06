@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 @NoArgsConstructor
@@ -49,11 +50,12 @@ public class S3Uploader {
     }
 
     public String upload(MultipartFile file) throws IOException {
-        SimpleDateFormat date = new SimpleDateFormat("yyyymmddHHmmss");
+        SimpleDateFormat date = new SimpleDateFormat("yyyyMMddHHmmss");
         String originFileName = file.getOriginalFilename();
 
         String[] splits = originFileName.split("\\.");
-        String newFileName = splits[0]+date.format(new Date())+"."+splits[1];
+        String newFileName = splits[0] + UUID.randomUUID().toString().split("-")[0]
+                + date.format(new Date()) + "." + splits[1];
         System.out.println("origin: " + originFileName);
         System.out.println("new: " + newFileName);
 
