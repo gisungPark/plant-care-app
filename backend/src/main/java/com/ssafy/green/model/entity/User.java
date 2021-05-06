@@ -30,7 +30,7 @@ public class User implements UserDetails {
     @Enumerated(EnumType.STRING)
     private UserType provider;
     private String providerId;
-    private String thema;
+    private String theme;
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
@@ -42,7 +42,7 @@ public class User implements UserDetails {
         this.profile = profile;
         this.provider = provider;
         this.providerId = providerId;
-        this.thema = "DEAFULT_THEMA_IMAGE";
+        this.theme = "DEAFULT_THEMA_IMAGE";
     }
 
     /**
@@ -56,8 +56,8 @@ public class User implements UserDetails {
     /**
      * 테마 정보 수정
      */
-    public void changeThema(String thema){
-        this.thema = thema;
+    public void changeThema(String theme){
+        this.theme = theme;
     }
 
     /**
