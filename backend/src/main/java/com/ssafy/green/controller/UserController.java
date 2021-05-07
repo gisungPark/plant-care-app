@@ -8,6 +8,7 @@ import com.ssafy.green.model.dto.MessageResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.entity.DeviceToken;
+import com.ssafy.green.model.entity.User;
 import com.ssafy.green.service.RoomService;
 import com.ssafy.green.service.UserService;
 import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
@@ -375,7 +376,6 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
-
     @ApiOperation(value = "회원 정보 삭제",
             notes = "Parameter\n" +
                     "- token(RequestHeader) : Firebase token\n" +
@@ -407,5 +407,45 @@ public class UserController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
+
+    @Data
+    static class ThemeHomeNickResponse {
+        private String homeNickname;
+        private String theme;
+    }
+
+    /**
+     * 메인화면 ( 방 닉네임, 테마 보내주기)
+     */
+    @ApiOperation(value = "메인화면 조회", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n\n" +
+            "Response\n" +
+            "- nickname: 닉네임\n" +
+            "- theme: 홈 테마\n" +
+            "- error: 0[성공], 1[실패]")
+    @GetMapping("/main")
+    public ResponseEntity<ThemeHomeNickResponse> getMain(@RequestHeader("TOKEN") String idToken) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
+        ThemeHomeNickResponse thnr=new ThemeHomeNickResponse();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+            User user = userService.findUser(decodedToken.getUid());
+            thnr.setHomeNickname(user.getHomeNickname());
+            thnr.setTheme(user.getTheme());
+        }catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        }
+        return new ResponseEntity<ThemeHomeNickResponse>(thnr, HttpStatus.OK);
+    }
+
 
 }
