@@ -38,6 +38,10 @@ public class UserController {
     private final FirebaseInitService firebaseInit;
     private final FirebaseCloudMessageService fcmService;
 
+    /*방 전체 메인 테마 이미지*/
+   //private final String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
+
+
     @PostMapping("/sendMsg")
     @ApiOperation(value = "알림 전송", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
@@ -334,13 +338,20 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "테마 변경",
+    @Data
+    static class ThemaRequest {
+        private String homeNickname;
+        private String thema;
+    }
+
+    @ApiOperation(value = "홈 닉네임, 테마 변경",
             notes = "Parameter\n" +
                     "- token(RequestHeader) : Firebase token\n" +
+                    "- homeNickname : 변경할 홈 닉네임\n" +
                     "- thema: 변경할 테마\n\n" +
                     "Response\n" +
                     "- error: 0[성공], 1[실패]")
-    @PutMapping("/changeThema")
+    @PutMapping("/changeNickTheme")
     public ResponseEntity<Map<String, Object>> change(@RequestHeader("TOKEN") String idToken,
                                                       @RequestBody ThemaRequest request) {
         logger.debug("# 토큰정보 {}: " + idToken);
@@ -350,7 +361,7 @@ public class UserController {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
             resultMap.put("error", 0);
-            userService.changeThema(decodedToken.getUid(), request.getThema());
+            userService.changeThema(decodedToken.getUid(), request.getThema(), request.getHomeNickname());
         } catch (FirebaseAuthException e) {
             resultMap.put("error", 1);
             AuthErrorCode authErrorCode = e.getAuthErrorCode();
@@ -362,11 +373,6 @@ public class UserController {
         }
 
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-    }
-
-    @Data
-    static class ThemaRequest {
-        private String thema;
     }
 
 

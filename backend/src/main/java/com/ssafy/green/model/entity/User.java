@@ -35,14 +35,17 @@ public class User implements UserDetails {
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
+    private String homeNickname;
+
     @Builder
-    public User(String userId, String nickname, String profile, UserType provider, String providerId) {
+    public User(String userId, String nickname, String profile, UserType provider, String providerId, String homeNickname) {
         this.userId = userId;
         this.nickname = nickname;
         this.profile = profile;
         this.provider = provider;
         this.providerId = providerId;
         this.theme = "DEAFULT_THEMA_IMAGE";
+        this.homeNickname=homeNickname;
     }
 
     /**
@@ -56,7 +59,8 @@ public class User implements UserDetails {
     /**
      * 테마 정보 수정
      */
-    public void changeThema(String theme){
+    public void changeThema(String theme, String homeNickname){
+        this.homeNickname= homeNickname;
         this.theme = theme;
     }
 
