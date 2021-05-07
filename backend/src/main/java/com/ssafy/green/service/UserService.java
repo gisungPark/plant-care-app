@@ -203,6 +203,7 @@ public class UserService {
         if(!findUser.isPresent()) return;
         User user = findUser.get();
         user.changeThema(thema, homeNickname);
+        userRepository.save(user);
     }
 
     /**
