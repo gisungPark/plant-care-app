@@ -198,11 +198,11 @@ public class UserService {
      * 테마 변경
      */
     @Transactional
-    public void changeThema(String userId, String thema){
+    public void changeThema(String userId, String thema, String homeNickname){
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return;
         User user = findUser.get();
-        user.changeThema(thema);
+        user.changeThema(thema, homeNickname);
     }
 
     /**

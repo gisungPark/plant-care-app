@@ -59,7 +59,8 @@ public class User implements UserDetails {
     /**
      * 테마 정보 수정
      */
-    public void changeThema(String theme){
+    public void changeThema(String theme, String homeNickname){
+        this.homeNickname= homeNickname;
         this.theme = theme;
     }
 
