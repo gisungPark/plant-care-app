@@ -35,7 +35,6 @@ public class UserService {
      */
     @Transactional
     public UserResponse oauthLogin(String userId) {
-        UserResponse userResponse = new UserResponse();
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
 
         // 1. 최초 로그인 회원가입 처리
@@ -47,19 +46,16 @@ public class UserService {
                     .provider(UserType.basic)
                     .providerId("")
                     .profile(DEFALLT_IMG)
+                    .homeNickname("HOME")
                     .build();
             // 2. 회원 가입
             userRepository.save(newUser);
             findUser = userRepository.findByUserIdAndFlag(userId, true);
         }
+
         User user = findUser.get();
         // 3. callback 객체 생성
-        System.out.println("#로그인 처리!!!");
-        userResponse.setUserId(user.getUserId());
-        userResponse.setNickname(user.getNickname());
-        userResponse.setProfile(user.getProfile());
-        userResponse.setThema(user.getTheme());
-        return userResponse;
+        return new UserResponse(user);
     }
 
     /**
@@ -89,10 +85,9 @@ public class UserService {
     @Transactional
     public UserResponse updateInfo(String userId, UserRequest userRequest) {
         // 1. userId로 회원 정보 조회
-        UserResponse userResponse = new UserResponse();
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
 
-        if(!findUser.isPresent()) return userResponse;
+        if(!findUser.isPresent()) return null;
         User user = findUser.get();
 
         // 2. 회원 정보 수정
@@ -100,11 +95,7 @@ public class UserService {
         userRepository.save(user);
 
         // 3. callback 객체 생성
-        userResponse.setUserId(user.getUserId());
-        userResponse.setNickname(user.getNickname());
-        userResponse.setProfile(user.getProfile());
-        userResponse.setThema(user.getTheme());
-        return userResponse;
+        return new UserResponse(user);
     }
 
     /**

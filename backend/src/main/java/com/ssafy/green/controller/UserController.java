@@ -38,6 +38,10 @@ public class UserController {
     private final FirebaseInitService firebaseInit;
     private final FirebaseCloudMessageService fcmService;
 
+    /*방 전체 메인 테마 이미지*/
+   //private final String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
+
+
     @PostMapping("/sendMsg")
     @ApiOperation(value = "알림 전송", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
