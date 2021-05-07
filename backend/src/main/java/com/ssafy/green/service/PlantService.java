@@ -202,7 +202,7 @@ public class PlantService {
 
     // 물 준 날짜 수정
     @Transactional
-    public Long updateWater(String userId, Long id, WaterRequest waterRequest) {
+    public Long updateWater(String userId, Long id) {
         User curUser = getUser(userId);
 
         Water water = waterRepository.findById(id).get();
@@ -213,8 +213,7 @@ public class PlantService {
         if(!curUser.getId().equals(room.get().getUser().getId()))
             return 0L;
 
-        water.setWaterDate(waterRequest.getWaterDate());
-        waterRepository.save(water);
+        waterRepository.delete(water);
 
         Optional<Water> getWater = waterRepository.findTopByPlantCareOrderByWaterDateDesc(getPlantCare);
         getPlantCare.setLastDate(getWater.get().getWaterDate());
