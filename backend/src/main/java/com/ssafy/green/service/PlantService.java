@@ -200,9 +200,9 @@ public class PlantService {
         return water.getId();
     }
 
-    // 물 준 날짜 수정
+    // 물 준 날짜 삭제
     @Transactional
-    public Long updateWater(String userId, Long id) {
+    public Long deleteWater(String userId, Long id) {
         User curUser = getUser(userId);
 
         Water water = waterRepository.findById(id).get();

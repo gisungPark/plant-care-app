@@ -297,7 +297,7 @@ public class PlantController {
     public Long deleteWater(@RequestHeader("TOKEN") String token, @PathVariable Long wid) {
         try{
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            return plantService.updateWater(decodedToken.getUid(), wid);
+            return plantService.deleteWater(decodedToken.getUid(), wid);
         } catch (FirebaseAuthException e) {
 
         }
