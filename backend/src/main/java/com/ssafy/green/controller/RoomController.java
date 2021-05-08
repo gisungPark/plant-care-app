@@ -28,10 +28,10 @@ public class RoomController {
 
     private final RoomService roomService;
     private final S3Uploader s3Uploader;
-    private final String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
+    private final String DEFAULT_ROOM_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
 
     /**
-     * 방 생성
+     * 방 생성 v22222222222222
      */
     @ApiOperation(value = "방 생성 V2", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
@@ -43,7 +43,7 @@ public class RoomController {
     public ResponseEntity<Map<String, Object>> createV2(@RequestHeader("TOKEN") String token,
                                                          CreateRoomRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        String uploadImg = DEFAULT_THEMA_IMAGE;
+        String uploadImg = DEFAULT_ROOM_IMAGE;
 
         try {
             // 1. Firebase Token decoding
@@ -54,9 +54,8 @@ public class RoomController {
             if(request.getTheme() != null) {
                 uploadImg = s3Uploader.upload(request.getTheme());
                 System.out.println("파일 업로드 성공!!!!!");
-            }else{
-                System.out.println("파일 null 에러 발생!!!!!");
             }
+
             // 2. 방 생성!
             boolean result = roomService.createRoom(decodedToken.getUid(), request.getRoomName(), uploadImg);
             if (result) {
@@ -85,6 +84,66 @@ public class RoomController {
         private String roomName;
         private MultipartFile theme;
     }
+
+
+    /**
+     * 방 정보 변경
+     */
+    @ApiOperation(value = "방 정보 변경", notes = "Parameter\n" +
+            "- token(RequestHeader) : Firebase token\n" +
+            "- {id}(PathVariable): 방 번호\n" +
+            "- roomName: 생성할 방 이름\n" +
+            "- theme: 배경 이미지 파일 (MultipartFile)\n\n" +
+            "Response\n" +
+            "- error: 0[성공], 1[실패]")
+    @PostMapping("/update/{id}")
+    public ResponseEntity<Map<String, Object>> update(@RequestHeader("TOKEN") String token,
+                                                      @PathVariable Long id,
+                                                      UpdateRoomRequest request) {
+        Map<String, Object> resultMap = new HashMap<>();
+        String uploadImg = DEFAULT_ROOM_IMAGE;
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+
+            // 2. 이미지 업로드
+            if(request.getTheme() != null) {
+                uploadImg = s3Uploader.upload(request.getTheme());
+                System.out.println("파일 업로드 성공!!!!!");
+            }
+
+            // 2. 방 생성!
+            boolean result = roomService.updateRoom(decodedToken.getUid(), id, request.getRoomName(), uploadImg);
+            if (result) {
+                resultMap.put("error", 0);
+                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+            } else {
+                resultMap.put("error", 1);
+                resultMap.put("msg", "존재하지 않는 방 입니다.");
+            }
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        } catch (IOException e2){
+            resultMap.put("error", 1);
+            resultMap.put("msg", "파일 업로드 실패!!");
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
+
+    @Data
+    static class UpdateRoomRequest {
+        private String roomName;
+        private MultipartFile theme;
+    }
+
+
+
 
 
     /**

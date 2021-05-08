@@ -16,6 +16,7 @@ import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import com.ssafy.green.service.firebase.FirebaseInitService;
 import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
+import jdk.nashorn.internal.parser.Token;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -162,13 +163,16 @@ public class UserController {
      */
     @ApiOperation(value = "디바이스 토큰 등록!!", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
-            "- device_token(RequestHeader) : 디바이스 token\n\n" +
+            "- device(RequestHeader) : 디바이스 token\n\n" +
             "Response\n" +
             "- error: 0[성공], 1[실패]")
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerToken(@RequestHeader("TOKEN") String idToken,
-                                                             @RequestHeader("DEVICE_TOKEN") String deviceToken) {
+                                                             @RequestHeader("DEVICE") String deviceToken) {
 
+        System.out.println("#### 디바이스 토큰 등록 api 호출!!!!");
+        System.out.println("token : " + idToken);
+        System.out.println("device : " + deviceToken);
         Map<String, Object> resultMap = new HashMap<>();
         try {
             // 1. Firebase Token decoding

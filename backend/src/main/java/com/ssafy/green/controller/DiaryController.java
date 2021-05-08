@@ -269,10 +269,12 @@ public class DiaryController {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-            // 2. 이미지 업로드
-            for(MultipartFile m : request.getFiles()) {
-                String fileName = s3Uploader.upload(m);
-                fileNames.add(fileName);
+            if(request.getContent() != null) {
+                // 2. 이미지 업로드
+                for (MultipartFile m : request.getFiles()) {
+                    String fileName = s3Uploader.upload(m);
+                    fileNames.add(fileName);
+                }
             }
 
             // 2. 다이어리 작성
@@ -327,10 +329,12 @@ public class DiaryController {
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
 
-            // 2. 이미지 업로드
-            for(MultipartFile m : request.getFiles()) {
-                String fileName = s3Uploader.upload(m);
-                fileNames.add(fileName);
+            if(request.getFiles() != null) {
+                // 2. 이미지 업로드
+                for (MultipartFile m : request.getFiles()) {
+                    String fileName = s3Uploader.upload(m);
+                    fileNames.add(fileName);
+                }
             }
 
             // 2. 다이어리 수정
