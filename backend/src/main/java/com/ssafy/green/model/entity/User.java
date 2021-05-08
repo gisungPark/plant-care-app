@@ -48,12 +48,22 @@ public class User implements UserDetails {
     }
 
     /**
+     * 유저 정보 수정 V2222222222
+     */
+    public void updateInfoV2(String nickname, String profile) {
+        this.nickname = nickname;
+        this.profile = profile;
+    }
+
+    /**
      * 유저 정보 수정
      */
     public void updateInfo(UserRequest info) {
         this.nickname = info.getNickname();
         this.profile = info.getProfile();
     }
+
+
 
     /**
      * 테마 정보 수정
@@ -101,4 +111,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }

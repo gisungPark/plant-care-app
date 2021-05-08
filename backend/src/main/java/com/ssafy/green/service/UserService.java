@@ -1,9 +1,6 @@
 package com.ssafy.green.service;
 
-import com.ssafy.green.model.dto.MessageResponse;
-import com.ssafy.green.model.dto.RoomResponse;
-import com.ssafy.green.model.dto.UserRequest;
-import com.ssafy.green.model.dto.UserResponse;
+import com.ssafy.green.model.dto.*;
 import com.ssafy.green.model.dto.plant.MyPlantListResponse;
 import com.ssafy.green.model.entity.*;
 import com.ssafy.green.repository.DeviceTokenRepository;
@@ -83,6 +80,24 @@ public class UserService {
     }
 
     /**
+     * 회원 정보 수정 V22222
+     */
+    @Transactional
+    public UserResponse updateInfoV2(String userId, String nickname, String profile) {
+        // 1. userId로 회원 정보 조회
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+
+        if(!findUser.isPresent()) return null;
+        User user = findUser.get();
+
+        // 2. 회원 정보 수정
+        user.updateInfoV2(nickname, profile);
+
+        // 3. callback 객체 생성
+        return new UserResponse(user);
+    }
+
+    /**
      * 회원 정보 수정
      */
     @Transactional
@@ -95,7 +110,6 @@ public class UserService {
 
         // 2. 회원 정보 수정
         user.updateInfo(userRequest);
-        userRepository.save(user);
 
         // 3. callback 객체 생성
         return new UserResponse(user);
