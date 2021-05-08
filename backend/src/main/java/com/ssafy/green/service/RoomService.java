@@ -57,6 +57,21 @@ public class RoomService {
     }
 
     /**
+     * 방 정보 수정
+     */
+    public boolean updateRoom(String userId, Long roomId, String roomName, String uploadImg) {
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(userId);
+        Optional<Room> findRoom = roomRepository.findById(roomId);
+        if(!findRoom.isPresent()) return false;
+
+        Room room = findRoom.get();
+        room.update(roomName, uploadImg);
+        return true;
+    }
+
+
+    /**
      * 방 전체 조회 (flag == true)
      */
     public List<RoomResponse> findRooms(String userId) {
@@ -91,4 +106,6 @@ public class RoomService {
         }
         return false;
     }
+
+
 }
