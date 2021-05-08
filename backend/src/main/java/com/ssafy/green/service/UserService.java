@@ -28,7 +28,10 @@ public class UserService {
     private final RoomRepository roomRepository;
     private final MessageRepository messageRepository;
     private final DeviceTokenRepository deviceTokenRepository;
-    private final String DEFALLT_IMG = "http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG";
+
+    // 기본 이미지!!
+    private final String DEFAULT_PROFILE_IMG = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_PROFILE_IMG.png";
+    private final String DEFAULT_HOME_THEME = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_HOME_THEME.jpg";
 
     /**
      * 소셜 로그인
@@ -45,8 +48,9 @@ public class UserService {
                     .nickname("")
                     .provider(UserType.basic)
                     .providerId("")
-                    .profile(DEFALLT_IMG)
+                    .profile(DEFAULT_PROFILE_IMG)
                     .homeNickname("HOME")
+                    .theme(DEFAULT_HOME_THEME)
                     .build();
             // 2. 회원 가입
             userRepository.save(newUser);
@@ -167,7 +171,7 @@ public class UserService {
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return false;
         User user = findUser.get();
-        Optional<Message> findMsg = messageRepository.findByUserAndTitleAndContentOrderByIdDesc(user, title, content);
+        Optional<Message> findMsg = messageRepository.findByUserAndTitleAndContentAndFlagOrderByIdDesc(user, title, content, true);
         if(!findMsg.isPresent()) return false;
         
         // 2. 알림 확인

@@ -12,11 +12,13 @@ import java.util.List;
 public class RoomResponse {
     private Long rid;
     private String roomName;
+    private String theme;
     private List<MyPlantListResponse> plantList;
 
     public RoomResponse(Room room){
         this.rid = room.getId();
         this.roomName = room.getRoomName();
+        this.theme = room.getTheme();
         this.plantList = this.getPlantList(room);
     }
 
