@@ -59,6 +59,7 @@ public class RoomService {
     /**
      * 방 정보 수정
      */
+    @Transactional
     public boolean updateRoom(String userId, Long roomId, String roomName, String uploadImg) {
         // 1. 회원 정보 찾기
         User findUser = userService.findUser(userId);
