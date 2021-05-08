@@ -9,6 +9,7 @@ import com.ssafy.green.model.entity.plant.PlantInfo;
 import com.ssafy.green.model.entity.plant.Water;
 import com.ssafy.green.repository.*;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -225,6 +226,7 @@ public class PlantService {
         return id;
     }
 
+    @Transactional
     public List<NoticeResponse> todayWater() {
         List<PlantCare> plantCareList = plantCareRepository.findAll();
         List<NoticeResponse> todayList = new ArrayList<>();
@@ -256,6 +258,7 @@ public class PlantService {
 
     private void addTodayWater(List<NoticeResponse> todayList, PlantCare plantCare) {
         Optional<Room> room = roomRepository.findById(plantCare.getRoom().getId());
+        Hibernate.initialize(room.get().getUser().getUserId());
         String userId = room.get().getUser().getUserId();
         String device = deviceTokenRepository.findByUser(room.get().getUser()).get().getToken();
         todayList.add(new NoticeResponse(userId, device, plantCare.getNickname()));
