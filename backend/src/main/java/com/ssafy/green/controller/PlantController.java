@@ -315,7 +315,7 @@ public class PlantController {
 
     // 물 주기 알람
     // @GetMapping("/water")
-    @Scheduled(cron = "0 0 12 * * ?") // 매일 12시 마다
+    @Scheduled(cron = "00 00 12,18 * * ?") // 매일 12,18시 마다 알람가도록
     public void waterNotice() throws IOException {
         List<NoticeResponse> todayWater = plantService.todayWater();
         for(NoticeResponse NR : todayWater){
