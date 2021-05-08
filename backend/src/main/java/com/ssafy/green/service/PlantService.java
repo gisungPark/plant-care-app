@@ -1,5 +1,6 @@
 package com.ssafy.green.service;
 
+import com.ssafy.green.model.dto.NoticeResponse;
 import com.ssafy.green.model.dto.plant.*;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.User;
@@ -12,9 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +30,8 @@ public class PlantService {
     private final PlantInfoRepository plantInfoRepository;
     @Autowired
     private final WaterRepository waterRepository;
+    @Autowired
+    private final DeviceTokenRepository deviceTokenRepository;
     
     // 모든 식물 조회
     public List<PlantListResponse> findAll(String userId) {
@@ -220,6 +223,42 @@ public class PlantService {
         plantCareRepository.save(getPlantCare);
 
         return id;
+    }
+
+    public List<NoticeResponse> todayWater() {
+        List<PlantCare> plantCareList = plantCareRepository.findAll();
+        List<NoticeResponse> todayList = new ArrayList<>();
+        LocalDate today = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00");
+
+        for(PlantCare plantCare : plantCareList){
+            LocalDate last = LocalDate.parse(plantCare.getLastDate(), formatter);
+            if(plantCare.getWater().equals("주 2회")){
+                if(today.equals(last.plusDays(4))) {
+                    addTodayWater(todayList, plantCare);
+                }
+            }else if(plantCare.getWater().equals("주 1회")){
+                if(today.equals(last.plusWeeks(1))) {
+                    addTodayWater(todayList, plantCare);
+                }
+            }else if(plantCare.getWater().equals("2주 1회")){
+                if(today.equals(last.plusWeeks(2))) {
+                    addTodayWater(todayList, plantCare);
+                }
+            }else if(plantCare.getWater().equals("한 달 1회")){
+                if(today.equals(last.plusMonths(1))) {
+                    addTodayWater(todayList, plantCare);
+                }
+            }
+        }
+        return todayList;
+    }
+
+    private void addTodayWater(List<NoticeResponse> todayList, PlantCare plantCare) {
+        Optional<Room> room = roomRepository.findById(plantCare.getRoom().getId());
+        String userId = room.get().getUser().getUserId();
+        String device = deviceTokenRepository.findByUser(room.get().getUser()).get().getToken();
+        todayList.add(new NoticeResponse(userId, device, plantCare.getNickname()));
     }
 
     // 각 함수마다 사용자 존재 확인
