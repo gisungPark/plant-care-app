@@ -6,6 +6,7 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.ssafy.green.model.dto.MessageResponse;
 import com.ssafy.green.model.dto.UserRequest;
+import com.ssafy.green.model.dto.UserRequestV2;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.entity.DeviceToken;
 import com.ssafy.green.model.entity.User;
@@ -13,6 +14,7 @@ import com.ssafy.green.service.RoomService;
 import com.ssafy.green.service.UserService;
 import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import com.ssafy.green.service.firebase.FirebaseInitService;
+import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,13 +38,12 @@ import java.util.Map;
 public class UserController {
 
     public final Logger logger = LoggerFactory.getLogger(UserController.class);
+    private final S3Uploader s3Uploader;
     private final UserService userService;
     private final RoomService roomService;
     private final FirebaseInitService firebaseInit;
     private final FirebaseCloudMessageService fcmService;
-
-    /*방 전체 메인 테마 이미지*/
-   //private final String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
+    private final String DEFAULT_PROFILE_IMG = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_PROFILE_IMG.png";
 
 
     @PostMapping("/sendMsg")
@@ -363,6 +365,61 @@ public class UserController {
             }
             return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
         }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+    }
+
+
+    /**
+     * 회원 정보 수정 v22222222
+     */
+    @ApiOperation(value = "회원 정보 수정 v2",
+            notes = "Parameter\n" +
+                    "- token(RequestHeader) : Firebase token\n" +
+                    "- nickname: 변경할 닉네임\n" +
+                    "- profile: 변경할 프로필 이미지\n\n" +
+                    "Response\n" +
+                    "- userId: 유저 아이디\n" +
+                    "- nickname: 변경된 닉네임\n" +
+                    "- profile: 변경된 프로필 이미지\n" +
+                    "- error: 0[성공], 1[실패]")
+    @PutMapping("/updateInfo/v2")
+    public ResponseEntity<Map<String, Object>> updateInfoV2(@RequestHeader("TOKEN") String idToken,
+                                                          UserRequestV2 request) {
+        logger.debug("# 토큰정보 {}: " + idToken);
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
+
+
+            String fileName = DEFAULT_PROFILE_IMG;
+            if(request.getProfile() != null){
+                // 2. 이미지 업로드
+                try {
+                    fileName = s3Uploader.upload(request.getProfile());
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    resultMap.put("error", 1);
+                    resultMap.put("msg", "파일 업로드 실패!!");
+                    return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+                }
+            }
+
+            // 2. 회원 정보 수정
+            UserResponse userResponse = userService.updateInfoV2(decodedToken.getUid(), request.getNickname(), fileName);
+            resultMap.put("response", userResponse);
+            resultMap.put("error", 0);
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+        }
+
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 

@@ -11,5 +11,5 @@ public interface MessageRepository extends JpaRepository<Message, Long> {
 
     Optional<Message> findByUserAndTitleAndContentOrderByIdDesc(User user,String title, String content);
 
-    List<Message> findAllByUser(User user);
+    List<Message> findAllByUserAndFlagOrderByIdDesc(User user, boolean flag);
 }

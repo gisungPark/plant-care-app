@@ -1,11 +1,7 @@
 package com.ssafy.green.service;
 
-import com.ssafy.green.model.dto.MessageResponse;
-import com.ssafy.green.model.dto.RoomResponse;
-import com.ssafy.green.model.dto.UserRequest;
-import com.ssafy.green.model.dto.UserResponse;
+import com.ssafy.green.model.dto.*;
 import com.ssafy.green.model.dto.plant.MyPlantListResponse;
-import com.ssafy.green.model.dto.plant.MyPlantResponse;
 import com.ssafy.green.model.entity.*;
 import com.ssafy.green.repository.DeviceTokenRepository;
 import com.ssafy.green.repository.MessageRepository;
@@ -28,7 +24,10 @@ public class UserService {
     private final RoomRepository roomRepository;
     private final MessageRepository messageRepository;
     private final DeviceTokenRepository deviceTokenRepository;
-    private final String DEFALLT_IMG = "http://t1.daumcdn.net/liveboard/nylon/f14d6b83fcae464985e8c3090237cf2d.JPG";
+
+    // 기본 이미지!!
+    private final String DEFAULT_PROFILE_IMG = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_PROFILE_IMG.png";
+    private final String DEFAULT_HOME_THEME = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_HOME_THEME.jpg";
 
     /**
      * 소셜 로그인
@@ -45,8 +44,9 @@ public class UserService {
                     .nickname("")
                     .provider(UserType.basic)
                     .providerId("")
-                    .profile(DEFALLT_IMG)
+                    .profile(DEFAULT_PROFILE_IMG)
                     .homeNickname("HOME")
+                    .theme(DEFAULT_HOME_THEME)
                     .build();
             // 2. 회원 가입
             userRepository.save(newUser);
@@ -80,6 +80,24 @@ public class UserService {
     }
 
     /**
+     * 회원 정보 수정 V22222
+     */
+    @Transactional
+    public UserResponse updateInfoV2(String userId, String nickname, String profile) {
+        // 1. userId로 회원 정보 조회
+        Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
+
+        if(!findUser.isPresent()) return null;
+        User user = findUser.get();
+
+        // 2. 회원 정보 수정
+        user.updateInfoV2(nickname, profile);
+
+        // 3. callback 객체 생성
+        return new UserResponse(user);
+    }
+
+    /**
      * 회원 정보 수정
      */
     @Transactional
@@ -92,7 +110,6 @@ public class UserService {
 
         // 2. 회원 정보 수정
         user.updateInfo(userRequest);
-        userRepository.save(user);
 
         // 3. callback 객체 생성
         return new UserResponse(user);
@@ -187,7 +204,7 @@ public class UserService {
         User user = findUser.get();
 
         // 2. 알림 전체 조회
-        List<Message> messages = messageRepository.findAllByUser(user);
+        List<Message> messages = messageRepository.findAllByUserAndFlagOrderByIdDesc(user, true);
         for(Message m: messages){
             findAll.add(MessageResponse.create(m));
         }
