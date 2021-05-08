@@ -286,21 +286,18 @@ public class PlantController {
         return 0L;
     }
 
-    // 물 준 날짜 수정
-    @ApiOperation(value = "물 준 날짜 수정", notes =
+    // 물 준 날짜 취소(삭제)
+    @ApiOperation(value = "물 준 날짜 취소", notes =
             "Path\n" +
             "- wid : 물 준 고유 번호\n\n" +
-            "Request\n" +
-            "- pid : 나의 식물 고유 번호\n" +
-            "- waterDate : 물 준 날짜\n\n" +
             "Response\n" +
-            "- 1 이상 : 물 준 날짜 수정 성공한 물 준 고유 번호(wid) \n" +
-            "- 0 : 물 준 날짜 수정 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
-    @PutMapping("/care/water/{wid}")
-    public Long updateWater(@RequestHeader("TOKEN") String token, @PathVariable Long wid, @RequestBody WaterRequest waterRequest) {
+            "- 1 이상 : 물 준 날짜 취소 성공한 물 준 고유 번호(wid) \n" +
+            "- 0 : 물 준 날짜 취소 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
+    @DeleteMapping("/care/water/{wid}")
+    public Long deleteWater(@RequestHeader("TOKEN") String token, @PathVariable Long wid) {
         try{
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            return plantService.updateWater(decodedToken.getUid(), wid, waterRequest);
+            return plantService.deleteWater(decodedToken.getUid(), wid);
         } catch (FirebaseAuthException e) {
 
         }

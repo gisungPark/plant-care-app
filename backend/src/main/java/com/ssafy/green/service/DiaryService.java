@@ -2,6 +2,7 @@ package com.ssafy.green.service;
 
 import com.ssafy.green.model.dto.DiaryRequest;
 import com.ssafy.green.model.dto.DiaryRequestV2;
+import com.ssafy.green.model.dto.DiaryRequestV3;
 import com.ssafy.green.model.dto.DiaryResponse;
 import com.ssafy.green.model.entity.Diary;
 import com.ssafy.green.model.entity.DiaryImage;
@@ -120,6 +121,42 @@ public class DiaryService {
 
         return true;
     }
+
+    /**
+     * 다이어리 작성 v3333333333
+     */
+    @Transactional
+    public boolean writeDiaryV3(String userId, DiaryRequestV3 request, List<String> fileNames) {
+
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(userId);
+        Optional<PlantCare> findPlant = plantCareRepository.findById(request.getPlantId());
+
+        if (!findPlant.isPresent()) {
+            throw new IllegalStateException("존재하지 않는 식물입니다.");
+        }
+        // 2. 다이어리 객체 생성
+        Diary newDiary = Diary.builder()
+                .user(findUser)
+                .plantCare(findPlant.get())
+                .title(request.getTitle())
+                .content(request.getContent())
+                .build();
+
+        newDiary.setWriteDateTime(request.getWriteDateTime());
+
+        for (String s : fileNames) {
+            // 4. 다이어리 이미지 저장!
+            DiaryImage diaryImage = new DiaryImage(newDiary, s);
+            newDiary.addImg(diaryImage);
+        }
+
+        // 5. 다이어리 저장!
+        diaryRepository.save(newDiary);
+
+        return true;
+    }
+
 
     /**
      * 다이어리 수정! v2

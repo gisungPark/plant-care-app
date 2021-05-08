@@ -2,7 +2,7 @@ import io
 from flask_ngrok import run_with_ngrok
 from flask import Flask, jsonify, request
 
- # 이미지를 읽어 결과를 반환하는 함수
+ # 이미지를 읽어 결과를 반환하는 함수11111
 def get_prediction(image_bytes):
     image = Image.open(io.BytesIO(image_bytes))
     image = transforms_test(image).unsqueeze(0).to(device)

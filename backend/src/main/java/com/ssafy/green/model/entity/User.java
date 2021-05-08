@@ -31,18 +31,28 @@ public class User implements UserDetails {
     private UserType provider;
     private String providerId;
     private String theme;
+    private String homeNickname;
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
     @Builder
-    public User(String userId, String nickname, String profile, UserType provider, String providerId) {
+    public User(String userId, String nickname, String profile, UserType provider, String providerId, String homeNickname, String theme) {
         this.userId = userId;
         this.nickname = nickname;
         this.profile = profile;
         this.provider = provider;
         this.providerId = providerId;
-        this.theme = "DEAFULT_THEMA_IMAGE";
+        this.homeNickname=homeNickname;
+        this.theme = theme;
+    }
+
+    /**
+     * 유저 정보 수정 V2222222222
+     */
+    public void updateInfoV2(String nickname, String profile) {
+        this.nickname = nickname;
+        this.profile = profile;
     }
 
     /**
@@ -53,11 +63,14 @@ public class User implements UserDetails {
         this.profile = info.getProfile();
     }
 
+
+
     /**
      * 테마 정보 수정
      */
-    public void changeThema(String theme){
+    public void changeThema(String theme, String homeNickname){
         this.theme = theme;
+        this.homeNickname= homeNickname;
     }
 
     /**
@@ -98,4 +111,6 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
+
+
 }
