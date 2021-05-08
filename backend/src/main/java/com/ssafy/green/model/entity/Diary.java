@@ -6,7 +6,9 @@ import com.ssafy.green.model.entity.plant.PlantCare;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,6 +54,19 @@ public class Diary {
         this.writeDateTime = LocalDateTime.now();
     }
 
+
+    public void setWriteDateTime(String date){
+        String[] splits = date.split("-");
+        int year = Integer.parseInt(splits[0]);
+        int month = Integer.parseInt(splits[1]);
+        int day = Integer.parseInt(splits[2]);
+
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime writeDateTime = LocalDateTime.of(LocalDate.of(year, month, day),
+                            LocalTime.of(now.getHour(), now.getMinute(), now.getSecond()));
+        this.writeDateTime = writeDateTime;
+    }
+
     /**
      * 이미지 정보 추가
      */
@@ -69,7 +84,6 @@ public class Diary {
         }
         this.diaryTitle = diaryRequest.getTitle();
         this.diaryContent = diaryRequest.getContent();
-        this.writeDateTime = LocalDateTime.now();
 
         for(String img: diaryRequest.getImgUrls()){
             DiaryImage diaryImage = new DiaryImage(this, img);
@@ -86,7 +100,6 @@ public class Diary {
         }
         this.diaryTitle = request.getTitle();
         this.diaryContent = request.getContent();
-        this.writeDateTime = LocalDateTime.now();
 
         for(String img: fileNames){
             DiaryImage diaryImage = new DiaryImage(this, img);
@@ -100,6 +113,7 @@ public class Diary {
      */
     public void delete() {
         this.flag = false;
+        this.diaryImages.clear();
     }
 
 

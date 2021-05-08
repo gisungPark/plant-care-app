@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface MessageRepository extends JpaRepository<Message, Long> {
 
-    Optional<Message> findByUserAndTitleAndContentAndFlagOrderByIdDesc(User user,String title, String content, boolean flag);
+    Optional<Message> findByUserAndTitleAndContentOrderByIdDesc(User user,String title, String content);
 
-    List<Message> findAllByUser(User user);
+    List<Message> findAllByUserAndFlagOrderByIdDesc(User user, boolean flag);
 }

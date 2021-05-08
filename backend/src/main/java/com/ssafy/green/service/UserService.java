@@ -5,7 +5,6 @@ import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.model.dto.UserRequest;
 import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.dto.plant.MyPlantListResponse;
-import com.ssafy.green.model.dto.plant.MyPlantResponse;
 import com.ssafy.green.model.entity.*;
 import com.ssafy.green.repository.DeviceTokenRepository;
 import com.ssafy.green.repository.MessageRepository;
@@ -171,7 +170,7 @@ public class UserService {
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return false;
         User user = findUser.get();
-        Optional<Message> findMsg = messageRepository.findByUserAndTitleAndContentAndFlagOrderByIdDesc(user, title, content, true);
+        Optional<Message> findMsg = messageRepository.findByUserAndTitleAndContentOrderByIdDesc(user, title, content);
         if(!findMsg.isPresent()) return false;
         
         // 2. 알림 확인
@@ -191,7 +190,7 @@ public class UserService {
         User user = findUser.get();
 
         // 2. 알림 전체 조회
-        List<Message> messages = messageRepository.findAllByUser(user);
+        List<Message> messages = messageRepository.findAllByUserAndFlagOrderByIdDesc(user, true);
         for(Message m: messages){
             findAll.add(MessageResponse.create(m));
         }
