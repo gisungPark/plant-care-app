@@ -39,7 +39,14 @@ public class Room {
         this.theme = theme;
     }
 
+    public void update(String roomName, String uploadImg) {
+        this.roomName = roomName;
+        this.theme = uploadImg;
+    }
+
     public void delete() {
         this.flag = false;
     }
+
+
 }
