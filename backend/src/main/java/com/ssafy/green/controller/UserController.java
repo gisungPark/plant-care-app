@@ -16,7 +16,6 @@ import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import com.ssafy.green.service.firebase.FirebaseInitService;
 import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
-import jdk.nashorn.internal.parser.Token;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
