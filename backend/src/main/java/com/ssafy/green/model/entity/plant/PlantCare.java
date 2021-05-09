@@ -47,7 +47,7 @@ public class PlantCare {
         this.nickname = nickname;
         this.name = name;
         this.startedDate = startedDate;
-        this.lastDate = startedDate;
+        this.lastDate = null;
         this.water = water;
         this.image = image;
         this.dead = true;
