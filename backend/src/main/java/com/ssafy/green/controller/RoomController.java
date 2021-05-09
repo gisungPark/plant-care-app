@@ -220,6 +220,35 @@ public class RoomController {
     }
 
     /**
+     * 해당 방 상세 조회
+     */
+    @ApiOperation(value = "해당 방 상세 조회", notes = "사용자 로그인 토큰 필요\n" +
+            "Response\n" +
+            "- error: 0[성공], 1[실패]")
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Map<String, Object>> findRoom(@RequestHeader("TOKEN") String token, @PathVariable Long id) {
+        Map<String, Object> resultMap = new HashMap<>();
+
+        try {
+            // 1. Firebase Token decoding
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+            // 2. 방 생성!
+            RoomResponse findRoom = roomService.findRoom(decodedToken.getUid(), id);
+            resultMap.put("response", findRoom);
+            resultMap.put("error", 0);
+            return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
+        } catch (FirebaseAuthException e) {
+            resultMap.put("error", 1);
+            AuthErrorCode authErrorCode = e.getAuthErrorCode();
+            // 3. Token 만료 체크
+            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
+                resultMap.put("msg", "EXPIRED_ID_TOKEN");
+            }
+        }
+        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
+    }
+
+    /**
      * 방 삭제
      */
     @ApiOperation(value = "방 삭제", notes = "Parameter\n" +
