@@ -10,12 +10,14 @@ public class MyPlantListResponse {
     private String name;
     private String lastDate;
     private String image;
+    private boolean dead;
 
     public MyPlantListResponse(PlantCare entity) {
         this.pid = entity.getId();
         this.name = entity.getName();
         this.nickname = entity.getNickname();
         this.lastDate = entity.getLastDate();
-        this.image =entity.getImage();
+        this.image = entity.getImage();
+        this.dead = entity.isDead();
     }
 }
