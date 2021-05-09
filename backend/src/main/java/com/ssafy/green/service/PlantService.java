@@ -228,7 +228,7 @@ public class PlantService {
 
     @Transactional
     public List<NoticeResponse> todayWater() {
-        List<PlantCare> plantCareList = plantCareRepository.findAll();
+        List<PlantCare> plantCareList = plantCareRepository.findAllByDeadAndFlag(true, true);
         List<NoticeResponse> todayList = new ArrayList<>();
         LocalDate today = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00");
@@ -267,7 +267,7 @@ public class PlantService {
     // 각 함수마다 사용자 존재 확인
     private User getUser(String userId) throws IllegalArgumentException {
         return userRepository.findByUserIdAndFlag(userId, true).orElseThrow(() ->
-                new IllegalArgumentException("해당 사용자가 없습니다.[ID=" + userId + "]"));
+                new IllegalArgumentException("해당 사용자가 없습니다.[id=" + userId + "]"));
     }
 
     // 각 함수마다 식물 존재 확인
