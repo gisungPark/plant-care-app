@@ -34,7 +34,7 @@ public class MbtiService {
     }
 
     public MbtiResultResponse findMyType(String typeStr){
-        System.out.println(typeStr);
+        //System.out.println(typeStr);
         int countE=0, countI=0, countS=0, countN=0, countF=0, countT=0, countJ=0, countP=0;
 
         for(int i=0; i<typeStr.length(); i++){
@@ -61,7 +61,7 @@ public class MbtiService {
         if(countJ>countP) result+="J";
         else result+="P";
 
-        System.out.println(result);
+        //System.out.println(result);
 
         Optional<MbtiResult> mbtiR = mbtiResultRepository.findByType(result);
 
