@@ -1,6 +1,9 @@
 package com.ssafy.green.service;
 
-import com.ssafy.green.model.dto.*;
+import com.ssafy.green.model.dto.MessageResponse;
+import com.ssafy.green.model.dto.RoomResponse;
+import com.ssafy.green.model.dto.UserRequest;
+import com.ssafy.green.model.dto.UserResponse;
 import com.ssafy.green.model.dto.plant.MyPlantListResponse;
 import com.ssafy.green.model.entity.*;
 import com.ssafy.green.repository.DeviceTokenRepository;
@@ -123,6 +126,16 @@ public class UserService {
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return false;
 
+        // 2. 토큰 조회
+        List<DeviceToken> findAll = new ArrayList<>();
+        findAll = deviceTokenRepository.findAllByUser(findUser.get());
+
+        // 3. 토큰 중복 체크
+        for(DeviceToken d : findAll){
+            if(d.getToken().equals(deviceToken)) return false;
+        }
+
+        // 4. 토큰 저장
         User user = findUser.get();
         DeviceToken newToken = new DeviceToken(user, deviceToken);
         deviceTokenRepository.save(newToken);
@@ -155,11 +168,13 @@ public class UserService {
         if(!findUser.isPresent()) return false;
 
         // 2. 토큰 조회!!
-        Optional<DeviceToken> findToken = deviceTokenRepository.findByUserAndToken(findUser.get(), deviceToken);
-        if(!findToken.isPresent()) return false;
+        List<DeviceToken> findAllToken
+                = deviceTokenRepository.findAllByUserAndToken(findUser.get(), deviceToken);
 
-        // 3. 토크 삭제
-        deviceTokenRepository.delete(findToken.get());
+        // 3. 토큰 삭제
+        for(DeviceToken d : findAllToken){
+            deviceTokenRepository.delete(d);
+        }
         return true;
     }
 

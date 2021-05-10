@@ -269,7 +269,7 @@ public class DiaryController {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-            if(request.getContent() != null) {
+            if(request.getFiles()[0].getSize() != 0) {
                 // 2. 이미지 업로드
                 for (MultipartFile m : request.getFiles()) {
                     String fileName = s3Uploader.upload(m);
@@ -328,8 +328,7 @@ public class DiaryController {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-
-            if(request.getFiles() != null) {
+            if(request.getFiles()[0].getSize() != 0) {
                 // 2. 이미지 업로드
                 for (MultipartFile m : request.getFiles()) {
                     String fileName = s3Uploader.upload(m);
@@ -363,9 +362,6 @@ public class DiaryController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
-
-
-
 
     /**
      * 다이어리 수정!
@@ -453,6 +449,4 @@ public class DiaryController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
-
-
 }
