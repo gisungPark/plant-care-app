@@ -6,16 +6,13 @@ import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
 import com.ssafy.green.model.dto.RoomResponse;
 import com.ssafy.green.service.RoomService;
-import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,8 +24,6 @@ import java.util.Map;
 public class RoomController {
 
     private final RoomService roomService;
-    private final S3Uploader s3Uploader;
-    private final String DEFAULT_ROOM_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
 
     /**
      * 방 생성 v22222222222222
@@ -43,21 +38,13 @@ public class RoomController {
     public ResponseEntity<Map<String, Object>> createV2(@RequestHeader("TOKEN") String token,
                                                          CreateRoomRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        String uploadImg = DEFAULT_ROOM_IMAGE;
 
         try {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-            System.out.println("#####################################");
-            // 2. 이미지 업로드
-            if(request.getTheme() != null) {
-                uploadImg = s3Uploader.upload(request.getTheme());
-                System.out.println("파일 업로드 성공!!!!!");
-            }
-
             // 2. 방 생성!
-            boolean result = roomService.createRoom(decodedToken.getUid(), request.getRoomName(), uploadImg);
+            boolean result = roomService.createRoom(decodedToken.getUid(), request.getRoomName(), request.getTheme());
             if (result) {
                 resultMap.put("error", 0);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
@@ -72,9 +59,6 @@ public class RoomController {
             if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
                 resultMap.put("msg", "EXPIRED_ID_TOKEN");
             }
-        } catch (IOException e2){
-            resultMap.put("error", 1);
-            resultMap.put("msg", "파일 업로드 실패!!");
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
@@ -82,7 +66,7 @@ public class RoomController {
     @Data
     static class CreateRoomRequest {
         private String roomName;
-        private MultipartFile theme;
+        private String theme;
     }
 
 
@@ -101,20 +85,13 @@ public class RoomController {
                                                       @PathVariable Long id,
                                                       UpdateRoomRequest request) {
         Map<String, Object> resultMap = new HashMap<>();
-        String uploadImg = DEFAULT_ROOM_IMAGE;
 
         try {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
 
-            // 2. 이미지 업로드
-            if(request.getTheme() != null) {
-                uploadImg = s3Uploader.upload(request.getTheme());
-                System.out.println("파일 업로드 성공!!!!!");
-            }
-
             // 2. 방 생성!
-            boolean result = roomService.updateRoom(decodedToken.getUid(), id, request.getRoomName(), uploadImg);
+            boolean result = roomService.updateRoom(decodedToken.getUid(), id, request.getRoomName(), request.getTheme());
             if (result) {
                 resultMap.put("error", 0);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
@@ -129,61 +106,16 @@ public class RoomController {
             if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
                 resultMap.put("msg", "EXPIRED_ID_TOKEN");
             }
-        } catch (IOException e2){
-            resultMap.put("error", 1);
-            resultMap.put("msg", "파일 업로드 실패!!");
         }
+
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
     @Data
     static class UpdateRoomRequest {
         private String roomName;
-        private MultipartFile theme;
+        private String theme;
     }
-
-
-
-
-
-    /**
-     * 방 생성
-     */
-    @ApiOperation(value = "방 생성", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- roomName: 생성할 방 이름\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
-    @PostMapping("/create")
-    public ResponseEntity<Map<String, Object>> create(@RequestHeader("TOKEN") String token,
-                                                      @RequestBody CreateRoomRequest request) {
-        Map<String, Object> resultMap = new HashMap<>();
-        String DEFAULT_THEMA_IMAGE = "https://ssafybucket.s3.ap-northeast-2.amazonaws.com/DEFAULT_THEMA_IMAGE.jpg";
-
-        try {
-            // 1. Firebase Token decoding
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            // 2. 방 생성!
-            boolean result = roomService.createRoom(decodedToken.getUid(), request.getRoomName(), DEFAULT_THEMA_IMAGE);
-            if (result) {
-                resultMap.put("error", 0);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            } else {
-                resultMap.put("error", 1);
-                resultMap.put("msg", "이미 존재하는 방 입니다.");
-            }
-        } catch (FirebaseAuthException e) {
-            resultMap.put("error", 1);
-            AuthErrorCode authErrorCode = e.getAuthErrorCode();
-            // 3. Token 만료 체크
-            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
-                resultMap.put("msg", "EXPIRED_ID_TOKEN");
-            }
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-    }
-
-
 
     /**
      * 방 조회
