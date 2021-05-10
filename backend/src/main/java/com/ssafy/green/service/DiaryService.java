@@ -71,7 +71,7 @@ public class DiaryService {
         System.out.println(end);
 
         List<Diary> findDiarys
-                = diaryRepository.findAllByUserAndFlagAndWriteDateTimeBetweenOrderByIdDesc(findUser, true, start, end);
+                = diaryRepository.findAllByUserAndFlagAndWriteDateTimeBetweenOrderByWriteDateTimeDesc(findUser, true, start, end);
         List<DiaryResponse> diaryRes = new ArrayList<>();
 
         for (Diary d : findDiarys) {

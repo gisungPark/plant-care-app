@@ -14,7 +14,7 @@ import java.util.List;
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     @Query(value = "SELECT d FROM Diary d " +
-                        "WHERE d.user.id = :id and d.flag = true ORDER BY d.id DESC")
+                        "WHERE d.user.id = :id and d.flag = true ORDER BY d.writeDateTime DESC")
     List<Diary> findAllDiary(@Param("id") Long id);
 
     Diary findByIdAndFlag(Long id, boolean flag);
@@ -24,6 +24,5 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 //            "  d.flag = true ORDER BY d.id DESC")
 //    List<Diary> findByDate(String id, String date);
 
-
-    List<Diary> findAllByUserAndFlagAndWriteDateTimeBetweenOrderByIdDesc(User user, boolean flag, LocalDateTime start, LocalDateTime end);
+    List<Diary> findAllByUserAndFlagAndWriteDateTimeBetweenOrderByWriteDateTimeDesc(User user, boolean flag, LocalDateTime start, LocalDateTime end);
 }

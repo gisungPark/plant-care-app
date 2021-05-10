@@ -20,11 +20,9 @@ import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -196,73 +194,6 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
-    @ApiOperation(value = "디바이스 토큰 등록 테스트1")
-    @PostMapping("/register/test1")
-    public ResponseEntity<Map<String, Object>> registerTokenTest1(@RequestHeader Map<String, Object> requestHeader) {
-        String idToken = requestHeader.get("token").toString();
-        String deviceToken = requestHeader.get("device_token").toString();
-
-        Map<String, Object> resultMap = new HashMap<>();
-
-        try {
-            // 1. Firebase Token decoding
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            // 2. 토큰 등록
-            boolean result = userService.registerToken(decodedToken.getUid(), deviceToken);
-            if(result){
-                resultMap.put("error", 0);
-                resultMap.put("msg", "토큰 등록 성공!!");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            }
-            resultMap.put("error", 1);
-            resultMap.put("msg", "토큰 등록 실패!!");
-        } catch (FirebaseAuthException e) {
-            resultMap.put("error", 1);
-            AuthErrorCode authErrorCode = e.getAuthErrorCode();
-            // 3. Token 만료 체크
-            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
-                resultMap.put("msg", "EXPIRED_ID_TOKEN");
-            }
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-    }
-
-    @ApiOperation(value = "디바이스 토큰 등록 테스트2")
-    @PostMapping("/register/test2")
-    public ResponseEntity<Map<String, Object>> registerTokenTest2(@RequestHeader HttpHeaders headers) {
-        String idToken = headers.get("TOKEN").toString();
-        String deviceToken = headers.get("DEVICE_TOKEN").toString();
-
-        idToken = idToken.replace("[","");
-        idToken = idToken.replace("]","");
-        deviceToken = deviceToken.replace("[","");
-        deviceToken = deviceToken.replace("]","");
-
-        Map<String, Object> resultMap = new HashMap<>();
-
-        try {
-            // 1. Firebase Token decoding
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
-            // 2. 토큰 등록
-            boolean result = userService.registerToken(decodedToken.getUid(), deviceToken);
-            if(result){
-                resultMap.put("error", 0);
-                resultMap.put("msg", "토큰 등록 성공!!");
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            }
-            resultMap.put("error", 1);
-            resultMap.put("msg", "토큰 등록 실패!!");
-        } catch (FirebaseAuthException e) {
-            resultMap.put("error", 1);
-            AuthErrorCode authErrorCode = e.getAuthErrorCode();
-            // 3. Token 만료 체크
-            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
-                resultMap.put("msg", "EXPIRED_ID_TOKEN");
-            }
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-    }
-
     /**
      * 디바이스 토큰 삭제
      */
@@ -273,7 +204,7 @@ public class UserController {
             "- error: 0[성공], 1[실패]")
     @DeleteMapping("/logout")
     public ResponseEntity<Map<String, Object>> logout(@RequestHeader("TOKEN") String idToken,
-                                                             @RequestHeader("DEVICE_TOKEN") String deviceToken) {
+                                                             @RequestHeader("DEVICE") String deviceToken) {
         Map<String, Object> resultMap = new HashMap<>();
         try {
             // 1. Firebase Token decoding
