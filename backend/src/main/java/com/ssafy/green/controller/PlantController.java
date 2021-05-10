@@ -3,17 +3,24 @@ package com.ssafy.green.controller;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
+import com.ssafy.green.model.dto.NoticeResponse;
 import com.ssafy.green.model.dto.plant.*;
+import com.ssafy.green.model.entity.plant.PlantCare;
 import com.ssafy.green.service.PlantService;
+import com.ssafy.green.service.UserService;
+import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import com.ssafy.green.service.s3.S3Uploader;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.schema.Entry;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @AllArgsConstructor
@@ -24,6 +31,8 @@ public class PlantController {
     @Autowired
     private PlantService plantService;
     private final S3Uploader s3Uploader;
+    private final UserService userService;
+    private final FirebaseCloudMessageService fcmService;
     private final String DEFAULT_PlANT_IMAGE = "https://i.pinimg.com/564x/3e/93/03/3e9303d2646cb2d84fbb763f7eedb409.jpg";
 
     // 식물 이름 조회
@@ -302,5 +311,17 @@ public class PlantController {
 
         }
         return 0L;
+    }
+
+    // 물 주기 알람
+    // @GetMapping("/water")
+    @Scheduled(cron = "00 00 12,18 * * ?") // 매일 12,18시 마다 알람가도록
+    public void waterNotice() throws IOException {
+        List<NoticeResponse> todayWater = plantService.todayWater();
+        for(NoticeResponse NR : todayWater){
+            // System.out.println(NR.getUserId()+" "+"오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
+            userService.recordMsg(NR.getUserId(), "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
+            fcmService.sendMessageTo(NR.getDeviceToken(), "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
+        }
     }
 }

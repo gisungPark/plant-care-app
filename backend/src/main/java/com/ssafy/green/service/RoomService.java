@@ -88,6 +88,17 @@ public class RoomService {
     }
 
     /**
+     * 해당 방 상세 조회 (flag == true)
+     */
+    public RoomResponse findRoom(String userId, Long roomId) {
+        // 1. 회원 정보 찾기
+        User findUser = userService.findUser(userId);
+
+        Optional<Room> room =roomRepository.findByIdAndFlag(roomId, true);
+        return new RoomResponse(room.get());
+    }
+
+    /**
      * 방 삭제
      */
     @Transactional
@@ -107,6 +118,4 @@ public class RoomService {
         }
         return false;
     }
-
-
 }

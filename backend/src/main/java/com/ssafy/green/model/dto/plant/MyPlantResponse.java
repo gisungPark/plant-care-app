@@ -11,6 +11,7 @@ public class MyPlantResponse {
     private String startedDate;
     private String lastDate;
     private String image;
+    private boolean dead;
 
     private String common;
     private String name;
@@ -25,6 +26,7 @@ public class MyPlantResponse {
         this.startedDate = plantCare.getStartedDate();
         this.lastDate = plantCare.getLastDate();
         this.image = plantCare.getImage();
+        this.dead = plantCare.isDead();
         this.name = plantCare.getName();
         this.water = plantCare.getWater();
 
