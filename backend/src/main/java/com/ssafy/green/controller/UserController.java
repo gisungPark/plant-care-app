@@ -199,7 +199,7 @@ public class UserController {
      */
     @ApiOperation(value = "Logout 시, 디바이스 토큰 삭제!!", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
-            "- device_token(RequestHeader) : 디바이스 token\n\n" +
+            "- device(RequestHeader) : 디바이스 token\n\n" +
             "Response\n" +
             "- error: 0[성공], 1[실패]")
     @DeleteMapping("/logout")

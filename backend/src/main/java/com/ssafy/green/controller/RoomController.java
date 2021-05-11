@@ -46,7 +46,9 @@ public class RoomController {
             // 2. 방 생성!
             boolean result = roomService.createRoom(decodedToken.getUid(), request.getRoomName(), request.getTheme());
             if (result) {
+                List<RoomResponse> allRooms = roomService.findRooms(decodedToken.getUid());
                 resultMap.put("error", 0);
+                resultMap.put("response", allRooms);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             } else {
                 resultMap.put("error", 1);
@@ -93,6 +95,8 @@ public class RoomController {
             // 2. 방 생성!
             boolean result = roomService.updateRoom(decodedToken.getUid(), id, request.getRoomName(), request.getTheme());
             if (result) {
+                List<RoomResponse> allRooms = roomService.findRooms(decodedToken.getUid());
+                resultMap.put("response", allRooms);
                 resultMap.put("error", 0);
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             } else {
