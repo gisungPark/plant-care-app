@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Data
 public class MessageResponse {
-    private Long id;
+    private String messageKey;
     private String title;
     private String content;
     private LocalDateTime dateTime;
@@ -15,7 +15,7 @@ public class MessageResponse {
 
     public static MessageResponse create(Message m) {
         MessageResponse response = new MessageResponse();
-        response.setId(m.getId());
+        response.setMessageKey(m.getMessageKey());
         response.setTitle(m.getTitle());
         response.setContent(m.getContent());
         response.setDateTime(m.getDateTime());

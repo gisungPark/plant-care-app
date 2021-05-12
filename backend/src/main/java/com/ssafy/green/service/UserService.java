@@ -181,11 +181,11 @@ public class UserService {
      * 알림 기록 저장!!!
      */
     @Transactional
-    public Long recordMsg(String userId, String title, String content){
+    public Long recordMsg(String userId, String messageKey, String title, String content){
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return 0L;
         User user = findUser.get();
-        Message newMsg = new Message(user, title, content);
+        Message newMsg = new Message(user, messageKey, title, content);
         messageRepository.save(newMsg);
         return newMsg.getId();
     }
@@ -194,11 +194,11 @@ public class UserService {
      * 알림 확인 완료!!!
      */
     @Transactional
-    public boolean checkMsg(String userId, String title, String content){
+    public boolean checkMsg(String userId, String messageKey){
         Optional<User> findUser = userRepository.findByUserIdAndFlag(userId, true);
         if(!findUser.isPresent()) return false;
         User user = findUser.get();
-        Optional<Message> findMsg = messageRepository.findByUserAndTitleAndContentOrderByIdDesc(user, title, content);
+        Optional<Message> findMsg = messageRepository.findByUserAndMessageKey(user, messageKey);
         if(!findMsg.isPresent()) return false;
         
         // 2. 알림 확인

@@ -21,13 +21,15 @@ public class Message {
 
     private String title;
     private String content;
+    private String messageKey;
     private LocalDateTime dateTime;
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
-    public Message(User user, String title, String content) {
+    public Message(User user, String messageKey, String title, String content) {
         this.user = user;
+        this.messageKey = messageKey;
         this.title = title;
         this.content = content;
         this.dateTime = LocalDateTime.now();
