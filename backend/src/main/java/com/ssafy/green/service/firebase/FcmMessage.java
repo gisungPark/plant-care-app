@@ -28,4 +28,5 @@ public class FcmMessage {
         private String body;
         private String image;
     }
+
 }
