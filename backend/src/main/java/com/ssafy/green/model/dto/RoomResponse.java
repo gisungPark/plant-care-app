@@ -24,6 +24,8 @@ public class RoomResponse {
 
     public static List<MyPlantListResponse> getPlantList(Room room){
         List<MyPlantListResponse> list = new ArrayList<>();
+        if(room.getPlantList() == null) return list;
+
         for(PlantCare plant : room.getPlantList()){
             if(plant.isFlag())
                 list.add(new MyPlantListResponse(plant));
