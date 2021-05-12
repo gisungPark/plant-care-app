@@ -19,8 +19,8 @@ public class FirebaseCloudMessageService {
     private final String API_URL = "https://fcm.googleapis.com/v1/projects/greenfingers-3cbec/messages:send";
     private final ObjectMapper objectMapper;
 
-    public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-        String message = makeMessage(targetToken, title, body);
+    public void sendMessageTo(String targetToken, String messageKey, String title, String body) throws IOException {
+        String message = makeMessage(targetToken, messageKey, title, body);
 
         OkHttpClient client = new OkHttpClient();
         RequestBody requestBody
@@ -39,7 +39,7 @@ public class FirebaseCloudMessageService {
 
     }
 
-    private String makeMessage(String targetToken, String title, String body)
+    private String makeMessage(String targetToken, String messageKey, String title, String body)
             throws JsonProcessingException {
 
         FcmMessage fcmMessage = FcmMessage.builder()
@@ -51,7 +51,7 @@ public class FirebaseCloudMessageService {
                                 .image(null)
                                 .build())
                         .data(FcmMessage.Data.builder()
-                            .msgId("11111111111111")
+                            .msgId(messageKey)
                             .build())
                         .build()
                 )

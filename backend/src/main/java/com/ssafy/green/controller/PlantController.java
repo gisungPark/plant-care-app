@@ -21,6 +21,7 @@ import springfox.documentation.schema.Entry;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @AllArgsConstructor
@@ -320,8 +321,9 @@ public class PlantController {
         List<NoticeResponse> todayWater = plantService.todayWater();
         for(NoticeResponse NR : todayWater){
             // System.out.println(NR.getUserId()+" "+"오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
-            userService.recordMsg(NR.getUserId(), "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
-            fcmService.sendMessageTo(NR.getDeviceToken(), "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
+            String messageKey = UUID.randomUUID().toString();
+            userService.recordMsg(NR.getUserId(), messageKey, "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
+            fcmService.sendMessageTo(NR.getDeviceToken(), messageKey, "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
         }
     }
 }
