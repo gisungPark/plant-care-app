@@ -15,8 +15,9 @@ public class FcmMessage {
     @Getter
     @AllArgsConstructor
     public static class Message{
-        private Notification notification;
         private String token;
+        private Notification notification;
+        private Data data;
     }
 
     @Builder
@@ -27,6 +28,13 @@ public class FcmMessage {
         private String title;
         private String body;
         private String image;
+    }
+
+    @Builder
+    @Getter
+    @AllArgsConstructor
+    public static class Data{
+        private String msgId;
     }
 
 }
