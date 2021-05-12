@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin(origins = "*")
 @RestController
@@ -52,7 +53,7 @@ public class UserController {
             "Response\n" +
             "- error: 0[성공], 1[실패]")
     public ResponseEntity<Map<String, Object>> sendMessage(@RequestHeader("TOKEN") String idToken,
-                              @RequestBody Message msg){
+                              @RequestBody Message request){
         Map<String, Object> resultMap = new HashMap<>();
         try {
             // 1. Firebase Token decoding
@@ -63,9 +64,12 @@ public class UserController {
 
             // 3. 알림 전송
             for(DeviceToken d: allDeviceToken) {
+
+                String messageKey = UUID.randomUUID().toString();
+
                 // 3-1. 알림 기록
-                userService.recordMsg(decodedToken.getUid(), msg.getTitle(), msg.getContent());
-                fcmService.sendMessageTo(d.getToken(), msg.getTitle(), msg.getContent());
+                userService.recordMsg(decodedToken.getUid(), messageKey, request.getTitle(), request.getContent());
+                fcmService.sendMessageTo(d.getToken(), messageKey, request.getTitle(), request.getContent());
             }
 
             resultMap.put("error", 0);
@@ -94,7 +98,7 @@ public class UserController {
     @ApiOperation(value = "알림 목록 조회!!", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n\n" +
             "Response\n" +
-            "- id: 알림 id \n" +
+            "- messageKey: 알림 키값 \n" +
             "- title: 알림 제목\n" +
             "- content: 알림 내용\n" +
             "- dateTime: 알림 날짜\n" +
@@ -124,22 +128,28 @@ public class UserController {
     }
     @ApiOperation(value = "알림 확인 상태 변경!!(읽음 처리)", notes = "Parameter\n" +
             "- token(RequestHeader) : Firebase token\n" +
-            "- title: 알림 제목\n" +
-            "- content: 알림 내용\n\n" +
+            "- messageKey: 알림 key값\n\n" +
             "Response\n" +
+            "- messageKey: 알림 키값 \n" +
+            "- title: 알림 제목\n" +
+            "- content: 알림 내용\n" +
+            "- dateTime: 알림 날짜\n" +
+            "- flag: 알림 확인 여부(true[미확인], false[확인])\n" +
             "- error: 0[성공], 1[실패]")
     @PutMapping("/checkMsg")
     public ResponseEntity<Map<String, Object>> checkMessage(@RequestHeader("TOKEN") String idToken,
-                                                            @RequestBody Message msg){
+                                                            @RequestBody MessageReadRequest request){
         Map<String, Object> resultMap = new HashMap<>();
         try {
             // 1. Firebase Token decoding
             FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(idToken);
 
             // 2. 알림 확인!!
-            boolean result = userService.checkMsg(decodedToken.getUid(), msg.getTitle(), msg.getContent());
+            boolean result = userService.checkMsg(decodedToken.getUid(), request.getMessageKey());
             if(result) {
+                List<MessageResponse> allMsg = userService.findAllMsg(decodedToken.getUid());
                 resultMap.put("error", 0);
+                resultMap.put("response", allMsg);
                 resultMap.put("msg", "알림 확인 성공!!");
                 return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
             }
@@ -155,6 +165,14 @@ public class UserController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
+
+    @Data
+    static class MessageReadRequest{
+        private String messageKey;
+    }
+
+
+
     /**
      * 디바이스 토큰 등록
      */
