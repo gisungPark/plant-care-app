@@ -10,6 +10,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -29,22 +30,23 @@ public class User implements UserDetails {
 
     @Enumerated(EnumType.STRING)
     private UserType provider;
-    private String providerId;
     private String theme;
     private String homeNickname;
+
+    private LocalDateTime createDate;
 
     @Column(name = "flag", columnDefinition = "boolean default true")
     private Boolean flag = true;
 
     @Builder
-    public User(String userId, String nickname, String profile, UserType provider, String providerId, String homeNickname, String theme) {
+    public User(String userId, String nickname, String profile, UserType provider, String homeNickname, String theme) {
         this.userId = userId;
         this.nickname = nickname;
         this.profile = profile;
         this.provider = provider;
-        this.providerId = providerId;
         this.homeNickname=homeNickname;
         this.theme = theme;
+        this.createDate = LocalDateTime.now();
     }
 
     /**

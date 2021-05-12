@@ -46,7 +46,6 @@ public class UserService {
                     .userId(userId)
                     .nickname("")
                     .provider(UserType.basic)
-                    .providerId("")
                     .profile(DEFAULT_PROFILE_IMG)
                     .homeNickname("HOME")
                     .theme(DEFAULT_HOME_THEME)
@@ -132,7 +131,7 @@ public class UserService {
 
         // 3. 토큰 중복 체크
         for(DeviceToken d : findAll){
-            if(d.getToken().equals(deviceToken)) return false;
+            if(d.getToken().equals(deviceToken)) return true;
         }
 
         // 4. 토큰 저장
