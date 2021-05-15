@@ -13,10 +13,6 @@ import numpy as np
 import time
 import os
 
-import io
-from flask_ngrok import run_with_ngrok
-from flask import Flask, jsonify, request
-
 def main():
     device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") # device 객체
 
