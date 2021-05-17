@@ -1,21 +1,26 @@
 ## Dockerfile 작성
 # FROM 도커 이미지 사용
-FROM frolvlad/alpine-python-machinelearning:latest   
+FROM Python 3.6.8  
 # 도커 이미지에 RUN으로 pip 업그레이드     
 RUN pip install --upgrade pip
 # 이 컨테이너 내부에 어플리케이션 폴더 만듬
 WORKDIR /app 
 # 우리의 모든 것이 해당 응용 프로그램 폴더에 복사
 COPY . /app
-# pip install flask
-# pip install Pillow
-# pip install torch
-# pip install torchvision
+
+pip install flask
+pip install Pillow
+pip install torch
+pip install torchvision
+
 RUN pip install -r requirements.txt
 RUN python -m nltk.downloader punkt
+
 # 컨테이터 진입 사용 포트
 EXPOSE 4000
+
 # 컨테이너가 시작할때 항상 실행되는 명령어
 ENTRYPOINT  ["python"]    
+
 # ENTRYPOINT 에서 실행할 어플리케이션
 CMD ["app.py"]
