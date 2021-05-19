@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, redirect, send_file
+from flask import Flask, jsonify, render_template, request, redirect, send_file, make_response
 import io
 
 import os
@@ -18,6 +18,7 @@ from PIL import Image
 import argparse
 
 app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
 
 DEFAULT_DATA_DIRECTORY = 'category'
 DEFAULT_CHECKPOINT_FILENAME = './bestModel.pth'
@@ -45,7 +46,7 @@ def parse_input_arguments():
 
 
 def load_model_checkpoint(file_path):
-    checkpoint = torch.load(file_path)
+    checkpoint = torch.load(file_path, map_location=torch.device('cpu'))
     learning_rate = checkpoint['learning_rate']
     model = getattr(torchvision.models, checkpoint['network'])(pretrained = True)
     model.classifier = checkpoint['classifier']
@@ -107,7 +108,7 @@ def get_prediction(image_path, model, top_k_probabilities = DEFAULT_TOP_K):
 
 def get_mapping_label_name_categories(category_names):
     print('\t' + category_names)
-    with open(category_names, 'r') as f:
+    with open(category_names, 'rt', encoding='UTF8') as f:
         category_label_to_name = json.load(f)
     return category_label_to_name
 
@@ -126,11 +127,12 @@ def predict(image_path, checkpoint_path, top_k, category_names, gpu):
     model, category_label_to_name = load_model(category_names, checkpoint_path)
 
     top_probabilities, top_classes = get_prediction(image_path, model, top_k_probabilities = top_k)
-
+    
     print('Probabilities: ', top_probabilities)
     print('Categories:    ', top_classes)
-    print('Result:    ', top_classes[0])
-    return top_classes[0]
+    print('학명:    ', top_classes[0])
+    print('식물명:    ', category_label_to_name[top_classes[0]][1])
+    return top_classes[0], category_label_to_name[top_classes[0]][1]
 
 ######################################################################################################
 
@@ -146,11 +148,11 @@ def result_predict():
     f = request.files['file']
 
     # 분류 결과 확인 및 클라이언트에게 결과 반환
-    class_name = predict(f, checkpoint_path, top_k, category_names, gpu)
-    print("결과:", {'class_name': class_name})
-    response = {'result' : class_name}
-    return render_template("result.html", name=f.filename, result=class_name) # 로컬 테스트용
-    # return jsonify(response) # 배포용
+    common, name = predict(f, checkpoint_path, top_k, category_names, gpu)
+    print("결과:", {'학명': common, '이름' : name})
+    response = {'result' : common, 'name' : name}
+    # return render_template("result.html", name=f.filename, result=class_name) # 로컬 테스트용
+    return make_response(jsonify(response)) # 배포용
 
 if __name__ == "__main__":
-    app.run(host='0.0.0.0',port=4000)
+    app.run(host='0.0.0.0',port=5000)
