@@ -12,16 +12,26 @@ from torchvision import datasets, models, transforms
 import numpy as np
 import time
 import os
+os.environ["CUDA_DEVICE_ORDER"]="00000000:03:00.0"   
+os.environ["CUDA_VISIBLE_DEVICES"]="0"
+
+def test():
+    print( torch.cuda.is_available()) 
+    print( torch.cuda.device_count())
+    print( torch.cuda.current_device()) 
+    
 
 def main():
-    device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu") # device 객체
+    device = torch.device(
+        "cuda:0" if torch.cuda.is_available() else "cpu")  # device 객체
 
     # 데이터셋을 불러올 때 사용할 변형(transformation) 객체 정의
     transforms_train = transforms.Compose([
         transforms.Resize((224, 224)),
-        transforms.RandomHorizontalFlip(), # 데이터 증진(augmentation)
+        transforms.RandomHorizontalFlip(),  # 데이터 증진(augmentation)
         transforms.ToTensor(),
-        transforms.Normalize([0.485, 0.456, 0.406], [0.229, 0.224, 0.225]) # 정규화(normalization)
+        transforms.Normalize([0.485, 0.456, 0.406], [
+                             0.229, 0.224, 0.225])  # 정규화(normalization)
     ])
 
     transforms_test = transforms.Compose([
@@ -31,11 +41,15 @@ def main():
     ])
 
     data_dir = './custom_dataset'
-    train_datasets = datasets.ImageFolder(os.path.join(data_dir, 'train'), transforms_train)
-    test_datasets = datasets.ImageFolder(os.path.join(data_dir, 'test'), transforms_test)
+    train_datasets = datasets.ImageFolder(
+        os.path.join(data_dir, 'train'), transforms_train)
+    test_datasets = datasets.ImageFolder(
+        os.path.join(data_dir, 'test'), transforms_test)
 
-    train_dataloader = torch.utils.data.DataLoader(train_datasets, batch_size=8, shuffle=True, num_workers=2)
-    test_dataloader = torch.utils.data.DataLoader(test_datasets, batch_size=8, shuffle=True, num_workers=2)
+    train_dataloader = torch.utils.data.DataLoader(
+        train_datasets, batch_size=8, shuffle=True, num_workers=2)
+    test_dataloader = torch.utils.data.DataLoader(
+        test_datasets, batch_size=8, shuffle=True, num_workers=2)
 
     print('학습 데이터셋 크기:', len(train_datasets))
     print('테스트 데이터셋 크기:', len(test_datasets))
@@ -58,7 +72,6 @@ def main():
         plt.show()
         print('시각화*****************************************************')
 
-
     # 학습 데이터를 배치 단위로 불러오기
     iterator = iter(train_dataloader)
 
@@ -67,9 +80,9 @@ def main():
     out = torchvision.utils.make_grid(inputs)
     imshow(out, title=[class_names[x] for x in classes])
 
-    model = models.resnet34(pretrained=True)
+    model = models.resnet50(pretrained=True)
     num_features = model.fc.in_features
-    # 전이 학습(transfer learning): 모델의 출력 뉴런 수를 3개로 교체하여 마지막 레이어 다시 학습
+    # 전이 학습(transfer learning)
     model.fc = nn.Linear(num_features, 208)
     model = model.to(device)
 
@@ -108,7 +121,8 @@ def main():
         epoch_acc = running_corrects / len(train_datasets) * 100.
 
         # 학습 과정 중에 결과 출력
-        print('#{} Loss: {:.4f} Acc: {:.4f}% Time: {:.4f}s'.format(epoch, epoch_loss, epoch_acc, time.time() - start_time))
+        print('#{} Loss: {:.4f} Acc: {:.4f}% Time: {:.4f}s'.format(
+            epoch, epoch_loss, epoch_acc, time.time() - start_time))
 
     torch.save(model.state_dict(), "./output/testModel.pth")
     model.eval()
@@ -130,12 +144,15 @@ def main():
             running_corrects += torch.sum(preds == labels.data)
 
             # 한 배치의 첫 번째 이미지에 대하여 결과 시각화
-            imshow(inputs.cpu().data[0], title='result: ' + class_names[preds[0]])
+            imshow(inputs.cpu().data[0],
+                   title='result: ' + class_names[preds[0]])
 
         epoch_loss = running_loss / len(test_datasets)
         epoch_acc = running_corrects / len(test_datasets) * 100.
-        print('[Test Phase] Loss: {:.4f} Acc: {:.4f}% Time: {:.4f}s'.format(epoch_loss, epoch_acc, time.time() - start_time))
+        print('[Test Phase] Loss: {:.4f} Acc: {:.4f}% Time: {:.4f}s'.format(
+            epoch_loss, epoch_acc, time.time() - start_time))
 
-    
+
 if __name__ == "__main__":
-    main()
+    #main()
+    test()
