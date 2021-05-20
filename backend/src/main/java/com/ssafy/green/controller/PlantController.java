@@ -36,7 +36,7 @@ public class PlantController {
     private final FirebaseCloudMessageService fcmService;
     private final String DEFAULT_PlANT_IMAGE = "https://i.pinimg.com/564x/3e/93/03/3e9303d2646cb2d84fbb763f7eedb409.jpg";
 
-    // 식물 이름 조회
+    // 모든 식물 이름 조회
     @ApiOperation(value = "모든 식물 이름 조회(autocomplete를 위한 API)", notes =
             "Response\n" +
             "- id : 식물 정보 고유 번호 \n" +
@@ -74,6 +74,32 @@ public class PlantController {
 
         }
         return list;
+    }
+
+    // 식물 학명 조회
+    @ApiOperation(value = "식물 학명 조회", notes =
+            "Path\n" +
+            "- common : 식물 학명(식물 이미지 분류 후)\n\n"+
+            "Response\n" +
+            "- id : 식물 정보 고유 번호 \n" +
+            "- common : 식물 학명 \n" +
+            "- name : 식물 이름 \n" +
+            "- level : 키우기 난이도 \n" +
+            "- temp : 적정 온도 \n" +
+            "- humid : 적정 습도 \n" +
+            "- water : 물주기 \n" +
+            "- info : 식물 정보 \n" +
+            "- image : 식물 이미지 \n\n" +
+            "값 없을 때(null) : 토큰 검사 실패한 경우 ")
+    @GetMapping("/check/{common}")
+    public PlantResponse findByCommon(@RequestHeader("TOKEN") String token, @PathVariable String common) {
+        try{
+            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
+            return plantService.findByCommon(decodedToken.getUid(), common);
+        } catch (FirebaseAuthException e) {
+
+        }
+        return null;
     }
 
     // 식물 상세 정보 조회
