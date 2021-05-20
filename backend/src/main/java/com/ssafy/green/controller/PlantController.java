@@ -341,15 +341,9 @@ public class PlantController {
     }
 
     // 물 주기 알람
-    // @GetMapping("/water")
-    @Scheduled(cron = "00 00 12,18 * * ?") // 매일 12,18시 마다 알람가도록
+    @GetMapping("/water")
+    @Scheduled(cron = "00 00 12,16 * * ?") // 매일 12, 16시 마다 알람가도록
     public void waterNotice() throws IOException {
         List<NoticeResponse> todayWater = plantService.todayWater();
-//        for(NoticeResponse NR : todayWater){
-//            // System.out.println(NR.getUserId()+" "+"오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
-//            String messageKey = UUID.randomUUID().toString();
-//            userService.recordMsg(NR.getUserId(), messageKey, "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
-//            fcmService.sendMessageTo(NR.getDeviceToken(), messageKey, "띵동", "오늘 "+ NR.getNickname()+" 물 주는 날이에요.");
-//        }
     }
 }

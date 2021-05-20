@@ -243,22 +243,24 @@ public class PlantService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd 00:00:00");
 
         for(PlantCare plantCare : plantCareList){
-            LocalDate last = LocalDate.parse(plantCare.getLastDate(), formatter);
-            if(plantCare.getWater().equals("주 2회")){
-                if(today.equals(last.plusDays(4))) {
-                    addTodayWater(todayList, plantCare);
-                }
-            }else if(plantCare.getWater().equals("주 1회")){
-                if(today.equals(last.plusWeeks(1))) {
-                    addTodayWater(todayList, plantCare);
-                }
-            }else if(plantCare.getWater().equals("2주 1회")){
-                if(today.equals(last.plusWeeks(2))) {
-                    addTodayWater(todayList, plantCare);
-                }
-            }else if(plantCare.getWater().equals("한 달 1회")){
-                if(today.equals(last.plusMonths(1))) {
-                    addTodayWater(todayList, plantCare);
+            if(plantCare.getLastDate() != null) {
+                LocalDate last = LocalDate.parse(plantCare.getLastDate(), formatter);
+                if(plantCare.getWater().equals("주 2회")){
+                    if(today.equals(last.plusDays(4))) {
+                        addTodayWater(todayList, plantCare);
+                    }
+                }else if(plantCare.getWater().equals("주 1회")){
+                    if(today.equals(last.plusWeeks(1))) {
+                        addTodayWater(todayList, plantCare);
+                    }
+                }else if(plantCare.getWater().equals("2주 1회")){
+                    if(today.equals(last.plusWeeks(2))) {
+                        addTodayWater(todayList, plantCare);
+                    }
+                }else if(plantCare.getWater().equals("한 달 1회")){
+                    if(today.equals(last.plusMonths(1))) {
+                        addTodayWater(todayList, plantCare);
+                    }
                 }
             }
         }
