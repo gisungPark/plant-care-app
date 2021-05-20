@@ -7,10 +7,13 @@ import {addUid, addUser} from '../../reducers/authReducer';
 import {clearUser} from '../../reducers/profileReducer';
 import firebase from '../../config/firebase';
 import {GoogleSignin} from '@react-native-google-signin/google-signin';
+
+import {setProfile} from '../../reducers/profileReducer';
 GoogleSignin.configure({});
 
 //api
 import {deleteDevice} from '../../api/auth';
+import {userInfo} from '../../api/auth';
 
 // style
 import styled from 'styled-components';
@@ -98,6 +101,8 @@ export default function Profile({navigation}) {
 
   const dispatch = useDispatch();
   const clearUserInfo = () => dispatch(clearUser());
+  const saveProfile = (profile, provider, useremail) =>
+    dispatch(setProfile(profile, provider, useremail));
 
   // state
   const {image, email, provider, plants} = useSelector(state => ({
@@ -122,6 +127,12 @@ export default function Profile({navigation}) {
       setIsLoading(false);
     }
   };
+
+  useEffect(async () => {
+    const allAboutUser = await userInfo();
+    const myInfo = allAboutUser.data.response;
+    saveProfile(myInfo, provider, email);
+  }, []);
 
   return (
     <ProfileContainer>

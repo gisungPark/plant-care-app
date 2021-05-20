@@ -35,17 +35,22 @@ export const ServiceSummary = styled.div`
   }
   a {
     margin-top: 15%;
-    margin-left: 3%;
-    margin-right: 3%;
+    /* margin-left: 3%;
+    margin-right: 3%; */
     border: none;
     background-color: transparent;
     display: inline-block;
     color: none;
+    position: relative;
     width: 100%;
-    height: 50%;
+    height: 75%;
     img {
       height: 100%;
       width: 100%;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
     div {
       height: 100%;
@@ -53,6 +58,10 @@ export const ServiceSummary = styled.div`
       border: 1px solid black;
       font-size: 20px;
       border-radius: 5px;
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
     }
     :hover {
       cursor: pointer;

@@ -66,3 +66,8 @@ export function plantInfoDetail(id) {
 export function plantRecognition(formData) {
   return instanceRecognition.post('predict', formData);
 }
+
+//학명 식물 상세 정보 조회
+export function plantInfoDetailByName(common) {
+  return instance.get(`plant/check/${common}`);
+}

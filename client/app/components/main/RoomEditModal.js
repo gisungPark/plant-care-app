@@ -163,7 +163,7 @@ const RoomEditModal = props => {
             </Littlechip>
             <TextInputBox style={{marginBottom: 10}}>
               <TextInput
-                placeholder="방 이름"
+                placeholder={roomname}
                 onChangeText={userRn => setRoomname(userRn)}
               />
             </TextInputBox>

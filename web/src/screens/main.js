@@ -70,13 +70,22 @@ function Main() {
             spacing={5}
           >
             <Grid item xs={4} justify="center" align="center">
-              <a href="">
+              <a href="https://play.google.com/store/apps/details?id=com.kimnpark.greenfingers">
                 <img src={googleStoreButton} alt="google download"></img>
               </a>
             </Grid>
             <Grid item xs={4} justify="center" align="center">
               <a href="">
-                <div>App 다운로드</div>
+                <div
+                  style={{
+                    textAlign: "center",
+                    justifyContent: "center",
+                    alignSelf: "center",
+                    lineHeight: 2.5,
+                  }}
+                >
+                  App 다운로드
+                </div>
               </a>
             </Grid>
           </Grid>

@@ -20,9 +20,13 @@ import {changePlant} from '../../reducers/roomReducer';
 const win = Dimensions.get('window');
 
 export function PlantDetail({route, navigation}) {
-  const {plantact} = useSelector(state => ({
+  const {plantact, rooms} = useSelector(state => ({
     plantact: state.roomReducer.plantact,
+    rooms: state.roomReducer.rooms,
   }));
+  const [roomtheme, setRoomtheme] = useState(
+    'https://www.sketchappsources.com/resources/source-image/profile-illustration-gunaldi-yunus.png',
+  );
   const [isModalVisible, setisModalVisible] = useState(false);
   const [ChooseData, setChooseData] = useState();
   const [myInfo, setMyInfo] = useState([]);
@@ -38,11 +42,21 @@ export function PlantDetail({route, navigation}) {
   const {rname} = route.params;
   const dispatch = useDispatch();
   const makeclean = () => dispatch(changePlant(''));
+
   useEffect(async () => {
+    console.log('plnatdetail props', route.params.rid);
     if (plantact === 'back') {
       makeclean();
       navigation.navigate('Room', {rid: rid, rname: rname});
     }
+    await rooms.forEach(room => {
+      console.log('rrr', room);
+      if (room.rid === route.params.rid) {
+        console.log(room.theme);
+        setRoomtheme(room.theme);
+      }
+    });
+
     const plantDetail = await myPlantInfo(pid);
     setMyInfo(plantDetail.data);
   }, [plantact]);
@@ -55,8 +69,10 @@ export function PlantDetail({route, navigation}) {
             position: 'absolute',
             top: 0,
             left: 0,
+            width: '100%',
           }}
-          source={require('../../assets/images/mainroom.jpg')}
+          // source={require('../../assets/images/mainroom.jpg')}
+          source={{uri: roomtheme}}
         />
       </View>
       <Cardback style={{flex: 10}}>

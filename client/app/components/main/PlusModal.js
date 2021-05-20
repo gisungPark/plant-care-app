@@ -138,6 +138,7 @@ const PlusModal = props => {
   const [plantName, setPlantName] = useState('');
   // 식물 조회 후 등록
   const plusplant = async () => {
+    console.log('choosedata', ChooseData);
     if (ChooseData !== undefined) {
       var dd = date.getDate();
       var mm = date.getMonth() + 1;

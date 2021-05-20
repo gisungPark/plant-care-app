@@ -89,9 +89,7 @@ export function RoomScreen({route, navigation}) {
   const dispatch = useDispatch();
   const makeclean = () => dispatch(changeRoom(''));
   useEffect(async () => {
-    console.log('in use effect');
     const check = roomact;
-    console.log('check', check);
     if (check === 'trash') {
       // makeclean();
       await navigation.navigate('Home');
@@ -100,6 +98,7 @@ export function RoomScreen({route, navigation}) {
     }
     await getRoomNameTheme();
   }, [plantact, roomact, rooms]);
+
   useEffect(() => {
     return () => {
       makeclean();
@@ -180,7 +179,7 @@ export function RoomScreen({route, navigation}) {
                 left: 0,
                 width: '100%',
               }}
-              source={require('../../assets/images/mainroom.jpg')}
+              // source={require('../../assets/images/mainroom.jpg')}
               source={{uri: roomtheme}}
             />
           </View>

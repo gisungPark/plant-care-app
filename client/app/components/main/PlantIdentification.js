@@ -19,7 +19,7 @@ import {
 import RadioButtonRN from 'radio-buttons-react-native';
 import axios from 'axios';
 import {InputAutoSuggest} from 'react-native-autocomplete-search';
-import {plantAll} from '../../api/plant';
+import {plantAll, plantInfoDetailByName} from '../../api/plant';
 import {useSelector} from 'react-redux';
 import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 import {
@@ -28,6 +28,8 @@ import {
 } from 'react-native-responsive-screen';
 
 import {plantRecognition} from '../../api/plant';
+
+import {RenderLoading} from '../../components/common/renderLoading';
 
 // 글 작성 textInput 박스
 const SearchBar = styled.TextInput`
@@ -52,8 +54,9 @@ const HEIGHT = Dimensions.get('window').height;
 const HEIGHT_MODAL = 300;
 const PlantIdentification = props => {
   const {uid} = useSelector(state => ({uid: state.authReducer.uid}));
-  const [result, setResult] = useState([]);
+  const [result, setResult] = useState({});
   const [info, setInfo] = useState([]);
+  const [loading, setLoading] = useState(false);
   // autocomplete을 위한 식물 정보 불러오기
   const getPlantInfo = () => {
     plantAll()
@@ -61,7 +64,7 @@ const PlantIdentification = props => {
       .catch(err => console.log(err));
   };
   useEffect(async () => {
-    console.log(props);
+    setLoading(true);
     if (props.image !== undefined) {
       const formData = new FormData();
       formData.append('file', {
@@ -69,10 +72,14 @@ const PlantIdentification = props => {
         name: 'plant.jpg',
         type: 'image/jpeg',
       });
-      // console.log('formdata', formData);
       const recogResponse = await plantRecognition(formData);
-      console.log('recogRes', recogResponse.data);
+
+      const detailResponse = await plantInfoDetailByName(
+        recogResponse.data.result,
+      );
+      setResult(detailResponse.data);
     }
+    setLoading(false);
     await getPlantInfo();
   }, [props.image]);
   const closeModal = (bool, data) => {
@@ -82,78 +89,84 @@ const PlantIdentification = props => {
 
   return (
     <ScrollView disabled={true}>
-      <KeyboardAwareScrollView contentContainerStyle={styles.container}>
-        <View style={styles.modal}>
-          <View style={styles.modaltop}>
-            <Text style={styles.titletext}>식물 판별</Text>
-            <View style={styles.close}>
-              <TouchableOpacity onPress={() => closeModal(false, 'Cancel')}>
-                <Icon
-                  type="Ionicons"
-                  name="close-outline"
-                  style={{color: '#29582C', fontSize: 30}}></Icon>
-              </TouchableOpacity>
-            </View>
-          </View>
-          <View>
-            <Text style={styles.intro}>{uid}님의 식물은</Text>
-          </View>
-          <View style={styles.modalbody}>
-            <View style={styles.listtop}>
-              <TouchableOpacity style={styles.plant1}>
-                <Image
-                  source={require('../../assets/images/plant.jpg')}
-                  style={styles.eximage}
-                />
-                <View style={{alignItems: 'flex-end'}}>
-                  <Text style={{fontWeight: 'bold', fontSize: 18}}>
-                    {result.name}
-                  </Text>
-                  <Text
-                    style={{
-                      fontWeight: 'bold',
-                      fontSize: 13,
-                      color: 'rgba(0,0,0,0.5)',
-                    }}>
-                    Syngonium
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.plantinput}>
-              <Text style={{marginBottom: 20}}>
-                {result.name}이 아니라면 직접 입력해주세요
-              </Text>
-
-              <View
-                style={{
-                  height: 120,
-                  justifyContent: 'center',
-                }}>
-                <InputAutoSuggest
-                  staticData={info}
-                  itemFormat={{
-                    id: 'id',
-                    name: 'name',
-                  }}
-                  onDataSelectedChange={data =>
-                    data !== null ? setResult(data) : console.log(data)
-                  }
-                />
+      {loading ? (
+        <RenderLoading isLoading={loading} />
+      ) : (
+        <KeyboardAwareScrollView contentContainerStyle={styles.container}>
+          <View style={styles.modal}>
+            <View style={styles.modaltop}>
+              <Text style={styles.titletext}>식물 판별</Text>
+              <View style={styles.close}>
+                <TouchableOpacity onPress={() => closeModal(false, 'Cancel')}>
+                  <Icon
+                    type="Ionicons"
+                    name="close-outline"
+                    style={{color: '#29582C', fontSize: 30}}></Icon>
+                </TouchableOpacity>
               </View>
             </View>
+            <View>
+              <Text style={styles.intro}>이 식물이 맞나요?</Text>
+            </View>
+            <View style={styles.modalbody}>
+              <View style={styles.listtop}>
+                <TouchableOpacity style={styles.plant1}>
+                  <Image
+                    // source={require('../../assets/images/plant.jpg')}
+                    source={{uri: result.image}}
+                    style={styles.eximage}
+                  />
+                  <View style={{alignItems: 'flex-end'}}>
+                    <Text style={{fontWeight: 'bold', fontSize: 18}}>
+                      {result.name}
+                    </Text>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: 13,
+                        color: 'rgba(0,0,0,0.5)',
+                      }}>
+                      {result.common}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.plantinput}>
+                <Text style={{marginBottom: 20}}>
+                  {result.name}이(가) 아니라면 직접 입력해주세요
+                </Text>
+
+                <View
+                  style={{
+                    height: 120,
+                    justifyContent: 'center',
+                  }}>
+                  <InputAutoSuggest
+                    staticData={info}
+                    itemFormat={{
+                      id: 'id',
+                      name: 'name',
+                    }}
+                    onDataSelectedChange={data =>
+                      data !== null ? setResult(data) : console.log(data)
+                    }
+                  />
+                </View>
+              </View>
+            </View>
+            <View style={styles.last}>
+              <Button
+                onPress={() => closeModal(false, result)}
+                style={styles.lastbtn}>
+                <Text
+                  style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>
+                  완료
+                </Text>
+              </Button>
+            </View>
           </View>
-          <View style={styles.last}>
-            <Button
-              onPress={() => closeModal(false, result)}
-              style={styles.lastbtn}>
-              <Text style={{fontSize: 15, fontWeight: 'bold', color: 'white'}}>
-                완료
-              </Text>
-            </Button>
-          </View>
-        </View>
-      </KeyboardAwareScrollView>
+        </KeyboardAwareScrollView>
+      )}
     </ScrollView>
   );
 };
