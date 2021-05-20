@@ -2,18 +2,21 @@ package com.ssafy.green.service;
 
 import com.ssafy.green.model.dto.NoticeResponse;
 import com.ssafy.green.model.dto.plant.*;
+import com.ssafy.green.model.entity.DeviceToken;
 import com.ssafy.green.model.entity.Room;
 import com.ssafy.green.model.entity.User;
 import com.ssafy.green.model.entity.plant.PlantCare;
 import com.ssafy.green.model.entity.plant.PlantInfo;
 import com.ssafy.green.model.entity.plant.Water;
 import com.ssafy.green.repository.*;
+import com.ssafy.green.service.firebase.FirebaseCloudMessageService;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -33,7 +36,11 @@ public class PlantService {
     private final WaterRepository waterRepository;
     @Autowired
     private final DeviceTokenRepository deviceTokenRepository;
-    
+    @Autowired
+    private final UserService userService;
+    @Autowired
+    private final FirebaseCloudMessageService fcmService;
+
     // 모든 식물 조회
     public List<PlantListResponse> findAll(String userId) {
         User curUser = getUser(userId);
@@ -48,6 +55,13 @@ public class PlantService {
         return plantInfoRepository.findByNameContaining(search).stream()
                 .map(PlantListResponse::new)
                 .collect(Collectors.toList());
+    }
+
+    // 식물 학명 조회
+    public PlantResponse findByCommon(String userId, String common) {
+        User curUser = getUser(userId);
+        Optional<PlantInfo> plantInfo = plantInfoRepository.findByCommon(common);
+        return new PlantResponse(plantInfo.get());
     }
 
     // 식물 상세 정보 조회
@@ -255,8 +269,18 @@ public class PlantService {
         Optional<Room> room = roomRepository.findById(plantCare.getRoom().getId());
         Hibernate.initialize(room.get().getUser().getUserId());
         String userId = room.get().getUser().getUserId();
-        String device = deviceTokenRepository.findByUser(room.get().getUser()).get().getToken();
-        todayList.add(new NoticeResponse(userId, device, plantCare.getNickname()));
+        List<DeviceToken> allDeviceToken = deviceTokenRepository.findAllByUser(room.get().getUser());
+
+        String messageKey = UUID.randomUUID().toString();
+        for(DeviceToken d : allDeviceToken) {
+            todayList.add(new NoticeResponse(userId, d.getToken(), plantCare.getNickname()));
+            try {
+                fcmService.sendMessageTo(userId, messageKey, "띵동", "오늘 "+ plantCare.getNickname()+" 물 주는 날이에요.");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        userService.recordMsg(userId, messageKey, "띵동", "오늘 "+ plantCare.getNickname()+" 물 주는 날이에요.");
     }
 
     // 각 함수마다 사용자 존재 확인

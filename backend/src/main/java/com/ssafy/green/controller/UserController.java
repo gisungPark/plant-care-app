@@ -62,15 +62,14 @@ public class UserController {
             // 2. Device Token 조회!
             List<DeviceToken> allDeviceToken = userService.findAllDeviceToken(decodedToken.getUid());
 
+            String messageKey = UUID.randomUUID().toString();
+
             // 3. 알림 전송
             for(DeviceToken d: allDeviceToken) {
-
-                String messageKey = UUID.randomUUID().toString();
-
                 // 3-1. 알림 기록
-                userService.recordMsg(decodedToken.getUid(), messageKey, request.getTitle(), request.getContent());
                 fcmService.sendMessageTo(d.getToken(), messageKey, request.getTitle(), request.getContent());
             }
+            userService.recordMsg(decodedToken.getUid(), messageKey, request.getTitle(), request.getContent());
 
             resultMap.put("error", 0);
             resultMap.put("msg", "전송 성공!!");
