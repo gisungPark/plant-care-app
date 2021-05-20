@@ -50,6 +50,13 @@ public class PlantService {
                 .collect(Collectors.toList());
     }
 
+    // 식물 학명 조회
+    public PlantResponse findByCommon(String userId, String common) {
+        User curUser = getUser(userId);
+        Optional<PlantInfo> plantInfo = plantInfoRepository.findByCommon(common);
+        return new PlantResponse(plantInfo.get());
+    }
+
     // 식물 상세 정보 조회
     public PlantResponse findByPlantInfo(String userId, Long id) {
         User curUser = getUser(userId);
