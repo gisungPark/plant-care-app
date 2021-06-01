@@ -48,7 +48,7 @@ instance.interceptors.request.use(
   },
   function (error) {
     // Do something with request error
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   },
 );
@@ -61,20 +61,20 @@ instance.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status == '401') {
-      Alert.alert(
-        '주의⚠',
-        '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
-      );
-    } else if (error.response.status == '403') {
-      Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
-    } else if (error.response.status == '400') {
-      Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
-    } else if (error.response.status == '404') {
-      Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
-    } else {
-      Alert.alert('주의⚠', '오류 발생');
-    }
+    // if (error.response.status == '401') {
+    //   Alert.alert(
+    //     '주의⚠',
+    //     '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
+    //   );
+    // } else if (error.response.status == '403') {
+    //   Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
+    // } else if (error.response.status == '400') {
+    //   Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
+    // } else if (error.response.status == '404') {
+    //   Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
+    // } else {
+    //   Alert.alert('주의⚠', '오류 발생');
+    // }
     return Promise.reject(error);
   },
 );
@@ -88,7 +88,7 @@ instanceFile.interceptors.request.use(
   },
   function (error) {
     // Do something with request error
-    console.log(error);
+    // console.log(error);
     return Promise.reject(error);
   },
 );
@@ -101,21 +101,21 @@ instanceFile.interceptors.response.use(
     return response;
   },
   function (error) {
-    if (error.response.status == '401') {
-      Alert.alert(
-        '주의⚠',
-        '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
-      );
-    } else if (error.response.status == '403') {
-      Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
-    } else if (error.response.status == '400') {
-      Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
-    } else if (error.response.status == '404') {
-      Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
-    } else {
-      Alert.alert('주의⚠', '오류 발생');
-      console.log(error);
-    }
+    // if (error.response.status == '401') {
+    //   Alert.alert(
+    //     '주의⚠',
+    //     '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
+    //   );
+    // } else if (error.response.status == '403') {
+    //   Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
+    // } else if (error.response.status == '400') {
+    //   Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
+    // } else if (error.response.status == '404') {
+    //   Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
+    // } else {
+    //   Alert.alert('주의⚠', '오류 발생');
+    //   console.log(error);
+    // }
     return Promise.reject(error);
   },
 );
@@ -131,7 +131,7 @@ instanceDevice.interceptors.request.use(
   },
   function (error) {
     // Do something with request error
-    console.log('device token error', error);
+    // console.log('device token error', error);
     return Promise.reject(error);
   },
 );
@@ -145,22 +145,22 @@ instanceDevice.interceptors.response.use(
     return response;
   },
   function (error) {
-    console.log('에러났다', error.response.headers);
-    if (error.response.status == '401') {
-      Alert.alert(
-        '주의⚠',
-        '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
-      );
-    } else if (error.response.status == '403') {
-      Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
-    } else if (error.response.status == '400') {
-      Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
-    } else if (error.response.status == '404') {
-      Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
-    } else {
-      Alert.alert('주의⚠', '오류 발생');
-      console.log(error);
-    }
+    // console.log('에러났다', error.response.headers);
+    // if (error.response.status == '401') {
+    //   Alert.alert(
+    //     '주의⚠',
+    //     '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
+    //   );
+    // } else if (error.response.status == '403') {
+    //   Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
+    // } else if (error.response.status == '400') {
+    //   Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
+    // } else if (error.response.status == '404') {
+    //   Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
+    // } else {
+    //   Alert.alert('주의⚠', '오류 발생');
+    //   console.log(error);
+    // }
     return Promise.reject(error);
   },
 );
@@ -180,26 +180,26 @@ instanceRecognition.interceptors.request.use(
 // 식물판별 인스턴스 토큰 response 인터셉터
 instanceRecognition.interceptors.response.use(
   function (response) {
-    console.log(response);
+    // console.log(response);
     return response;
   },
   function (error) {
-    console.log('식물판별 에러났다', error.response);
-    if (error.response.status == '401') {
-      Alert.alert(
-        '주의⚠',
-        '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
-      );
-    } else if (error.response.status == '403') {
-      Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
-    } else if (error.response.status == '400') {
-      Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
-    } else if (error.response.status == '404') {
-      Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
-    } else {
-      Alert.alert('주의⚠', '오류 발생');
-      console.log(error);
-    }
+    // console.log('식물판별 에러났다', error.response);
+    // if (error.response.status == '401') {
+    //   Alert.alert(
+    //     '주의⚠',
+    //     '로그인이 만료되었습니다. 다시 로그인 해주세요.(Error Code: 401)',
+    //   );
+    // } else if (error.response.status == '403') {
+    //   Alert.alert('주의⚠', '권한이 없습니다.(Error Code: 403)');
+    // } else if (error.response.status == '400') {
+    //   Alert.alert('주의⚠', '클라이언트 오류(Error Code: 400)');
+    // } else if (error.response.status == '404') {
+    //   Alert.alert('주의⚠', 'Not Found(Error Code: 404)');
+    // } else {
+    //   Alert.alert('주의⚠', '오류 발생');
+    //   // console.log(error);
+    // }
     return Promise.reject(error);
   },
 );

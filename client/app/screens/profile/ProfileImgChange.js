@@ -77,7 +77,7 @@ export default function ProfileImgChange({navigation}) {
       cropperCircleOverlay: true,
     })
       .then(image => {
-        console.log('received image', image);
+        // console.log('received image', image);
         setImg(image.path);
       })
       .catch(e => {
@@ -111,7 +111,7 @@ export default function ProfileImgChange({navigation}) {
       name: 'profile.jpg',
       type: 'image/jpeg',
     });
-    console.log(formData);
+    // console.log(formData);
     // 백엔드 요청
     const response = await updateImage(formData);
     const newImage = response.data.response.profile;

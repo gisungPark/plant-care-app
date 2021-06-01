@@ -9,6 +9,7 @@ import {
   Image,
   ImageBackground,
   Modal,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {Button, Icon} from 'native-base';
 import styled from 'styled-components';
@@ -85,7 +86,8 @@ const PlusModal = props => {
   // take photo, choose photo
   const [image, setImage] = useState(
     // 'http://www.pngall.com/wp-content/uploads/5/Profile-PNG-Clipart.png',
-    'https://i.pinimg.com/564x/08/56/13/0856131b7c2615b7c55e63a33ea32444.jpg',
+    // 'https://i.pinimg.com/564x/08/56/13/0856131b7c2615b7c55e63a33ea32444.jpg',
+    'https://www.creativefabrica.com/wp-content/uploads/2020/02/02/Plant-Icon-Graphics-1-5-580x387.jpg',
   );
   const takePhotoFromCamera = () => {
     ImagePicker.openCamera({
@@ -95,7 +97,7 @@ const PlusModal = props => {
       // compressImageQuality: 0.7,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImage(image.path);
         changeModalVisible(true);
       })
@@ -112,7 +114,7 @@ const PlusModal = props => {
       // compressImageQuality: 0.7,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImage(image.path);
         changeModalVisible(true);
       })
@@ -138,7 +140,7 @@ const PlusModal = props => {
   const [plantName, setPlantName] = useState('');
   // 식물 조회 후 등록
   const plusplant = async () => {
-    console.log('choosedata', ChooseData);
+    // console.log('choosedata', ChooseData);
     if (ChooseData !== undefined) {
       var dd = date.getDate();
       var mm = date.getMonth() + 1;
@@ -166,7 +168,7 @@ const PlusModal = props => {
         type: 'image/jpeg',
       });
       formData.append('startedDate', ndate);
-      console.log(formData);
+      // console.log(formData);
       await myPlantRegister(formData)
         .then(res => console.log(res.data))
         .catch(err => console.log(err));
@@ -179,7 +181,7 @@ const PlusModal = props => {
 
   bs = React.createRef();
   return (
-    <TouchableOpacity disabled={true} style={styles.container}>
+    <KeyboardAvoidingView disabled={true} style={styles.container}>
       <View style={styles.modal}>
         {/* close 버튼 */}
         <View style={styles.modaltop}>
@@ -197,6 +199,21 @@ const PlusModal = props => {
           {/* 식물이름입력 */}
           <View style={styles.input}>
             <Littlechip>
+              <Text style={styles.chiptext}>데려온 날</Text>
+            </Littlechip>
+            <DatePicker
+              style={{
+                marginBottom: 5,
+                marginHorizontal: 10,
+              }}
+              date={date}
+              mode="date"
+              onDateChange={setDate}
+            />
+          </View>
+          {/* 데려온 날 */}
+          <View style={{marginTop: 40}}>
+            <Littlechip style={{marginBottom: 10}}>
               <Text style={styles.chiptext}>식물 이름</Text>
             </Littlechip>
             <TextInputBox style={{marginBottom: 10}}>
@@ -206,21 +223,6 @@ const PlusModal = props => {
                 value={plantName}
               />
             </TextInputBox>
-          </View>
-          {/* 데려온 날 */}
-          <View style={{marginTop: 40}}>
-            <Littlechip style={{marginBottom: 10}}>
-              <Text style={styles.chiptext}>데려온 날</Text>
-            </Littlechip>
-            <DatePicker
-              style={{
-                marginBottom: 10,
-                marginHorizontal: 10,
-              }}
-              date={date}
-              mode="date"
-              onDateChange={setDate}
-            />
           </View>
           {/* 사진등록 */}
           <View style={styles.photo}>
@@ -305,7 +307,7 @@ const PlusModal = props => {
           />
         </Modal>
       </View>
-    </TouchableOpacity>
+    </KeyboardAvoidingView>
   );
 };
 
@@ -322,6 +324,7 @@ const styles = StyleSheet.create({
     width: WIDTH - 60,
     backgroundColor: '#F9F9F9',
     borderRadius: 10,
+    // flex: 1,
   },
   modaltop: {
     flexDirection: 'row',
@@ -332,10 +335,10 @@ const styles = StyleSheet.create({
     // backgroundColor: "rgba(52,176,80,0.1)",
     width: WIDTH - 80,
     marginLeft: 20,
-    flex: 0.8,
+    // flex: 0.8,
   },
   content: {
-    flex: 11,
+    flex: 10,
   },
   chiptext: {
     fontWeight: 'bold',
@@ -366,7 +369,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
-    flex: 1,
+    flex: 3,
   },
   photo: {
     flex: 1,

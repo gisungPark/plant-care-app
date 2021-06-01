@@ -74,7 +74,7 @@ const PhotoChoice = props => {
       compressImageQuality: 0.7,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImage(image.path);
         this.bs.current.snapTo(1);
       })
@@ -91,7 +91,7 @@ const PhotoChoice = props => {
       compressImageQuality: 0.7,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImage(image.path);
         this.bs.current.snapTo(1);
       })

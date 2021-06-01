@@ -85,47 +85,47 @@ export function SignupScreen({navigation}) {
   };
 
   const validateEmail = userEmail => {
-    console.log(userEmail);
+    // console.log(userEmail);
     //e메일 형식
     let regEmail = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w\w+)+$/;
     if (regEmail.test(userEmail) === false) {
-      console.log('Email is not Correct');
+      // console.log('Email is not Correct');
       setEmail(userEmail);
       setEmailError('이메일 형식이 맞지 않습니다.');
     } else {
       setEmail(userEmail);
       setEmailError('');
-      console.log('Email is Correct');
+      // console.log('Email is Correct');
     }
   };
 
   const validatePassword = userPW => {
-    console.log(userPW);
+    // console.log(userPW);
     // 대문자 최소 1개, 소문자 1개 이상, 숫자 1개이상, 특수문자 1개 이상, 8자리이상
     let regPW =
       /^(?=.*?[A-Z])(?=(.*[a-z]){1,})(?=(.*[\d]){1,})(?=(.*[\W]){1,})(?!.*\s).{8,}$/;
     if (regPW.test(userPW) === false) {
-      console.log('대/소문자, 숫자, 특수문자 포함 8자 이상 입력해주세요');
+      // console.log('대/소문자, 숫자, 특수문자 포함 8자 이상 입력해주세요');
       setPassword(userPW);
       setPwError('대/소문자, 숫자, 특수문자 포함 8자 이상 입력해주세요.');
     } else {
       setPassword(userPW);
       setPwError('');
-      console.log('PW is Correct');
+      // console.log('PW is Correct');
     }
   };
 
   const validatePWC = userPWC => {
-    console.log(userPWC);
+    // console.log(userPWC);
     if (userPWC !== password) {
-      console.log('비밀번호가 일치하지 않습니다');
+      // console.log('비밀번호가 일치하지 않습니다');
       setPasswordConfirm(userPWC);
       setPwcError('비밀번호가 일치하지 않습니다.');
       return false;
     } else {
       setPasswordConfirm(userPWC);
       setPwcError('');
-      console.log('PWC is Correct');
+      // console.log('PWC is Correct');
     }
   };
 

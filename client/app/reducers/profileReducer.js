@@ -37,7 +37,7 @@ const profileState = {
 };
 
 export default function profile(state = profileState, action) {
-  console.log('redux userID ', state.userId);
+  // console.log('redux userID ', state.userId);
   switch (action.type) {
     case 'SET_PROFILE':
       return {

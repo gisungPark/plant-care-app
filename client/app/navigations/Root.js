@@ -112,14 +112,14 @@ export default function Root() {
   // const setIsLoading = status => dispatch(setStatus(status));
 
   //삭제예정
-  printToken = async () => {
-    const token = await auth().currentUser.getIdToken(true);
-    console.log(token);
-  };
+  // printToken = async () => {
+  //   const token = await auth().currentUser.getIdToken(true);
+  //   console.log(token);
+  // };
 
   saveUserInfo = async user => {
     if (user) {
-      await printToken();
+      // await printToken();
       const allAboutUser = await userInfo();
       const myPlants = allAboutUser.data.plants;
       const myInfo = allAboutUser.data.response;
@@ -127,7 +127,7 @@ export default function Root() {
       saveProfile(myInfo, user.providerData[0].providerId, user.email);
       setIsLoading(false);
 
-      console.log('room loading status', isLoading);
+      // console.log('room loading status', isLoading);
     } else {
       setIsLoading(false);
     }

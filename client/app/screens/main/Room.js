@@ -54,7 +54,7 @@ export function RoomScreen({route, navigation}) {
   const setData = data => {
     setChooseData(data);
   };
-  console.log(ChooseData);
+  // console.log(ChooseData);
   // plantList 안에든거 image, lastDate, name, nickname, pid
   const {rid} = route.params;
   const {rname} = route.params;
@@ -65,7 +65,7 @@ export function RoomScreen({route, navigation}) {
       await findRoomDetail(rid)
         .then(res => {
           setRoomDetail(res.data.response);
-          console.log('pl', res.data.response);
+          // console.log('pl', res.data.response);
         })
         .then(() => {
           setLoading(false);
@@ -104,6 +104,17 @@ export function RoomScreen({route, navigation}) {
       makeclean();
     };
   }, []);
+
+  // 물준날짜 있을 경우: 시간제외 날짜만 표시
+  // 물준날짜 없을 경우: '아직 물을 주지 않았어요' 문구 표시
+  const showLastDate = plant => {
+    if (plant.lastDate != undefined) {
+      return plant.lastDate.substring(0, 10);
+    } else {
+      return '아직 물을 주지 않았어요';
+    }
+  };
+
   const renderItem = ({item}) => {
     return (
       <TouchableOpacity>
@@ -124,12 +135,12 @@ export function RoomScreen({route, navigation}) {
               <View style={styles.rightinfo}>
                 <View style={styles.water}>
                   <Text style={styles.watertext}>물 준 날짜</Text>
-                  <Text style={styles.waterdate}>{item.lastDate}</Text>
+                  <Text style={styles.waterdate}>{showLastDate(item)}</Text>
                 </View>
-                <Image
+                {/* <Image
                   source={require('../../assets/images/plant1.png')}
                   style={styles.planticon}
-                />
+                /> */}
               </View>
             </View>
           </TouchableOpacity>
@@ -150,12 +161,12 @@ export function RoomScreen({route, navigation}) {
               <View style={styles.rightinfo}>
                 <View style={styles.water}>
                   <Text style={styles.watertext}>물 준 날짜</Text>
-                  <Text style={styles.waterdate}>{item.lastDate}</Text>
+                  <Text style={styles.waterdate}>{showLastDate(item)}</Text>
                 </View>
-                <Image
+                {/* <Image
                   source={require('../../assets/images/plant1.png')}
                   style={styles.planticon}
-                />
+                /> */}
               </View>
             </View>
           </TouchableOpacity>
@@ -335,7 +346,7 @@ const styles = StyleSheet.create({
   },
   plantname: {
     fontWeight: 'bold',
-    fontSize: 11,
+    fontSize: 15,
   },
   plantimg: {
     height: 150,
@@ -362,11 +373,11 @@ const styles = StyleSheet.create({
     // backgroundColor: "yellow",
   },
   watertext: {
-    fontSize: 9,
+    fontSize: 12,
     fontWeight: 'bold',
   },
   waterdate: {
-    fontSize: 9,
+    fontSize: 11,
   },
   pencil: {
     fontSize: 20,

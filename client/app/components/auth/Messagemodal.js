@@ -14,7 +14,7 @@ import {readMessage} from '../../api/auth';
 export default function MessageModal(props) {
   const closeModal = async visible => {
     // 알림 읽음으로 변경 로직 추가
-    console.log('props', props);
+    // console.log('props', props);
     if (props.message.messageKey) {
       const params = {messageKey: props.message.messageKey};
       await readMessage(params);
@@ -23,7 +23,7 @@ export default function MessageModal(props) {
     props.setModalVisible(visible);
   };
 
-  console.log('message modal props', props);
+  // console.log('message modal props', props);
 
   return (
     <ModalContainer>

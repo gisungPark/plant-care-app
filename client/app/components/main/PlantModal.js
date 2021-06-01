@@ -109,6 +109,7 @@ const PlantModal = props => {
               startedDate={startedDate}
               pid={pid}
               image={image}
+              pname={pname}
             />
           </Modal>
           <TouchableOpacity

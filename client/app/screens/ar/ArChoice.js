@@ -71,7 +71,7 @@ export function ArChoice({navigation}) {
       <View style={styles.button}>
         <AddButton
           onPress={() => {
-            console.log('click');
+            // console.log('click');
             navigation.navigate('ArIntro', {
               arname: isSelectedAr,
             });

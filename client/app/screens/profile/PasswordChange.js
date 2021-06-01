@@ -91,19 +91,19 @@ export default function PasswordChange({navigation}) {
     const user = await firebase.auth().currentUser;
     const valProvider = await validateProvider();
     if (!valProvider) {
-      console.log(message);
+      // console.log(message);
       setCompleteModalVisible(true);
       return;
     }
     const valPw = await validatePassword();
     if (!valPw) {
-      console.log(message);
+      // console.log(message);
       setCompleteModalVisible(true);
       return;
     }
     const valPwc = await validatePWC();
     if (!valPwc) {
-      console.log(message);
+      // console.log(message);
       setCompleteModalVisible(true);
       return;
     }

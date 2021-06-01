@@ -27,7 +27,7 @@ const physicsBody = {
 
 export function ArIntroScreen({route, navigation}) {
   const {arname} = route.params;
-  console.log(arname);
+  // console.log(arname);
   return (
     <ViroARSceneNavigator
       initialScene={{
@@ -41,7 +41,7 @@ export function ArIntroScreen({route, navigation}) {
 }
 const ArIntro = props => {
   const ar = props.arname;
-  console.log(ar);
+  // console.log(ar);
   return (
     // <View>
     //   <Text>AR</Text>

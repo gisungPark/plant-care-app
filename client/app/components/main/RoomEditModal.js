@@ -213,6 +213,7 @@ const styles = StyleSheet.create({
     width: WIDTH - 60,
     backgroundColor: '#F9F9F9',
     borderRadius: 10,
+    // flex: 0.85,
   },
   modaltop: {
     flexDirection: 'row',

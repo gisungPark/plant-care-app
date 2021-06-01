@@ -94,7 +94,7 @@ const RoomModal = props => {
       compressImageQuality: 0.7,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImage(image.path);
         setMime(image.mime);
       })
@@ -104,7 +104,7 @@ const RoomModal = props => {
   };
   // 갤러리에서 사진 저장
   const choosePhotoFromLibrary = () => {
-    console.log(uid);
+    // console.log(uid);
     ImagePicker.openPicker({
       width: 300,
       height: 300,
@@ -112,7 +112,7 @@ const RoomModal = props => {
       compressImageQuality: 0.7,
     })
       .then(image => {
-        console.log(image);
+        // console.log(image);
         setImage(image.path);
         setMime(image.mime);
       })
@@ -133,7 +133,7 @@ const RoomModal = props => {
 
   // 방 등록
   const plusRoom = async () => {
-    console.log(image);
+    // console.log(image);
     const formData = new FormData();
     formData.append('roomName', roomName);
     formData.append('theme', {
@@ -149,9 +149,9 @@ const RoomModal = props => {
   };
 
   const addRoom = async () => {
-    console.log(roomName, isSelected);
+    // console.log(roomName, isSelected);
     const roomResponse = await createRoom(roomName, isSelected);
-    console.log('방생성 respone', roomResponse.data.response);
+    // console.log('방생성 respone', roomResponse.data.response);
     // additionalRoom()
     getRooms(roomResponse.data.response);
     closeModal(false, 'Plus');

@@ -154,7 +154,7 @@ const HomeEditModal = props => {
             </Littlechip>
             <TextInputBox style={{marginBottom: 30}}>
               <TextInput
-                placeholder={homename}
+                value={homename}
                 onChangeText={userhn => setHomename(userhn)}
               />
             </TextInputBox>

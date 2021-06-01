@@ -122,6 +122,15 @@ function Home({navigation}) {
     userRooms: state.roomReducer.rooms,
   }));
 
+  // 물주기 상태
+  const {registerWaterFlag} = useSelector(state => ({
+    registerWaterFlag: state.diaryReducer.registerwater,
+  }));
+  // 물주기 취소 상태
+  const {deleteWaterFlag} = useSelector(state => ({
+    deleteWaterFlag: state.diaryReducer.deletewater,
+  }));
+
   const dispatch = useDispatch();
   const setMainInfo = (mainnickname, maintheme) =>
     dispatch(setMain(mainnickname, maintheme));
@@ -141,7 +150,7 @@ function Home({navigation}) {
   const getRoomData = () => {
     findRoom()
       .then(res => {
-        console.log('get room data', res.data.response);
+        // console.log('get room data', res.data.response);
         getRooms(res.data.response);
         setLoadingStatus(false);
       })
@@ -149,7 +158,7 @@ function Home({navigation}) {
         setLoading(false);
       })
       .catch(err => {
-        console.log(err);
+        // console.log(err);
         setLoading(false);
       });
   };
@@ -182,6 +191,20 @@ function Home({navigation}) {
     }
   };
 
+  // 물준날짜 있을 경우: 시간제외 날짜만 표시
+  // 물준날짜 없을 경우: '아직 물을 주지 않았어요' 문구 표시
+  const showLastDate = plant => {
+    if (plant.lastDate != undefined) {
+      return plant.lastDate.substring(0, 10);
+    } else {
+      return '아직 물을 주지 않았어요';
+    }
+  };
+
+  useEffect(async () => {
+    getRoomData();
+  }, [registerWaterFlag, deleteWaterFlag]);
+
   // asking for location permission
   const renderItem = ({item}) => {
     return (
@@ -190,7 +213,7 @@ function Home({navigation}) {
           <Text
             style={styles.roomname}
             onPress={() => {
-              console.log('click room name');
+              // console.log('click room name');
               navigation.navigate('Room', {
                 rid: item.rid,
                 rname: item.roomName,
@@ -202,7 +225,7 @@ function Home({navigation}) {
           <Text
             style={styles.gotoroom}
             onPress={() => {
-              console.log('click room name');
+              // console.log('click room name');
               navigation.navigate('Room', {
                 rid: item.rid,
                 rname: item.roomName,
@@ -218,7 +241,7 @@ function Home({navigation}) {
               <TouchableOpacity
                 style={styles.plantcard}
                 onPress={() => {
-                  console.log('click left');
+                  // console.log('click left');
                   navigation.navigate('Room', {
                     rid: item.rid,
                     rname: item.roomName,
@@ -237,20 +260,20 @@ function Home({navigation}) {
                     <View style={styles.water}>
                       <Text style={styles.watertext}>물 준 날짜</Text>
                       <Text style={styles.waterdate}>
-                        {item.plantList[0].lastDate}
+                        {showLastDate(item.plantList[0])}
                       </Text>
                     </View>
-                    <Image
+                    {/* <Image
                       source={require('../../assets/images/plant1.png')}
                       style={styles.planticon}
-                    />
+                    /> */}
                   </View>
                 </View>
               </TouchableOpacity>
               <TouchableOpacity
                 style={styles.plantcard}
                 onPress={() => {
-                  console.log('click right');
+                  // console.log('click right');
                   navigation.navigate('Room', {
                     rid: item.rid,
                     rname: item.roomName,
@@ -258,7 +281,7 @@ function Home({navigation}) {
                   });
                 }}>
                 <Image
-                  source={{uri: item.plantList[0].image}}
+                  source={{uri: item.plantList[1].image}}
                   style={styles.plantimg}
                 />
                 <View style={styles.plantinfo}>
@@ -269,13 +292,13 @@ function Home({navigation}) {
                     <View style={styles.water}>
                       <Text style={styles.watertext}>물 준 날짜</Text>
                       <Text style={styles.waterdate}>
-                        {item.plantList[1].lastDate}
+                        {showLastDate(item.plantList[1])}
                       </Text>
                     </View>
-                    <Image
+                    {/* <Image
                       source={require('../../assets/images/plant1.png')}
                       style={styles.planticon}
-                    />
+                    /> */}
                   </View>
                 </View>
               </TouchableOpacity>
@@ -288,7 +311,7 @@ function Home({navigation}) {
                 <TouchableOpacity
                   style={styles.plantcard}
                   onPress={() => {
-                    console.log('click left');
+                    // console.log('click left');
                     navigation.navigate('Room', {
                       rid: item.rid,
                       rname: item.roomName,
@@ -308,13 +331,13 @@ function Home({navigation}) {
                       <View style={styles.water}>
                         <Text style={styles.watertext}>물 준 날짜</Text>
                         <Text style={styles.waterdate}>
-                          {item.plantList[0].lastDate}
+                          {showLastDate(item.plantList[0])}
                         </Text>
                       </View>
-                      <Image
+                      {/* <Image
                         source={require('../../assets/images/plant1.png')}
                         style={styles.planticon}
-                      />
+                      /> */}
                     </View>
                   </View>
                 </TouchableOpacity>
@@ -324,7 +347,7 @@ function Home({navigation}) {
                 <TouchableOpacity
                   style={styles.plantcard2}
                   onPress={() => {
-                    console.log('click left');
+                    // console.log('click left');
                     navigation.navigate('Room', {
                       rid: item.rid,
                       rname: item.roomName,
@@ -579,7 +602,7 @@ const styles = StyleSheet.create({
   },
   plantname: {
     fontWeight: 'bold',
-    fontSize: 11,
+    fontSize: 13,
   },
   plantimg: {
     height: 100,
@@ -606,11 +629,11 @@ const styles = StyleSheet.create({
     // backgroundColor: "yellow",
   },
   watertext: {
-    fontSize: 9,
+    fontSize: 11,
     fontWeight: 'bold',
   },
   waterdate: {
-    fontSize: 9,
+    fontSize: 10,
   },
   gotoaddplant: {
     fontSize: 18,

@@ -69,8 +69,8 @@ export function LoginScreen({navigation}) {
       const response = await auth().signInWithCredential(credential);
       const googleMail = googleUserInfo.user.email;
       const profile = await userInfo();
-      console.log('profile1', profile.data.response);
-      console.log('profile2', profile);
+      // console.log('profile1', profile.data.response);
+      // console.log('profile2', profile);
       //DEVICE TOKEN
       const deviceToken = await messaging().getToken();
       const device_response = await registerDevice();
@@ -123,7 +123,7 @@ export function LoginScreen({navigation}) {
       }
     } else {
       Alert.alert('로그인 오류', '이메일과 비밀번호를 입력해주세요');
-      console.log('email, password no');
+      // console.log('email, password no');
       setIsLoading(false);
     }
     setEmail('');

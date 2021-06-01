@@ -24,6 +24,16 @@ export function PlantDetail({route, navigation}) {
     plantact: state.roomReducer.plantact,
     rooms: state.roomReducer.rooms,
   }));
+
+  // 물주기 상태
+  const {registerWaterFlag} = useSelector(state => ({
+    registerWaterFlag: state.diaryReducer.registerwater,
+  }));
+  // 물주기 취소 상태
+  const {deleteWaterFlag} = useSelector(state => ({
+    deleteWaterFlag: state.diaryReducer.deletewater,
+  }));
+
   const [roomtheme, setRoomtheme] = useState(
     'https://www.sketchappsources.com/resources/source-image/profile-illustration-gunaldi-yunus.png',
   );
@@ -44,15 +54,15 @@ export function PlantDetail({route, navigation}) {
   const makeclean = () => dispatch(changePlant(''));
 
   useEffect(async () => {
-    console.log('plnatdetail props', route.params.rid);
+    // console.log('plnatdetail props', route.params.rid);
     if (plantact === 'back') {
       makeclean();
       navigation.navigate('Room', {rid: rid, rname: rname});
     }
     await rooms.forEach(room => {
-      console.log('rrr', room);
+      // console.log('rrr', room);
       if (room.rid === route.params.rid) {
-        console.log(room.theme);
+        // console.log(room.theme);
         setRoomtheme(room.theme);
       }
     });
@@ -60,6 +70,22 @@ export function PlantDetail({route, navigation}) {
     const plantDetail = await myPlantInfo(pid);
     setMyInfo(plantDetail.data);
   }, [plantact]);
+
+  useEffect(async () => {
+    const plantDetail = await myPlantInfo(pid);
+    setMyInfo(plantDetail.data);
+  }, [registerWaterFlag, deleteWaterFlag]);
+
+  // 물준날짜 있을 경우: 시간제외 날짜만 표시
+  // 물준날짜 없을 경우: '아직 물을 주지 않았어요' 문구 표시
+  const showLastDate = () => {
+    if (myInfo.lastDate != undefined) {
+      return myInfo.lastDate.substring(0, 10);
+    } else {
+      return '아직 물을 주지 않았어요';
+    }
+  };
+
   return (
     <View style={{flex: 1, backgroundColor: 'transparent'}}>
       <View style={{flex: 0.7}}>
@@ -154,7 +180,11 @@ export function PlantDetail({route, navigation}) {
               justifyContent: 'space-between',
               flex: 1,
             }}>
-            <TouchableOpacity style={styles.diarybtn}>
+            <TouchableOpacity
+              style={styles.diarybtn}
+              onPress={() => {
+                navigation.navigate('Diary');
+              }}>
               <Text
                 style={{
                   color: 'white',
@@ -178,12 +208,12 @@ export function PlantDetail({route, navigation}) {
             <View style={styles.rightinfo}>
               <View style={styles.water}>
                 <Text style={styles.watertext}>물 준 날짜</Text>
-                <Text style={styles.waterdate}>{myInfo.lastDate}</Text>
+                <Text style={styles.waterdate}>{showLastDate()}</Text>
               </View>
-              <Image
+              {/* <Image
                 source={require('../../assets/images/plant1.png')}
                 style={styles.planticon}
-              />
+              /> */}
             </View>
           </View>
         </View>

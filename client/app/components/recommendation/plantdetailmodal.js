@@ -31,7 +31,7 @@ export default function plantdetailmodal(props) {
     await savePlant();
   }, [props]);
 
-  console.log('modal props', props);
+  // console.log('modal props', props);
   return (
     <ModalContainer>
       <ModalBox flexHeight="0.9" modalWidth="90%">

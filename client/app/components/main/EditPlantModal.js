@@ -51,11 +51,12 @@ const ButtonText = styled.Text`
 
 // 사진 선택 영역 컨테이너
 const ImageArea = styled.TouchableOpacity`
-  flex: 0.5;
+  flex: 2;
   flex-direction: row;
   margin-top: 10px;
   margin-left: 25px;
   margin-right: 15px;
+  height: 50px;
 `;
 
 // 사진 선택 영역 박스
@@ -73,7 +74,7 @@ const HEIGHT = Dimensions.get('window').height;
 const HEIGHT_MODAL = 300;
 const EditPlantModal = props => {
   const [roomId, setRoomId] = useState([]);
-  const [plantName, setPlantName] = useState('');
+  const [plantName, setPlantName] = useState(props.pname);
   const rid = props.rid;
   const startedDate = props.startedDate;
   const pid = props.pid;
@@ -95,6 +96,7 @@ const EditPlantModal = props => {
         console.log('openCamera catch' + err.toString());
       });
   };
+  // console.log(props);
 
   const choosePhotoFromLibrary = () => {
     ImagePicker.openPicker({
@@ -280,12 +282,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.4)',
   },
   modal: {
-    height: HEIGHT - 200,
+    height: HEIGHT - 120,
     paddingTop: 10,
     width: WIDTH - 60,
     backgroundColor: '#F9F9F9',
     borderRadius: 10,
-    flex: 0.85,
+    // flex: 0.85,
   },
   modaltop: {
     flexDirection: 'row',
@@ -330,12 +332,13 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   input: {
+    marginVertical: 50,
     flex: 1,
     // backgroundColor: 'yellow',
     // marginTop: 10,
   },
   photo: {
-    flex: 2,
+    flex: 3,
     // backgroundColor: 'green',
   },
   imagewrap: {
