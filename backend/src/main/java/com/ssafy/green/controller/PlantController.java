@@ -37,12 +37,7 @@ public class PlantController {
     private final String DEFAULT_PlANT_IMAGE = "https://i.pinimg.com/564x/3e/93/03/3e9303d2646cb2d84fbb763f7eedb409.jpg";
 
     // 모든 식물 이름 조회
-    @ApiOperation(value = "모든 식물 이름 조회(autocomplete를 위한 API)", notes =
-            "Response\n" +
-            "- id : 식물 정보 고유 번호 \n" +
-            "- common : 식물 학명 \n" +
-            "- name : 식물 이름 \n\n" +
-            "값 없을 때(null) : 토큰 검사 실패한 경우 ")
+    @ApiOperation(value = "모든 식물 이름 조회(autocomplete를 위한 API)")
     @GetMapping("/info")
     public List<PlantListResponse> findAll(@RequestHeader("TOKEN") String token) {
         List<PlantListResponse> list = null;
@@ -56,14 +51,7 @@ public class PlantController {
     }
 
     // 식물 이름 조회
-    @ApiOperation(value = "식물 이름 조회", notes =
-            "Path\n" +
-            "- search : 조회할 키워드\n\n"+
-            "Response\n" +
-            "- id : 식물 정보 고유 번호 \n" +
-            "- common : 식물 학명 \n" +
-            "- name : 식물 이름 \n\n" +
-            "값 없을 때(null) : 토큰 검사 실패한 경우 ")
+    @ApiOperation(value = "식물 이름 조회")
     @GetMapping("/info/{search}")
     public List<PlantListResponse> findAllByCommonAndName(@RequestHeader("TOKEN") String token, @PathVariable String search){
         List<PlantListResponse> list = null;
@@ -77,20 +65,7 @@ public class PlantController {
     }
 
     // 식물 학명 조회
-    @ApiOperation(value = "식물 학명 조회", notes =
-            "Path\n" +
-            "- common : 식물 학명(식물 이미지 분류 후)\n\n"+
-            "Response\n" +
-            "- id : 식물 정보 고유 번호 \n" +
-            "- common : 식물 학명 \n" +
-            "- name : 식물 이름 \n" +
-            "- level : 키우기 난이도 \n" +
-            "- temp : 적정 온도 \n" +
-            "- humid : 적정 습도 \n" +
-            "- water : 물주기 \n" +
-            "- info : 식물 정보 \n" +
-            "- image : 식물 이미지 \n\n" +
-            "값 없을 때(null) : 토큰 검사 실패한 경우 ")
+    @ApiOperation(value = "식물 학명 조회")
     @GetMapping("/check/{common}")
     public PlantResponse findByCommon(@RequestHeader("TOKEN") String token, @PathVariable String common) {
         try{
@@ -103,20 +78,7 @@ public class PlantController {
     }
 
     // 식물 상세 정보 조회
-    @ApiOperation(value = "식물 상세 정보 조회", notes =
-            "Path\n" +
-            "- pid : 식물 고유 번호(식물 조회 후)\n"+
-            "Response\n" +
-            "- id : 식물 정보 고유 번호 \n" +
-            "- common : 식물 학명 \n" +
-            "- name : 식물 이름 \n" +
-            "- level : 키우기 난이도 \n" +
-            "- temp : 적정 온도 \n" +
-            "- humid : 적정 습도 \n" +
-            "- water : 물주기 \n" +
-            "- info : 식물 정보 \n" +
-            "- image : 식물 이미지 \n\n" +
-            "값 없을 때(null) : 토큰 검사 실패한 경우 ")
+    @ApiOperation(value = "식물 상세 정보 조회")
     @GetMapping("/info/detail/{id}")
     public PlantResponse findByPlantInfo(@RequestHeader("TOKEN") String token, @PathVariable Long id) {
         try{
@@ -129,16 +91,7 @@ public class PlantController {
     }
 
     // 나의 식물 조회 기반 등록 : 식물 pid 포함 정보 필요
-    @ApiOperation(value = "나의 식물 조회 기반 등록", notes =
-            "Request\n" +
-            "- pid : 식물 고유 번호(식물 조회 후)\n"+
-            "- rid : 식물을 등록할 방 고유 번호\n"+
-            "- nickname : 식물 애칭\n"+
-            "- image : 등록할 식물 이미지(null인 경우 기본 이미지)\n"+
-            "- startedDate : 식물 키우기 시작한 날짜\n\n"+
-            "Response\n" +
-            "- 1 이상 : 등록 성공한 나의 식물 고유 번호(pid) \n" +
-            "- 0 : 등록 실패")
+    @ApiOperation(value = "나의 식물 조회 기반 등록")
     @PostMapping("/care")
     public Long saveBySearch(@RequestHeader("TOKEN") String token, MyPlantRequest myPlantRequest) {
         try{
@@ -160,18 +113,7 @@ public class PlantController {
     }
 
     // 나의 식물 이미지 분류 기반 등록 : 식물 학명 포함 정보 필요
-    @ApiOperation(value = "나의 식물 이미지 분류 기반 등록", notes =
-            "Path\n" +
-            "- common : 식물 학명(식물 이미지 분류 후 얻은)\n\n" +
-            "Request\n" +
-            "- pid : 0\n"+
-            "- rid : 식물을 등록할 방 고유 번호\n"+
-            "- nickname : 식물 애칭\n"+
-            "- image : 등록할 식물 이미지(null인 경우 기본 이미지)\n"+
-            "- startedDate : 식물 키우기 시작한 날짜\n\n"+
-            "Response\n" +
-            "- 1 이상 : 등록 성공한 나의 식물 고유 번호(pid) \n" +
-            "- 0 : 등록 실패")
+    @ApiOperation(value = "나의 식물 이미지 분류 기반 등록")
     @PostMapping("/care/{common}")
     public Long saveByIdentify(@RequestHeader("TOKEN") String token, @PathVariable String common, MyPlantRequest myPlantRequest) {
         try{
@@ -193,22 +135,7 @@ public class PlantController {
     }
 
     // 나의 식물 상세 정보
-    @ApiOperation(value = "나의 식물 상세 정보", notes =
-            "Path\n" +
-            "- pid : 나의 식물 고유 번호 \n\n"+
-            "Response\n" +
-            "- pid : 나의 식물 고유 번호 \n" +
-            "- nickname : 나의 식물 애칭 \n" +
-            "- startedDate : 키우기 시작 날짜 \n" +
-            "- lastDate : 마지막으로 물 준 날짜 \n" +
-            "- image : 식물 이미지 \n" +
-            "- common : 식물 학명 \n" +
-            "- name : 식물 이름 \n" +
-            "- water : 물주기 \n" +
-            "- temp : 적정 온도 \n" +
-            "- humid : 적정 습도 \n" +
-            "- info : 식물 정보 \n\n" +
-            "값 없을 때(null) : 토큰 검사 실패하였거나 나의 식물이 아닐 경우")
+    @ApiOperation(value = "나의 식물 상세 정보")
     @GetMapping("/care/{pid}")
     public MyPlantResponse findById(@RequestHeader("TOKEN") String token, @PathVariable Long pid) {
         try{
@@ -221,18 +148,7 @@ public class PlantController {
     }
 
     // 나의 식물 수정
-    @ApiOperation(value = "나의 식물 수정", notes =
-            "Path\n" +
-            "- pid : 나의 식물 고유 번호\n\n" +
-            "Request\n" +
-            "- pid : 나의 식물 고유 번호\n"+
-            "- rid : 수정할 식물을 등록할 방 고유 번호\n"+
-            "- nickname : 수정할 식물 애칭\n"+
-            "- image : 수정할 식물 이미지\n"+
-            "- startedDate : 수정할 키우기 시작한 날짜\n\n"+
-            "Response\n" +
-            "- 1 이상 : 수정 성공한 나의 식물 고유 번호(pid) \n" +
-            "- 0 : 수정 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
+    @ApiOperation(value = "나의 식물 수정")
     @PutMapping("/care/{pid}")
     public Long update(@RequestHeader("TOKEN") String token, @PathVariable Long pid, MyPlantRequest myPlantRequest) {
         try{
@@ -249,12 +165,7 @@ public class PlantController {
     }
 
     // 나의 식물 삭제
-    @ApiOperation(value = "나의 식물 삭제", notes =
-            "Path\n" +
-            "- pid : 나의 식물 고유 번호\n\n" +
-            "Response\n" +
-            "- 1 이상 : 삭제 성공한 나의 식물 고유 번호(pid) \n" +
-            "- 0 : 삭제 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
+    @ApiOperation(value = "나의 식물 삭제")
     @PutMapping("/care/delete/{pid}")
     public Long delete(@RequestHeader("TOKEN") String token, @PathVariable Long pid) {
         try{
@@ -267,12 +178,7 @@ public class PlantController {
     }
 
     // 나의 식물 떠나감
-    @ApiOperation(value = "나의 식물 떠나감", notes =
-            "Path\n" +
-            "- pid : 나의 식물 고유 번호\n\n" +
-            "Response\n" +
-            "- 1 이상 : 떠나감 성공한 나의 식물 고유 번호(pid) \n" +
-            "- 0 : 떠나감 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
+    @ApiOperation(value = "나의 식물 떠나감")
     @PutMapping("/care/dead/{pid}")
     public Long dead(@RequestHeader("TOKEN") String token, @PathVariable Long pid) {
         try{
@@ -285,12 +191,7 @@ public class PlantController {
     }
 
     // 물 준 날짜 조회
-    @ApiOperation(value = "식물의 모든 물 준 날짜 조회", notes =
-            "Path\n" +
-            "- pid : 나의 식물 고유 번호\n\n" +
-            "Response\n" +
-            "- wid : 물 준 고유 번호 \n" +
-            "- waterDate : 물 준 날짜")
+    @ApiOperation(value = "식물의 모든 물 준 날짜 조회")
     @GetMapping("/care/water/{pid}")
     public List<WaterResponse> getWater(@RequestHeader("TOKEN") String token, @PathVariable Long pid) {
         try{
@@ -304,13 +205,7 @@ public class PlantController {
     }
 
     // 물 준 날짜 등록
-    @ApiOperation(value = "물 준 날짜 등록", notes =
-            "Request\n" +
-            "- pid : 나의 식물 고유 번호\n" +
-            "- waterDate : 물 준 날짜\n\n" +
-            "Response\n" +
-            "- 1 이상 : 물 준 날짜 등록 성공한 물 준 고유 번호(wid) \n" +
-            "- 0 : 물 준 날짜 등록 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
+    @ApiOperation(value = "물 준 날짜 등록")
     @PostMapping("/care/water")
     public Long saveWater(@RequestHeader("TOKEN") String token, @RequestBody WaterRequest waterRequest) {
         try{
@@ -323,12 +218,7 @@ public class PlantController {
     }
 
     // 물 준 날짜 취소(삭제)
-    @ApiOperation(value = "물 준 날짜 취소", notes =
-            "Path\n" +
-            "- wid : 물 준 고유 번호\n\n" +
-            "Response\n" +
-            "- 1 이상 : 물 준 날짜 취소 성공한 물 준 고유 번호(wid) \n" +
-            "- 0 : 물 준 날짜 취소 실패(토큰 검사 실패 or 나의 식물이 아닐 경우)")
+    @ApiOperation(value = "물 준 날짜 취소")
     @DeleteMapping("/care/water/{wid}")
     public Long deleteWater(@RequestHeader("TOKEN") String token, @PathVariable Long wid) {
         try{

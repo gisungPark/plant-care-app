@@ -46,12 +46,7 @@ public class UserController {
 
 
     @PostMapping("/sendMsg")
-    @ApiOperation(value = "알림 전송", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- title : 알림 제목\n" +
-            "- content : 내용\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "알림 전송")
     public ResponseEntity<Map<String, Object>> sendMessage(@RequestHeader("TOKEN") String idToken,
                               @RequestBody Message request){
         Map<String, Object> resultMap = new HashMap<>();
@@ -94,15 +89,7 @@ public class UserController {
         private String content;
     }
 
-    @ApiOperation(value = "알림 목록 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n\n" +
-            "Response\n" +
-            "- messageKey: 알림 키값 \n" +
-            "- title: 알림 제목\n" +
-            "- content: 알림 내용\n" +
-            "- dateTime: 알림 날짜\n" +
-            "- flag: 알림 확인 여부(true[미확인], false[확인])\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "알림 목록 조회!!")
     @GetMapping("/findAllMsg")
     public ResponseEntity<Map<String, Object>> findAllMessage(@RequestHeader("TOKEN") String idToken){
         Map<String, Object> resultMap = new HashMap<>();
@@ -125,16 +112,7 @@ public class UserController {
         }
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
-    @ApiOperation(value = "알림 확인 상태 변경!!(읽음 처리)", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- messageKey: 알림 key값\n\n" +
-            "Response\n" +
-            "- messageKey: 알림 키값 \n" +
-            "- title: 알림 제목\n" +
-            "- content: 알림 내용\n" +
-            "- dateTime: 알림 날짜\n" +
-            "- flag: 알림 확인 여부(true[미확인], false[확인])\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "알림 확인 상태 변경!!(읽음 처리)")
     @PutMapping("/checkMsg")
     public ResponseEntity<Map<String, Object>> checkMessage(@RequestHeader("TOKEN") String idToken,
                                                             @RequestBody MessageReadRequest request){
@@ -175,11 +153,7 @@ public class UserController {
     /**
      * 디바이스 토큰 등록
      */
-    @ApiOperation(value = "디바이스 토큰 등록!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- device(RequestHeader) : 디바이스 token\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "디바이스 토큰 등록!!")
     @PostMapping("/register")
     public ResponseEntity<Map<String, Object>> registerToken(@RequestHeader("TOKEN") String idToken,
                                                              @RequestHeader("DEVICE") String deviceToken) {
@@ -214,11 +188,7 @@ public class UserController {
     /**
      * 디바이스 토큰 삭제
      */
-    @ApiOperation(value = "Logout 시, 디바이스 토큰 삭제!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- device(RequestHeader) : 디바이스 token\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "Logout 시, 디바이스 토큰 삭제!!")
     @DeleteMapping("/logout")
     public ResponseEntity<Map<String, Object>> logout(@RequestHeader("TOKEN") String idToken,
                                                              @RequestHeader("DEVICE") String deviceToken) {
@@ -250,13 +220,7 @@ public class UserController {
     /**
      * 회원 정보 조회
      */
-    @ApiOperation(value = "회원 정보 조회", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n\n" +
-            "Response\n" +
-            "- userId: 유저 아이디\n" +
-            "- nickname: 닉네임\n" +
-            "- profile: 프로필 이미지\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "회원 정보 조회")
     @PostMapping("/oauth")
     public ResponseEntity<Map<String, Object>> findUserInfo(@RequestHeader("TOKEN") String idToken) {
         logger.debug("# 토큰정보 {}: " + idToken);
@@ -283,18 +247,7 @@ public class UserController {
     /**
      * 회원 정보 조회
      */
-    @ApiOperation(value = "회원 정보 조회 V2", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n\n" +
-            "Response\n" +
-            "- response.userId: 유저 아이디\n" +
-            "- response.nickname: 닉네임\n" +
-            "- response.profile: 프로필 이미지\n" +
-            "- plants.pid: 식물 id\n" +
-            "- plants.nickname: 식물 닉네임\n" +
-            "- plants.name: 식물 이름\n" +
-            "- plants.lastDate: ????\n" +
-            "- plants.image: 식물 이미지\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "회원 정보 조회 V2")
     @PostMapping("/oauth/v2")
     public ResponseEntity<Map<String, Object>> findUserInfoV2(@RequestHeader("TOKEN") String idToken) {
         logger.debug("# 토큰정보 {}: " + idToken);
@@ -323,16 +276,7 @@ public class UserController {
     /**
      * 회원 정보 수정 v22222222
      */
-    @ApiOperation(value = "회원 정보 수정 v2",
-            notes = "Parameter\n" +
-                    "- token(RequestHeader) : Firebase token\n" +
-                    "- nickname: 변경할 닉네임\n" +
-                    "- profile: 변경할 프로필 이미지\n\n" +
-                    "Response\n" +
-                    "- userId: 유저 아이디\n" +
-                    "- nickname: 변경된 닉네임\n" +
-                    "- profile: 변경된 프로필 이미지\n" +
-                    "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "회원 정보 수정 v2")
     @PutMapping("/updateInfo/v2")
     public ResponseEntity<Map<String, Object>> updateInfoV2(@RequestHeader("TOKEN") String idToken,
                                                           UserRequestV2 request) {
@@ -378,16 +322,7 @@ public class UserController {
     /**
      * 회원 정보 수정
      */
-    @ApiOperation(value = "회원 정보 수정",
-            notes = "Parameter\n" +
-                    "- token(RequestHeader) : Firebase token\n" +
-                    "- nickname: 변경할 닉네임\n" +
-                    "- profile: 변경할 프로필 이미지\n\n" +
-                    "Response\n" +
-                    "- userId: 유저 아이디\n" +
-                    "- nickname: 변경된 닉네임\n" +
-                    "- profile: 변경된 프로필 이미지\n" +
-                    "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "회원 정보 수정")
     @PutMapping("/updateInfo")
     public ResponseEntity<Map<String, Object>> updateInfo(@RequestHeader("TOKEN") String idToken,
                                                           @RequestBody UserRequest request) {
@@ -421,13 +356,7 @@ public class UserController {
         private String thema;
     }
 
-    @ApiOperation(value = "홈 닉네임, 테마 변경",
-            notes = "Parameter\n" +
-                    "- token(RequestHeader) : Firebase token\n" +
-                    "- homeNickname : 변경할 홈 닉네임\n" +
-                    "- thema: 변경할 테마\n\n" +
-                    "Response\n" +
-                    "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "홈 닉네임, 테마 변경")
     @PutMapping("/changeNickTheme")
     public ResponseEntity<Map<String, Object>> change(@RequestHeader("TOKEN") String idToken,
                                                       @RequestBody ThemaRequest request) {
@@ -452,11 +381,7 @@ public class UserController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
     }
 
-    @ApiOperation(value = "회원 정보 삭제",
-            notes = "Parameter\n" +
-                    "- token(RequestHeader) : Firebase token\n" +
-                    "Response\n" +
-                    "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "회원 정보 삭제")
     @PutMapping("/delete")
     public ResponseEntity<Map<String, Object>> change(@RequestHeader("TOKEN") String idToken) {
         logger.debug("# 토큰정보 {}: " + idToken);
@@ -493,12 +418,7 @@ public class UserController {
     /**
      * 메인화면 ( 방 닉네임, 테마 보내주기)
      */
-    @ApiOperation(value = "메인화면 조회", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n\n" +
-            "Response\n" +
-            "- nickname: 닉네임\n" +
-            "- theme: 홈 테마\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "메인화면 조회")
     @GetMapping("/main")
     public ResponseEntity<ThemeHomeNickResponse> getMain(@RequestHeader("TOKEN") String idToken) {
         logger.debug("# 토큰정보 {}: " + idToken);

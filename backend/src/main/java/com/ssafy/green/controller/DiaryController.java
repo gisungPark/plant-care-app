@@ -5,7 +5,6 @@ import com.google.firebase.auth.AuthErrorCode;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.ssafy.green.model.dto.DiaryRequest;
 import com.ssafy.green.model.dto.DiaryRequestV2;
 import com.ssafy.green.model.dto.DiaryRequestV3;
 import com.ssafy.green.model.dto.DiaryResponse;
@@ -39,16 +38,7 @@ public class DiaryController {
     /**
      * 다이어리 전체 조회!!
      */
-    @ApiOperation(value = "다이어리 전체 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n\n" +
-            "Response\n" +
-            "- id: 글 id\n" +
-            "- plantId: 식물 id\n" +
-            "- title: 제목\n" +
-            "- content: 내용\n" +
-            "- imgUrls: 이미지 리스트\n" +
-            "- writeDateTime: 작성일\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "다이어리 전체 조회!!")
     @GetMapping("/findAll")
     public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token) {
         logger.debug("# 토큰정보 {}: " + token);
@@ -77,17 +67,7 @@ public class DiaryController {
     /**
      * 다이어리 날짜 조회
      */
-    @ApiOperation(value = "다이어리 날짜별 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- date(PathVariable): 날짜(ex: 2021-04-28 ) \n\n" +
-            "Response\n" +
-            "- id: 글 id\n" +
-            "- plantId: 식물 id\n" +
-            "- title: 제목\n" +
-            "- content: 내용\n" +
-            "- imgUrls: 이미지 리스트\n" +
-            "- writeDateTime: 작성일\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "다이어리 날짜별 조회!!")
     @GetMapping("/findByDate/{date}")
     public ResponseEntity<Map<String, Object>> findByDate(@RequestHeader("TOKEN") String token,
                                                           @PathVariable String date) {
@@ -117,17 +97,7 @@ public class DiaryController {
     /**
      * 다이어리 ID 조회!!
      */
-    @ApiOperation(value = "다이어리 ID 조회!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- {id}(PathVariable): 다이어리 아이디\n\n" +
-            "Response\n" +
-            "- id:  다이어리 아이디\n" +
-            "- plantId: 식물 아이디\n" +
-            "- title: 제목\n" +
-            "- content: 내용\n" +
-            "- imgUrls: 이미지 url 목록\n" +
-            "- writeDateTime: 작성 날짜\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "다이어리 ID 조회!!")
     @GetMapping("/find/{id}")
     public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token,
                                                      @PathVariable Long id) {
@@ -156,108 +126,9 @@ public class DiaryController {
     }
 
     /**
-     * 다이어리 작성!
-     */
-    @ApiOperation(value = "다이어리 작성!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- plantId\n" +
-            "- title\n" +
-            "- content\n" +
-            "- imgUrls (List)\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
-    @PostMapping("/write")
-    public ResponseEntity<Map<String, Object>> write(@RequestHeader("TOKEN") String token,
-                                                     @RequestBody DiaryRequest request) {
-        logger.debug("# 토큰정보 {}: " + token);
-        Map<String, Object> resultMap = new HashMap<>();
-
-        try {
-            // 1. Firebase Token decoding
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-
-            // 2. 다이어리 작성
-            boolean result = diaryService.writeDiary(decodedToken.getUid(), request);
-            if (result) {
-                resultMap.put("error", 0);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            } else {
-                resultMap.put("error", 1);
-            }
-        } catch (FirebaseAuthException e) {
-            resultMap.put("error", 1);
-            AuthErrorCode authErrorCode = e.getAuthErrorCode();
-            // 3. Token 만료 체크
-            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
-                resultMap.put("msg", "EXPIRED_ID_TOKEN");
-            }
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-    }
-
-
-    /**
-     * 다이어리 작성! v2
-     */
-    @ApiOperation(value = "다이어리 작성 v2!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- plantId\n" +
-            "- title\n" +
-            "- content\n" +
-            "- files (List)\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
-    @PostMapping("/write/v2")
-    public ResponseEntity<Map<String, Object>> writeV2(@RequestHeader("TOKEN") String token,
-                                                      DiaryRequestV2 request) {
-        logger.debug("# 토큰정보 {}: " + token);
-        Map<String, Object> resultMap = new HashMap<>();
-        List<String> fileNames = new ArrayList<>();
-
-        try {
-            // 1. Firebase Token decoding
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-
-            // 2. 이미지 업로드
-            for(MultipartFile m : request.getFiles()) {
-                String fileName = s3Uploader.upload(m);
-                fileNames.add(fileName);
-            }
-
-            // 2. 다이어리 작성
-            boolean result = diaryService.writeDiaryV2(decodedToken.getUid(), request, fileNames);
-            if (result) {
-                resultMap.put("error", 0);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            } else {
-                resultMap.put("error", 1);
-            }
-        } catch (FirebaseAuthException e) {
-            resultMap.put("error", 1);
-            AuthErrorCode authErrorCode = e.getAuthErrorCode();
-            // 3. Token 만료 체크
-            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
-                resultMap.put("msg", "EXPIRED_ID_TOKEN");
-            }
-        } catch (IOException e2){
-            resultMap.put("error", 1);
-            resultMap.put("msg", "파일 업로드 실패!!!");
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-    }
-
-    /**
      * 다이어리 작성! v333333333333333
      */
-    @ApiOperation(value = "다이어리 작성 v3!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- plantId\n" +
-            "- title\n" +
-            "- content\n" +
-            "- writeDateTime : 다이어리 작성 날짜 ex)2021-05-08\n" +
-            "- files (List)\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "다이어리 작성 v3!!")
     @PostMapping("/write/v3")
     public ResponseEntity<Map<String, Object>> writeV3(@RequestHeader("TOKEN") String token,
                                                        DiaryRequestV3 request) {
@@ -303,19 +174,7 @@ public class DiaryController {
     /**
      * 다이어리 수정! v2
      */
-    @ApiOperation(value = "다이어리 수정!! v2", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- {id}(PathVariable): 다이어리 아이디\n" +
-            "- content: 내용\n" +
-            "- plantId: 식물 아이디\n" +
-            "- files (List)\n\n" +
-            "Response\n" +
-            "- id:  다이어리 아이디\n" +
-            "- plantId: 식물 아이디\n" +
-            "- content: 다이어리 내용\n" +
-            "- imgUrls: 이미지 url 목록\n" +
-            "- writeDateTime: 작성 날짜\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "다이어리 수정!! v2")
     @PutMapping("/update/v2/{id}")
     public ResponseEntity<Map<String, Object>> updateV2(@RequestHeader("TOKEN") String token,
                                                       @PathVariable Long id,
@@ -363,63 +222,11 @@ public class DiaryController {
         return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
     }
 
-    /**
-     * 다이어리 수정!
-     */
-    @ApiOperation(value = "다이어리 수정!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- {id}(PathVariable): 다이어리 아이디\n" +
-            "- content: 내용\n" +
-            "- plantId: 식물 아이디\n" +
-            "- imgUrls (List)\n\n" +
-            "Response\n" +
-            "- id:  다이어리 아이디\n" +
-            "- plantId: 식물 아이디\n" +
-            "- content: 다이어리 내용\n" +
-            "- imgUrls: 이미지 url 목록\n" +
-            "- writeDateTime: 작성 날짜\n" +
-            "- error: 0[성공], 1[실패]")
-    @PutMapping("/update/{id}")
-    public ResponseEntity<Map<String, Object>> update(@RequestHeader("TOKEN") String token,
-                                                      @PathVariable Long id,
-                                                      @RequestBody DiaryRequest diaryRequest) {
-        logger.debug("# 토큰정보 {}: " + token);
-        Map<String, Object> resultMap = new HashMap<>();
-
-        try {
-            // 1. Firebase Token decoding
-            FirebaseToken decodedToken = FirebaseAuth.getInstance().verifyIdToken(token);
-            // 2. 다이어리 작성
-            boolean result = diaryService.update(decodedToken.getUid(), id, diaryRequest);
-            if (result) {
-                // 2-1. 수정 성공!
-                resultMap.put("error", 0);
-                DiaryResponse findDiary = diaryService.findById(id);
-                resultMap.put("response", findDiary);
-                return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.OK);
-            } else {
-                // 2-2. 수정 실패!
-                resultMap.put("error", 1);
-            }
-        } catch (FirebaseAuthException e) {
-            resultMap.put("error", 1);
-            AuthErrorCode authErrorCode = e.getAuthErrorCode();
-            // 3. Token 만료 체크
-            if (authErrorCode == AuthErrorCode.EXPIRED_ID_TOKEN) {
-                resultMap.put("msg", "EXPIRED_ID_TOKEN");
-            }
-        }
-        return new ResponseEntity<Map<String, Object>>(resultMap, HttpStatus.BAD_REQUEST);
-    }
 
     /**
      * 다이어리 내용 삭제!
      */
-    @ApiOperation(value = "다이어리 삭제!!", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- {id}(PathVariable): 다이어리 아이디\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "다이어리 삭제!!")
     @PutMapping("/delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@RequestHeader("TOKEN") String token,
                                                       @PathVariable Long id) {

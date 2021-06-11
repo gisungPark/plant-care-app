@@ -19,7 +19,7 @@ import java.io.InputStream;
 
 @Service
 public class FirebaseInitService {
-    private String firebaseSdkPath = "firebase/greenfingers-3cbec-firebase-adminsdk-ckq86-7871b76c97.json";
+    private String firebaseSdkPath = "firebase/green-ebf0f-firebase-adminsdk-n6vk8-01a00146ae.json";
 
     @PostConstruct
     public void init() throws IOException {

@@ -28,12 +28,7 @@ public class RoomController {
     /**
      * 방 생성 v22222222222222
      */
-    @ApiOperation(value = "방 생성 V2", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- roomName: 생성할 방 이름\n" +
-            "- theme: 배경 이미지 파일 (MultipartFile)\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "방 생성 V2")
     @PostMapping("/create/v2")
     public ResponseEntity<Map<String, Object>> createV2(@RequestHeader("TOKEN") String token,
                                                          CreateRoomRequest request) {
@@ -75,13 +70,7 @@ public class RoomController {
     /**
      * 방 정보 변경
      */
-    @ApiOperation(value = "방 정보 변경", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- {id}(PathVariable): 방 번호\n" +
-            "- roomName: 생성할 방 이름\n" +
-            "- theme: 배경 이미지 파일 (MultipartFile)\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "방 정보 변경")
     @PostMapping("/update/{id}")
     public ResponseEntity<Map<String, Object>> update(@RequestHeader("TOKEN") String token,
                                                       @PathVariable Long id,
@@ -124,9 +113,7 @@ public class RoomController {
     /**
      * 방 조회
      */
-    @ApiOperation(value = "모든 방 조회(그 안 식물까지)", notes = "사용자 로그인 토큰 필요\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "모든 방 조회(그 안 식물까지)")
     @GetMapping("/find")
     public ResponseEntity<Map<String, Object>> find(@RequestHeader("TOKEN") String token) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -158,9 +145,7 @@ public class RoomController {
     /**
      * 해당 방 상세 조회
      */
-    @ApiOperation(value = "해당 방 상세 조회", notes = "사용자 로그인 토큰 필요\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "해당 방 상세 조회")
     @GetMapping("/find/{id}")
     public ResponseEntity<Map<String, Object>> findRoom(@RequestHeader("TOKEN") String token, @PathVariable Long id) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -187,11 +172,7 @@ public class RoomController {
     /**
      * 방 삭제
      */
-    @ApiOperation(value = "방 삭제", notes = "Parameter\n" +
-            "- token(RequestHeader) : Firebase token\n" +
-            "- {id}(PathVariable) : 삭제할 방 번호\n\n" +
-            "Response\n" +
-            "- error: 0[성공], 1[실패]")
+    @ApiOperation(value = "방 삭제")
     @PutMapping("/delete/{id}")
     public ResponseEntity<Map<String, Object>> delete(@RequestHeader("TOKEN") String token,
                                                       @PathVariable Long id) {
